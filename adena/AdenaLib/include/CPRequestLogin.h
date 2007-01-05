@@ -1,5 +1,5 @@
 /*
- * CPGGAuth.h - Game gaurd authentication responce.
+ * CPRequestLogin.h - Client username and password.
  * Created January 4, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
@@ -21,39 +21,57 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_GG_AUTH_H_
-#define _ADENA_C_P_GG_AUTH_H_
+#ifndef _ADENA_C_P_REQUEST_LOGIN_H_
+#define _ADENA_C_P_REQUEST_LOGIN_H_
 
-#include <CLoginServerPacket.h>
+#include <CPRequestLogin.h>
 
 namespace adena
 {
 
-	class CPGGAuth : public CLoginServerPacket
+	class CPRequestLogin : public CLoginServerPacket
 	{
 	public:
 
-		CPGGAuth()
+		CPRequestLogin(irr::c8* in_data, BDRSA* rsa)
+		: CLoginServerPacket()
 		{
-			w8(0x0b);
-			w32(0x0b);
+			irr::c8 dec[128];
+			in_data ++; // Skip the packet type byte.
+			rsa->decrypt(in_data, 128, dec, 128);
+			hexdump(dec, 128);
+			irr::c8 user_buff[15];
+			irr::c8 pass_buff[17];
+			memcpy(user_buff, dec + 94, 14);
+			memcpy(pass_buff, dec + 108, 16);
+			user_buff[14] = 0;
+			pass_buff[16] = 0;
+			Username = irr::core::stringc(user_buff);
+			Password = irr::core::stringc(pass_buff);
 		};
 
-		virtual ~CPGGAuth()
+		virtual ~CPRequestLogin()
 		{
-
+			
 		};
 
 		virtual irr::c8* getData()
 		{
-			blowfishPad();
-			return Data;
+			return NULL;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return WritePointer;
+			return 0;
 		};
+
+		irr::core::stringc Username;
+
+		irr::core::stringc Password;
+
+	private:
+
+
 
 	};
 
