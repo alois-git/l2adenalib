@@ -24,6 +24,7 @@
 #include <CLoginServerClient.h>
 #include <CPServerInit.h>
 #include <CPGGAuth.h>
+#include <CPRequestLogin.h>
 
 using namespace irr;
 
@@ -69,6 +70,9 @@ void CLoginServerClient::HandlePacket()
 	{
 			case 0:
 				// cout << "Auth request.\n";
+				in = new CPRequestLogin(dec, Server->RsaCipher);
+				puts(((CPRequestLogin*)in)->Username.c_str());
+				puts(((CPRequestLogin*)in)->Password.c_str());
 				break;
 			case 7:
 				// cout << "GGAuth request.\n";
