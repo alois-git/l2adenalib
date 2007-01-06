@@ -27,6 +27,8 @@
 #include <AdenaConfig.h>
 #include <irrThread.h>
 #include <irrNet.h>
+#include <irrDb.h>
+#include <irrRng.h>
 #include <BDRSA.h>
 #include <CLoginServerNetEvent.h>
 #include <NewCrypt.h>
@@ -53,6 +55,8 @@ namespace adena
 		BDRSA* RsaCipher;
 		NewCrypt* BlowfishCipher;
 		irr::net::IServer* Server;
+		irr::db::IDatabase* DataBase;
+		irr::IRng* Rng;
 
 	private:
 

@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\include;..\..\irrlichtFramework\irrCore\include;..\..\irrlichtFramework\irrThread\include;..\..\irrlichtFramework\irrNet\include;..\..\irrlichtFramework\irrBigNum\include;..\..\irrlichtFramework\irrBigNum\source"
+				AdditionalIncludeDirectories=".\include;..\..\irrlichtFramework\irrCore\include;..\..\irrlichtFramework\irrThread\include;..\..\irrlichtFramework\irrNet\include;..\..\irrlichtFramework\irrBigNum\include;..\..\irrlichtFramework\irrBigNum\source;..\..\irrlichtFramework\irrDb\include;..\..\irrlichtFramework\irrCrypt\include;..\..\irrlichtFramework\irrRng\include;..\dependencies"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;ADENALIB_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\include;..\..\irrlichtFramework\irrCore\include;..\..\irrlichtFramework\irrThread\include;..\..\irrlichtFramework\irrNet\include;..\..\irrlichtFramework\irrBigNum\include;..\..\irrlichtFramework\irrBigNum\source"
+				AdditionalIncludeDirectories=".\include;..\..\irrlichtFramework\irrCore\include;..\..\irrlichtFramework\irrThread\include;..\..\irrlichtFramework\irrNet\include;..\..\irrlichtFramework\irrBigNum\include;..\..\irrlichtFramework\irrBigNum\source;..\..\irrlichtFramework\irrDb\include;..\..\irrlichtFramework\irrCrypt\include;..\..\irrlichtFramework\irrRng\include;..\dependencies"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ADENALIB_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -220,6 +220,126 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="lua"
+				>
+				<File
+					RelativePath="..\dependencies\lua\src\lapi.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lauxlib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lbaselib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lcode.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\ldblib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\ldebug.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\ldo.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\ldump.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lfunc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lgc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\linit.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\liolib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\llex.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lmathlib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lmem.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\loadlib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lobject.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lopcodes.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\loslib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lparser.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lstate.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lstring.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lstrlib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\ltable.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\ltablib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\ltm.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lundump.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lvm.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\lua\src\lzio.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -273,6 +393,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\include\CPLoginFailed.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPLoginOk.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CPServerInit.h"
 						>
 					</File>
@@ -282,6 +410,10 @@
 					>
 					<File
 						RelativePath=".\include\CPRequestLogin.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPRequestPlay.h"
 						>
 					</File>
 				</Filter>

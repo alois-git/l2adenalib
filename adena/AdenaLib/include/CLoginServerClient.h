@@ -47,6 +47,7 @@ namespace adena
 
 		irr::net::IServerClient* Client;
 		CLoginServer* Server;
+		irr::s32 SessionId;
 
 	};
 }
