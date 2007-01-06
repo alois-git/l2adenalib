@@ -271,7 +271,10 @@ public:
 		return used < other.used;
 	}
 
-
+	bool operator >(const string<T>& other) const
+	{
+		return !(*this < other);
+	}
 
 	//! Equals not operator
 	bool operator !=(const T* str) const
@@ -676,7 +679,7 @@ public:
 		s32 splace;
 		while((splace = find(to_replace.c_str())) != -1)
 		{
-			s32 eplace = splace + replace_with.size();
+			s32 eplace = splace + to_replace.size();
 			string<T> temp0 = subString(0, splace);
 			string<T> temp1 = subString(eplace, size() - eplace);
 			*this = temp0 + replace_with + temp1;

@@ -136,6 +136,8 @@ Note that the engine will run in D3D REF for this, which is a lot slower than HA
 #define IRRNET_EXPORTS
 #define IRRRNG_EXPORTS
 #define IRRBIGNUM_EXPORTS
+#define IRRDB_EXPORTS
+#define IRRCRYPT_EXPORTS
 #endif
 
 #ifdef IRRCORE_EXPORTS

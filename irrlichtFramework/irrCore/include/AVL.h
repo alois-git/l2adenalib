@@ -50,6 +50,8 @@
 
   ==========================================================================*/
 
+#ifndef _AVL_
+#define _AVL_
 
 /*--------------------------------------------------------------------------------------------
 	    ___     ___           _           _                 _   _             
@@ -572,3 +574,5 @@ void AVL<KeyType, ItemType>::RotateRight(AVLNode<KeyType, ItemType>*& root)
 	ComputeBalance(root->m_pRight);
 	ComputeBalance(root);
 }
+
+#endif
