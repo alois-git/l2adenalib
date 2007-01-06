@@ -671,6 +671,18 @@ public:
 				array[i] = replaceWith;
 	}
 
+	void replaceStr(const string<T>& to_replace, const string<T>& replace_with)
+	{
+		s32 splace;
+		while((splace = find(to_replace.c_str())) != -1)
+		{
+			s32 eplace = splace + replace_with.size();
+			string<T> temp0 = subString(0, splace);
+			string<T> temp1 = subString(eplace, size() - eplace);
+			*this = temp0 + replace_with + temp1;
+		}
+	}
+
 	//! trims the string.
 	/** Removes whitespace from begin and end of the string. */
 	void trim()
