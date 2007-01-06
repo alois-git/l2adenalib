@@ -25,6 +25,9 @@
 #include <CPServerInit.h>
 #include <CPGGAuth.h>
 #include <CPRequestLogin.h>
+#include <CPLoginOk.h>
+#include <CPLoginFailed.h>
+#include <irrCrypt.h>
 
 using namespace irr;
 
@@ -34,7 +37,7 @@ namespace adena
 {
 
 CLoginServerClient::CLoginServerClient(irr::net::IServerClient* client, CLoginServer* server)
-: Client(client), Server(server)
+: Client(client), Server(server), SessionId(0)
 {
 	char send_buff[155];
 	CPServerInit init(Server->ScrambledMod);
@@ -66,22 +69,43 @@ void CLoginServerClient::HandlePacket()
 
 	IPacket* in;
 	IPacket* out;
-	switch(dec[0])
+	if(dec[0] == 0)
 	{
-			case 0:
-				// cout << "Auth request.\n";
-				in = new CPRequestLogin(dec, Server->RsaCipher);
-				puts(((CPRequestLogin*)in)->Username.c_str());
-				puts(((CPRequestLogin*)in)->Password.c_str());
-				break;
-			case 7:
-				// cout << "GGAuth request.\n";
-				out = new CPGGAuth();
-				SendPacket(out);
-				delete out;
-				break;
-			default:
-				break;
+		// cout << "Auth request.\n";
+		in = new CPRequestLogin(dec, Server->RsaCipher);
+		puts(((CPRequestLogin*)in)->Username.c_str());
+		puts(((CPRequestLogin*)in)->Password.c_str());
+		irr::db::Query q = irr::db::Query(irr::core::stringc("SELECT password FROM accounts WHERE username = '$user'"));
+		q.setVar(irr::core::stringc("$user"), ((CPRequestLogin*)in)->Username);
+		irr::db::CQueryResult qr = Server->DataBase->query(q);
+		if(qr.RowCount != 1)
+		{
+			// Don't tell the client that the username does not exist.
+			CPLoginFailed clf(CPLoginFailed::REASON_PASS_WRONG);
+			SendPacket(&clf);
+		}else
+		{
+			irr::crypt::CHashMD5 md5 = irr::crypt::CHashMD5();
+			irr::core::stringc hash = md5.quickHash(((CPRequestLogin*)in)->Password);
+			if(qr[0][irr::core::stringc("password")] == hash)
+			{
+				SessionId = Server->Rng->getRandU32();
+				CPLoginOk clo(SessionId);
+				SendPacket(&clo);
+			}else
+			{
+				CPLoginFailed clf(CPLoginFailed::REASON_PASS_WRONG);
+				SendPacket(&clf);
+			}
+		}
+	}else if(dec[0] == 2)
+	{
+		
+	}else if(dec[0] == 7)
+	{
+		// cout << "GGAuth request.\n";
+		CPGGAuth gga = CPGGAuth();
+		SendPacket(&gga);
 	}
 
 	delete[] dec;
