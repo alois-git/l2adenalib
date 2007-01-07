@@ -41,7 +41,7 @@ CLoginServer::CLoginServer(irr::net::Address &addr)
 	RsaCipher = new BDRSA(1024, 65537);
 	RsaCipher->getMod(ScrambledMod, 128);
 	ScrambleRsaPublicMod();
-	BlowfishCipher = new NewCrypt("_;5.]94-31==-%xT!^[$\000");
+	BlowfishCipher = new CBlowfish("_;5.]94-31==-%xT!^[$\000");
 	DataBase = new irr::db::CSQLLite();
 	irr::db::CSQLLiteConParms qp = irr::db::CSQLLiteConParms();
 	qp.FileName = "l2login.sqlite";

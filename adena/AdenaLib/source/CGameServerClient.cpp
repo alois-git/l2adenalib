@@ -31,7 +31,7 @@ namespace adena
 CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServer* server)
 : Client(client), Server(server), SessionId(0)
 {
-
+	puts("Gameserver someone connected?!");
 };
 
 CGameServerClient::~CGameServerClient()

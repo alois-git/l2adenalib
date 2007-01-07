@@ -371,11 +371,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\IPacket.h"
+				RelativePath=".\include\CBlowfish.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\NewCrypt.h"
+				RelativePath=".\include\IPacket.h"
 				>
 			</File>
 			<Filter
@@ -418,6 +418,10 @@
 					</File>
 					<File
 						RelativePath=".\include\CPLoginOk.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPPlayOk.h"
 						>
 					</File>
 					<File

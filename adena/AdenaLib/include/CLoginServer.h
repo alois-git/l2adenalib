@@ -31,7 +31,7 @@
 #include <irrRng.h>
 #include <BDRSA.h>
 #include <CLoginServerNetEvent.h>
-#include <NewCrypt.h>
+#include <CBlowfish.h>
 #include <CPServerList.h>
 #include <SLoginServerStatus.h>
 #include <time.h>
@@ -58,7 +58,7 @@ namespace adena
 
 		char ScrambledMod[128];
 		BDRSA* RsaCipher;
-		NewCrypt* BlowfishCipher;
+		CBlowfish* BlowfishCipher;
 		irr::net::IServer* Server;
 		irr::db::IDatabase* DataBase;
 		irr::IRng* Rng;
