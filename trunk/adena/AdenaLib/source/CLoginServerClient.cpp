@@ -26,7 +26,9 @@
 #include <CPGGAuth.h>
 #include <CPRequestLogin.h>
 #include <CPLoginOk.h>
+#include <CPPlayOk.h>
 #include <CPLoginFailed.h>
+#include <CPRequestPlay.h>
 #include <irrCrypt.h>
 
 using namespace irr;
@@ -56,6 +58,7 @@ CLoginServerClient::~CLoginServerClient()
 void CLoginServerClient::HandlePacket()
 {
 	c8 buff[RECV_SIZE];
+	c8 dec[RECV_SIZE];
 	Client->recv(buff, 2);
 	int size = 0;
 	size += (unsigned char)buff[0];
@@ -66,7 +69,8 @@ void CLoginServerClient::HandlePacket()
 		// Invalid packet.
 		Server->Server->kickClient(Client);
 	}
-	char* dec = Server->BlowfishCipher->decrypt(buff, size - 2);
+
+	Server->BlowfishCipher->decrypt(buff, size - 2, dec, RECV_SIZE);
 
 	IPacket* in;
 	if(dec[0] == 0)
@@ -104,7 +108,9 @@ void CLoginServerClient::HandlePacket()
 		}
 	}else if(dec[0] == 2)
 	{
-		
+		//CPRequestPlay rp(dec);
+		CPPlayOk po(SessionId);
+		SendPacket(&po);
 	}else if(dec[0] == 5)
 	{
 		// Request server list.
@@ -123,13 +129,12 @@ void CLoginServerClient::HandlePacket()
 		CPGGAuth gga = CPGGAuth();
 		SendPacket(&gga);
 	}
-
-	delete[] dec;
 };
 
 void CLoginServerClient::SendPacket(IPacket* packet)
 {
 	c8 buff[RECV_SIZE];
+	c8 enc[RECV_SIZE];
 	irr::c8* data = packet->getData();
 	irr::u32 len = packet->getLen();
 	printf("Data\n");
@@ -137,12 +142,11 @@ void CLoginServerClient::SendPacket(IPacket* packet)
 	Server->BlowfishCipher->checksum(data, len);
 	printf("Data checksumed\n");
 	hexdump(data, len);
-	irr::c8* enc = Server->BlowfishCipher->crypt(data, len);
+	Server->BlowfishCipher->crypt(data, len, enc, RECV_SIZE);
 	buff[0] = ((len + 2) & 0xff);
 	buff[1] = (((len + 2) >> 8) & 0xff);
 	memcpy(buff + 2, enc, len);
 	Client->send(buff, len + 2);
-	delete[] enc;
 };
 
 }

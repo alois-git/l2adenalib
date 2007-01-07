@@ -1,6 +1,6 @@
 /*
- * CPRequestPlay.h - After select server.
- * Created January 6, 2007, by Michael 'Bigcheese' Spencer.
+ * CPPlayOk.h - Play Ok ftw.
+ * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,48 +21,40 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_REQUEST_PLAY_H_
-#define _ADENA_C_P_REQUEST_PLAY_H_
+#ifndef _ADENA_C_P_PLAY_OK_H_
+#define _ADENA_C_P_PLAY_OK_H_
 
-#include <CPRequestLogin.h>
+#include <CLoginServerPacket.h>
 
 namespace adena
 {
 
-	class CPRequestPlay : public CLoginServerPacket
+	class CPPlayOk : public CLoginServerPacket
 	{
 	public:
 
-		CPRequestPlay(irr::c8* in_data)
-		: CLoginServerPacket()
+		CPPlayOk(irr::s32 session_id)
 		{
-			Data = in_data;
-			Data++;
-			r32();
-			r32();
-			ServerIndex = r8();
+			w8(0x07);
+			w32(session_id);
+			w32(0x55667788);
 		};
 
-		virtual ~CPRequestPlay()
+		virtual ~CPPlayOk()
 		{
-			Data = 0;
+
 		};
 
 		virtual irr::c8* getData()
 		{
-			return NULL;
+			blowfishPad();
+			return Data;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return 0;
+			return WritePointer;
 		};
-
-		irr::u8 ServerIndex;
-
-	private:
-
-
 
 	};
 

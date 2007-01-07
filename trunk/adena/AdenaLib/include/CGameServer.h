@@ -30,7 +30,6 @@
 #include <irrDb.h>
 #include <irrRng.h>
 #include <BDRSA.h>
-#include <NewCrypt.h>
 #include <CGameServerNetEvent.h>
 
 namespace adena
@@ -50,7 +49,6 @@ namespace adena
 
 		virtual void run();
 
-		NewCrypt* BlowfishCipher;
 		irr::net::IServer* Server;
 		irr::db::IDatabase* DataBase;
 		irr::IRng* Rng;
