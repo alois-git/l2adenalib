@@ -1,3 +1,5 @@
+#include <IrrCompileConfig.h>
+
 #ifdef _IRR_WINDOWS_
 #ifdef IRRCRYPT_EXPORTS
 #define IRRCRYPT_API __declspec(dllexport)

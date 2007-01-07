@@ -33,7 +33,10 @@ u32 CHashRNG::getRandU32()
 	Hasher->hash_start();
 	u32 i;
 	for(i = 0; i < ArrayLen; i++)
-		Hasher->hash_append((u8*)&RngArray[i].getRandU32(), 4);
+	{
+		u32 temp = RngArray[i].getRandU32();
+		Hasher->hash_append((u8*)&temp, 4);
+	}
 	Hasher->hash_finish(buff, 16);
 	u32 ret = 0;
 	for(i = 0; i < 16; i+=4)

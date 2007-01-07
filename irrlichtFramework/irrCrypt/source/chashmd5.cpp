@@ -12,7 +12,6 @@ namespace crypt
 {
 
 CHashMD5::CHashMD5()
-: State(0)
 {
 
 };

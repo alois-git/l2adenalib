@@ -15,6 +15,7 @@ CTCPServerClient::CTCPServerClient(Socket sock, IServer *server)
 : IServerClient(sock, server)
 {
 	Sock = sock;
+	Server = server;
 	rc = RateController();
 };
 
@@ -28,6 +29,11 @@ void CTCPServerClient::run()
 	c8 buff[ 1 /*SERVER_CLIENT_BUFFER_SIZE*/];
 	while(Running){
 		int ret = ::recv(Sock, buff, 1, MSG_PEEK); // See if there is any data.
+		if(Sock == 0)
+		{
+			delete this;
+			return;
+		}
 		if(ret == 0)
 		{
 			// Client disconnected.
