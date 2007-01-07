@@ -68,7 +68,6 @@ void CLoginServerClient::HandlePacket()
 	char* dec = Server->BlowfishCipher->decrypt(buff, size - 2);
 
 	IPacket* in;
-	IPacket* out;
 	if(dec[0] == 0)
 	{
 		// cout << "Auth request.\n";
@@ -83,6 +82,7 @@ void CLoginServerClient::HandlePacket()
 			// Don't tell the client that the username does not exist.
 			CPLoginFailed clf(CPLoginFailed::REASON_PASS_WRONG);
 			SendPacket(&clf);
+			Server->Server->kickClient(Client);
 		}else
 		{
 			irr::crypt::CHashMD5 md5 = irr::crypt::CHashMD5();
@@ -96,11 +96,23 @@ void CLoginServerClient::HandlePacket()
 			{
 				CPLoginFailed clf(CPLoginFailed::REASON_PASS_WRONG);
 				SendPacket(&clf);
+				Server->Server->kickClient(Client);
 			}
 		}
 	}else if(dec[0] == 2)
 	{
 		
+	}else if(dec[0] == 5)
+	{
+		// Request server list.
+		if(SessionId)// User has logged in.
+		{
+			SendPacket(Server->ServerListPacket);
+		}else
+		{
+			// Should never get here unless not using l2 client.
+			Server->Server->kickClient(Client);
+		}
 	}else if(dec[0] == 7)
 	{
 		// cout << "GGAuth request.\n";

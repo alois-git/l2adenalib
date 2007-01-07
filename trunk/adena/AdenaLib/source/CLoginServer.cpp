@@ -28,9 +28,13 @@ namespace adena
 {
 
 CLoginServer::CLoginServer(irr::net::Address &addr)
-: Thread()
+: Thread(),  Server(0)
 {
+	ServerListPacket = new CPServerList();
+	irr::c8 ip[4] = {192, 168, 0, 2};
+	ServerListPacket->addServer(ip, 7777, true, false, 0, 100, false, true, 0, 0);
 	Rng = new irr::CMersenneTwister();
+	Rng->seed();
 	EventParser = new NELoginServerNetEvent(this);
 	Server = new irr::net::CTCPServer(EventParser, 10);
 	Server->bind(addr);
@@ -47,7 +51,8 @@ CLoginServer::CLoginServer(irr::net::Address &addr)
 
 CLoginServer::~CLoginServer()
 {
-	delete Server;
+	if(Server)
+		delete Server;
 	delete EventParser;
 	delete RsaCipher;
 	delete BlowfishCipher;
@@ -62,7 +67,6 @@ void CLoginServer::run()
 
 void CLoginServer::ScrambleRsaPublicMod()
 {
-	// Scramble code from l2j.
 	char* n = ScrambledMod;
 	int i;
 	for (i = 0; i < 4; i++)
