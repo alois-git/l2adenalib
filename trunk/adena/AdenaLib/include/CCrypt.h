@@ -1,6 +1,6 @@
 /*
- * CPServerInit.h - Sends protocol version and RSA modulus to client.
- * Created January 4, 2007, by Michael 'Bigcheese' Spencer.
+ * CCrypt.h - L2's usless xor encryption...
+ * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,25 +21,32 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_SERVER_INIT_H_
-#define _ADENA_C_P_SERVER_INIT_H_
+#ifndef _ADENA_C_CRYPT_H_
+#define _ADENA_C_CRYPT_H_
 
-#include <CPacket.h>
+#include <AdenaConfig.h>
+#include <memory.h>
 
 namespace adena
 {
 
-	class CPServerInit : public CPacket
+	class CCrypt
 	{
 	public:
 
-		CPServerInit(irr::c8* mod);
+		CCrypt(irr::c8* key);
 
-		virtual ~CPServerInit();
+		~CCrypt();
 
-		virtual irr::c8* getData();
+		void decrypt(irr::c8* data, irr::u32 len);
 
-		virtual irr::u32 getLen();
+		void encrypt(irr::c8* data, irr::u32 len);
+
+		const irr::c8* getKey();
+
+	private: 
+
+		char Key[8];
 
 	};
 

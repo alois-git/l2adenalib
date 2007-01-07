@@ -24,17 +24,17 @@
 #ifndef _ADENA_C_P_REQUEST_PLAY_H_
 #define _ADENA_C_P_REQUEST_PLAY_H_
 
-#include <CPRequestLogin.h>
+#include <CPacket.h>
 
 namespace adena
 {
 
-	class CPRequestPlay : public CLoginServerPacket
+	class CPRequestPlay : public CPacket
 	{
 	public:
 
 		CPRequestPlay(irr::c8* in_data)
-		: CLoginServerPacket()
+		: CPacket()
 		{
 			Data = in_data;
 			Data++;

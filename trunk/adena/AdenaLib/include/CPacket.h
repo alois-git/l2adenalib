@@ -1,5 +1,5 @@
 /*
- * CLoginServerPacket.h - L2 login packet.
+ * CPacket.h - L2 packet.
  * Created January 4, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
@@ -21,8 +21,8 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_LOGIN_SERVER_PACKET_H_
-#define _ADENA_C_LOGIN_SERVER_PACKET_H_
+#ifndef _ADENA_C_PACKET_H_
+#define _ADENA_C_PACKET_H_
 
 #include <IPacket.h>
 #include <irrString.h>
@@ -32,13 +32,13 @@
 namespace adena
 {
 
-	class CLoginServerPacket : public IPacket
+	class CPacket : public IPacket
 	{
 	public:
 
-		CLoginServerPacket();
+		CPacket();
 
-		virtual ~CLoginServerPacket();
+		virtual ~CPacket();
 
 		virtual irr::c8* getData() = 0;
 

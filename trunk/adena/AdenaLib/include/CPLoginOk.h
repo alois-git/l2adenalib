@@ -24,12 +24,12 @@
 #ifndef _ADENA_C_P_LOGIN_OK_H_
 #define _ADENA_C_P_LOGIN_OK_H_
 
-#include <CLoginServerPacket.h>
+#include <CPacket.h>
 
 namespace adena
 {
 
-	class CPLoginOk : public CLoginServerPacket
+	class CPLoginOk : public CPacket
 	{
 	public:
 

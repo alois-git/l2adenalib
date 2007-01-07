@@ -24,12 +24,12 @@
 #ifndef _ADENA_C_P_LOGIN_FAILED_H_
 #define _ADENA_C_P_LOGIN_FAILED_H_
 
-#include <CLoginServerPacket.h>
+#include <CPacket.h>
 
 namespace adena
 {
 
-	class CPLoginFailed : public CLoginServerPacket
+	class CPLoginFailed : public CPacket
 	{
 	public:
 		const static int REASON_ACCOUNT_BANNED = 0x09;
