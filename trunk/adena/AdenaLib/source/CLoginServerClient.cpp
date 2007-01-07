@@ -45,6 +45,7 @@ CLoginServerClient::CLoginServerClient(irr::net::IServerClient* client, CLoginSe
 	send_buff[1] = ((155 >> 8) & 0xff);
 	memcpy(send_buff + 2, init.getData(), 153);
 	client->send(send_buff, 155);
+	Server->ServerStatus.Connections++;
 };
 
 CLoginServerClient::~CLoginServerClient()
@@ -70,6 +71,7 @@ void CLoginServerClient::HandlePacket()
 	IPacket* in;
 	if(dec[0] == 0)
 	{
+		Server->ServerStatus.LoginAttempts++;
 		// cout << "Auth request.\n";
 		in = new CPRequestLogin(dec, Server->RsaCipher);
 		puts(((CPRequestLogin*)in)->Username.c_str());
@@ -92,6 +94,7 @@ void CLoginServerClient::HandlePacket()
 				SessionId = Server->Rng->getRandU32();
 				CPLoginOk clo(SessionId);
 				SendPacket(&clo);
+				Server->ServerStatus.LoginSuccesses++;
 			}else
 			{
 				CPLoginFailed clf(CPLoginFailed::REASON_PASS_WRONG);
@@ -112,6 +115,7 @@ void CLoginServerClient::HandlePacket()
 		{
 			// Should never get here unless not using l2 client.
 			Server->Server->kickClient(Client);
+			Server->ServerStatus.SuspectedHackAttempts++;
 		}
 	}else if(dec[0] == 7)
 	{

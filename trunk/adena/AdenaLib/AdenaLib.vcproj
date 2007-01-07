@@ -401,6 +401,10 @@
 					RelativePath=".\include\CLoginServerPacket.h"
 					>
 				</File>
+				<File
+					RelativePath=".\include\SLoginServerStatus.h"
+					>
+				</File>
 				<Filter
 					Name="ServerPackets"
 					>

@@ -65,6 +65,12 @@ void CLoginServer::run()
 		irr::core::threads::sleep(1000);
 };
 
+SLoginServerStatus CLoginServer::getStatus()
+{
+	ServerStatus.UpTime = (time(NULL) - StartTime);
+	return ServerStatus;
+};
+
 void CLoginServer::ScrambleRsaPublicMod()
 {
 	char* n = ScrambledMod;
