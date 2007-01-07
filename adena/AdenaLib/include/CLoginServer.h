@@ -33,6 +33,8 @@
 #include <CLoginServerNetEvent.h>
 #include <NewCrypt.h>
 #include <CPServerList.h>
+#include <SLoginServerStatus.h>
+#include <time.h>
 
 namespace adena
 {
@@ -52,6 +54,8 @@ namespace adena
 
 		virtual void run();
 
+		virtual SLoginServerStatus getStatus();
+
 		char ScrambledMod[128];
 		BDRSA* RsaCipher;
 		NewCrypt* BlowfishCipher;
@@ -59,11 +63,13 @@ namespace adena
 		irr::db::IDatabase* DataBase;
 		irr::IRng* Rng;
 		CPServerList* ServerListPacket;
+		SLoginServerStatus ServerStatus;
 
 	private:
 
 		void ScrambleRsaPublicMod();
 		NELoginServerNetEvent* EventParser;
+		time_t StartTime;
 		
 	};
 }
