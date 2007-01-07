@@ -1,6 +1,6 @@
 /*
- * CLoginServer.h - Login server.
- * Created December 31, 2006, by Michael 'Bigcheese' Spencer.
+ * CGameServerNetEvent.h - Game server network events.
+ * Created January 6, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,51 +21,28 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_LOGIN_SERVER_H_
-#define _ADENA_C_LOGIN_SERVER_H_
+#ifndef _ADENA_C_GAME_SERVER_NET_EVENT_H_
+#define _ADENA_C_GAME_SERVER_NET_EVENT_H_
 
 #include <AdenaConfig.h>
-#include <irrThread.h>
 #include <irrNet.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <BDRSA.h>
-#include <CLoginServerNetEvent.h>
-#include <NewCrypt.h>
-#include <CPServerList.h>
 
 namespace adena
 {
-
-	class ADENALIB_API CLoginServer : public irr::core::threads::Thread
+	class NEGameServerNetEvent : public irr::net::INetEvent
 	{
 	public:
 
-		/*
-		 * @param addr: The address to bind to.
-		 * result: Server is initalized and bound to addr.
-		 * A RSA key is generated, scrambled and stored.
-		 */
-		CLoginServer(irr::net::Address &addr);
+		NEGameServerNetEvent(void* server);
 
-		virtual ~CLoginServer();
+		~NEGameServerNetEvent();
 
-		virtual void run();
+		virtual void OnEvent(irr::net::NetEvent &e);
 
-		char ScrambledMod[128];
-		BDRSA* RsaCipher;
-		NewCrypt* BlowfishCipher;
-		irr::net::IServer* Server;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		CPServerList* ServerListPacket;
+		void* Server;
 
-	private:
-
-		void ScrambleRsaPublicMod();
-		NELoginServerNetEvent* EventParser;
-		
 	};
+
 }
 
 #endif

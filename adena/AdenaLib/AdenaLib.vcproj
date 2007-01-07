@@ -340,6 +340,22 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="GameServer"
+				>
+				<File
+					RelativePath=".\source\CGameServer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\CGameServerClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\CGameServerNetEvent.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -404,6 +420,10 @@
 						RelativePath=".\include\CPServerInit.h"
 						>
 					</File>
+					<File
+						RelativePath=".\include\CPServerList.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="ClientPackets"
@@ -417,6 +437,22 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="GameServer"
+				>
+				<File
+					RelativePath=".\include\CGameServer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\CGameServerClient.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\CGameServerNetEvent.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 	</Files>
