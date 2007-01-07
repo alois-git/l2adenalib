@@ -63,7 +63,7 @@ void CLoginServerClient::HandlePacket()
 	int size = 0;
 	size += (unsigned char)buff[0];
 	size += ((unsigned char)(buff[1]) * 256);
-	int recv_len = Client->recv(buff, RECV_SIZE);
+	int recv_len = Client->recv(buff, size - 2);
 	if(recv_len != (size - 2))
 	{
 		// Invalid packet.

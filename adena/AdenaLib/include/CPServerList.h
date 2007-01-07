@@ -24,13 +24,13 @@
 #ifndef _ADENA_C_P_SERVER_LIST_H_
 #define _ADENA_C_P_SERVER_LIST_H_
 
-#include <CLoginServerPacket.h>
+#include <CPacket.h>
 #include <irrList.h>
 
 namespace adena
 {
 
-	class CPServerList : public CLoginServerPacket
+	class CPServerList : public CPacket
 	{
 	public:
 

@@ -22,16 +22,21 @@
  */
 
 #include <CGameServerClient.h>
+#include <CPProtocolVersion.h>
 
 #define RECV_SIZE 65536 // Max size of a L2 packet.
+
+static const irr::c8 key[8] = {0x94, 0x35, 0x00, 0x00, 0xa1, 0x6c,	0x54, 0x87};
 
 namespace adena
 {
 
 CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServer* server)
-: Client(client), Server(server), SessionId(0)
+: Client(client), Server(server), SessionId(0), CryptPackets(false)
 {
-	puts("Gameserver someone connected?!");
+	for(int i = 0; i < 256; i++)
+		PacketFunctions[i] = &CGameServerClient::unknownPacket;
+	PacketFunctions[0] = &CGameServerClient::protocolVersion;
 };
 
 CGameServerClient::~CGameServerClient()
@@ -43,11 +48,38 @@ void CGameServerClient::HandlePacket()
 {
 	irr::c8 buff[RECV_SIZE];
 	Client->recv(buff, 2);
+	int size = 0;
+	size += (unsigned char)buff[0];
+	size += ((unsigned char)(buff[1]) * 256);
+	int recv_len = Client->recv(buff, size - 2);
+	if(recv_len != (size - 2))
+	{
+		// Invalid packet.
+		Server->Server->kickClient(Client);
+	}
+	if(CryptPackets)
+	{
+		InputCipher->decrypt(buff, size - 2);
+	}
+	(this->*PacketFunctions[buff[0]])(buff);
 };
 
 void CGameServerClient::SendPacket(IPacket* packet)
 {
 
+};
+
+//========================================
+
+void CGameServerClient::unknownPacket(irr::c8* data)
+{
+	printf("Recived unknown packet of type %d\n", data[0]);
+};
+
+void CGameServerClient::protocolVersion(irr::c8* data)
+{
+	CPProtocolVersion pv(data);
+	printf("User connected with proto version %d\n", pv.ProtocolVersion);
 };
 
 }

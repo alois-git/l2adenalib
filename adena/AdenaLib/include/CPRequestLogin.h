@@ -24,17 +24,17 @@
 #ifndef _ADENA_C_P_REQUEST_LOGIN_H_
 #define _ADENA_C_P_REQUEST_LOGIN_H_
 
-#include <CPRequestLogin.h>
+#include <CPacket.h>
 
 namespace adena
 {
 
-	class CPRequestLogin : public CLoginServerPacket
+	class CPRequestLogin : public CPacket
 	{
 	public:
 
 		CPRequestLogin(irr::c8* in_data, BDRSA* rsa)
-		: CLoginServerPacket()
+		: CPacket()
 		{
 			irr::c8 dec[128];
 			in_data ++; // Skip the packet type byte.

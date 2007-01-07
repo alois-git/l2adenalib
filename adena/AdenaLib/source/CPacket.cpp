@@ -1,5 +1,5 @@
 /*
- * CLoginServerPacket.cpp - L2 login packet.
+ * CPacket.cpp - L2 login packet.
  * Created January 5, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
@@ -21,14 +21,14 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#include <CLoginServerPacket.h>
+#include <CPacket.h>
 
 namespace adena
 {
 
 //================ Con/De structor ================
 
-CLoginServerPacket::CLoginServerPacket()
+CPacket::CPacket()
 : Data(0), DataLen(0), WritePointer(0), ReadPointer(0)
 {
 
@@ -36,7 +36,7 @@ CLoginServerPacket::CLoginServerPacket()
 
 //--------------------------------
 
-CLoginServerPacket::~CLoginServerPacket()
+CPacket::~CPacket()
 {
 	if(Data)
 		delete[] Data;
@@ -44,7 +44,7 @@ CLoginServerPacket::~CLoginServerPacket()
 
 //================ Protected ================
 
-void CLoginServerPacket::resize(irr::u32 new_size)
+void CPacket::resize(irr::u32 new_size)
 {
 	irr::c8* temp = Data;
 	Data = new irr::c8[new_size];
@@ -56,7 +56,7 @@ void CLoginServerPacket::resize(irr::u32 new_size)
 
 //--------------------------------
 
-void CLoginServerPacket::blowfishPad()
+void CPacket::blowfishPad()
 {
 	w32(0x00);
 
@@ -73,7 +73,7 @@ void CLoginServerPacket::blowfishPad()
 //================ Public ================
 //================ Write ================
 
-void CLoginServerPacket::w8(irr::u32 val)
+void CPacket::w8(irr::u32 val)
 {
 	if((WritePointer + 1) > DataLen)
 		resize(WritePointer + GROW_SIZE);
@@ -83,7 +83,7 @@ void CLoginServerPacket::w8(irr::u32 val)
 
 //--------------------------------
 
-void CLoginServerPacket::w16(irr::u32 val)
+void CPacket::w16(irr::u32 val)
 {
 	if((WritePointer + 2) > DataLen)
 		resize(WritePointer + GROW_SIZE);
@@ -94,7 +94,7 @@ void CLoginServerPacket::w16(irr::u32 val)
 
 //--------------------------------
 
-void CLoginServerPacket::w32(irr::u32 val)
+void CPacket::w32(irr::u32 val)
 {
 	if((WritePointer + 4) > DataLen)
 		resize(WritePointer + GROW_SIZE);
@@ -107,7 +107,7 @@ void CLoginServerPacket::w32(irr::u32 val)
 
 //--------------------------------
 
-void CLoginServerPacket::wStr(irr::core::stringc &str)
+void CPacket::wStr(irr::core::stringc &str)
 {
 	if((WritePointer + str.size() + 1) > DataLen)
 		resize(WritePointer + str.size() + 1);
@@ -119,7 +119,7 @@ void CLoginServerPacket::wStr(irr::core::stringc &str)
 
 //--------------------------------
 
-void CLoginServerPacket::wStrW(irr::core::stringw &str)
+void CPacket::wStrW(irr::core::stringw &str)
 {
 	if((WritePointer + (str.size() * 2) + 2) > DataLen)
 		resize(WritePointer + (str.size() * 2) + 2);
@@ -131,7 +131,7 @@ void CLoginServerPacket::wStrW(irr::core::stringw &str)
 
 //--------------------------------
 
-void CLoginServerPacket::wArray(irr::c8* in_data, irr::u32 data_len)
+void CPacket::wArray(irr::c8* in_data, irr::u32 data_len)
 {
 	if((WritePointer + data_len) > DataLen)
 		resize(WritePointer + data_len);
@@ -142,7 +142,7 @@ void CLoginServerPacket::wArray(irr::c8* in_data, irr::u32 data_len)
 
 //================ Read ================
 
-irr::u32 CLoginServerPacket::r8()
+irr::u32 CPacket::r8()
 {
 	int result = Data[ReadPointer++] &0xff;
 	return result;
@@ -150,7 +150,7 @@ irr::u32 CLoginServerPacket::r8()
 
 //--------------------------------
 
-irr::u32 CLoginServerPacket::r16()
+irr::u32 CPacket::r16()
 {
 	int result = Data[ReadPointer++] &0xff;
 	result |= ((Data[ReadPointer++] << 8) & 0xff00);
@@ -159,7 +159,7 @@ irr::u32 CLoginServerPacket::r16()
 
 //--------------------------------
 
-irr::u32 CLoginServerPacket::r32()
+irr::u32 CPacket::r32()
 {
 	int result = Data[ReadPointer++] &0xff;
 	result |= ((Data[ReadPointer++] << 8) & 0xff00);
@@ -170,7 +170,7 @@ irr::u32 CLoginServerPacket::r32()
 
 //--------------------------------
 
-void CLoginServerPacket::rStr(irr::core::stringc &str)
+void CPacket::rStr(irr::core::stringc &str)
 {
 	irr::u32 len = (irr::u32)strlen(Data + ReadPointer);
 	for(irr::u32 i = 0; i < len; i++)
@@ -180,14 +180,14 @@ void CLoginServerPacket::rStr(irr::core::stringc &str)
 
 //--------------------------------
 
-void CLoginServerPacket::rStrW(irr::core::stringw &str)
+void CPacket::rStrW(irr::core::stringw &str)
 {
 	// TODO
 };
 
 //--------------------------------
 
-void CLoginServerPacket::rArray(irr::c8* out_data, irr::u32 data_len)
+void CPacket::rArray(irr::c8* out_data, irr::u32 data_len)
 {
 	for(irr::u32 i = 0; i < data_len; i++)
 		out_data[i] = Data[i + ReadPointer++];

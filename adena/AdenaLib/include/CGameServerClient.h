@@ -28,12 +28,16 @@
 #include <irrNet.h>
 #include <IPacket.h>
 #include <CGameServer.h>
+#include <CCrypt.h>
 
 namespace adena
 {
+
 	class CGameServerClient
 	{
 	public:
+
+		typedef void (CGameServerClient::*packetFunc) (irr::c8*);
 
 		CGameServerClient(irr::net::IServerClient* client, CGameServer* server);
 
@@ -45,9 +49,20 @@ namespace adena
 
 	private:
 
+		CCrypt* OutputCipher;
+		CCrypt* InputCipher;
 		irr::net::IServerClient* Client;
 		CGameServer* Server;
 		irr::s32 SessionId;
+		bool CryptPackets;
+		packetFunc PacketFunctions[256];
+
+	protected:
+
+		void unknownPacket(irr::c8* data);
+
+		// Funtions in order of their packet num starting at 0x00.
+		void protocolVersion(irr::c8* data);
 
 	};
 }

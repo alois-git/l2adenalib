@@ -188,6 +188,10 @@
 				RelativePath=".\source\BlowfishEngine.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\source\CPacket.cpp"
+				>
+			</File>
 			<Filter
 				Name="LoginServer"
 				>
@@ -210,10 +214,6 @@
 				<Filter
 					Name="ServerPackets"
 					>
-					<File
-						RelativePath=".\source\CLoginServerPacket.cpp"
-						>
-					</File>
 					<File
 						RelativePath=".\source\CPServerInit.cpp"
 						>
@@ -344,6 +344,10 @@
 				Name="GameServer"
 				>
 				<File
+					RelativePath=".\source\CCrypt.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\source\CGameServer.cpp"
 					>
 				</File>
@@ -375,6 +379,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\CPacket.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\IPacket.h"
 				>
 			</File>
@@ -395,10 +403,6 @@
 				</File>
 				<File
 					RelativePath=".\include\CLoginServerNetEvent.h"
-					>
-				</File>
-				<File
-					RelativePath=".\include\CLoginServerPacket.h"
 					>
 				</File>
 				<File
@@ -450,6 +454,10 @@
 				Name="GameServer"
 				>
 				<File
+					RelativePath=".\include\CCrypt.h"
+					>
+				</File>
+				<File
 					RelativePath=".\include\CGameServer.h"
 					>
 				</File>
@@ -461,6 +469,14 @@
 					RelativePath=".\include\CGameServerNetEvent.h"
 					>
 				</File>
+				<Filter
+					Name="ClientPackets"
+					>
+					<File
+						RelativePath=".\include\CPProtocolVersion.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 	</Files>

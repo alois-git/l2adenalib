@@ -1,6 +1,6 @@
 /*
- * CPServerInit.h - Sends protocol version and RSA modulus to client.
- * Created January 4, 2007, by Michael 'Bigcheese' Spencer.
+ * CPProtocolVersion.h - Protocol version.
+ * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,25 +21,46 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_SERVER_INIT_H_
-#define _ADENA_C_P_SERVER_INIT_H_
+#ifndef _ADENA_C_P_PROTOCOL_VERSION_H_
+#define _ADENA_C_P_PROTOCOL_VERSION_H_
 
 #include <CPacket.h>
 
 namespace adena
 {
 
-	class CPServerInit : public CPacket
+	class CPProtocolVersion : public CPacket
 	{
 	public:
 
-		CPServerInit(irr::c8* mod);
+		CPProtocolVersion(irr::c8* in_data)
+		: CPacket()
+		{
+			Data = in_data;
+			ReadPointer++;
+			ProtocolVersion = r32();
+		};
 
-		virtual ~CPServerInit();
+		virtual ~CPProtocolVersion()
+		{
+			Data = 0;
+		};
 
-		virtual irr::c8* getData();
+		virtual irr::c8* getData()
+		{
+			return NULL;
+		};
 
-		virtual irr::u32 getLen();
+		virtual irr::u32 getLen()
+		{
+			return 0;
+		};
+
+		irr::u32 ProtocolVersion;
+
+	private:
+
+
 
 	};
 
