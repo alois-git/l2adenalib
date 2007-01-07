@@ -101,26 +101,32 @@ void CTCPServer::kickClient(void* client)
 	ClientListMutex.getLock();
 	((IServerClient*)client)->Running = false;
 	core::list<IServerClient*>::Iterator ittr(ClientList.begin());
+	bool found = false;
 	for(u32 i = 0; i < ClientList.getSize(); i++)
 	{
 		if(*ittr == ((IServerClient*)client))
 		{
-			::close(((IServerClient*)client)->Sock);
-			ClientList.erase(ittr);
-			ClientListMutex.releaseLock();
-			NetEvent ne;
-			ne.serverClient = (IServerClient*)client;
-			ne.server = this;
-			ne.enet = ENET_CLIENT_DISCONNECT;
-			ne.clientDisconnect.edr = EDR_KICK;
-			ne.ec = EC_SERVER;
-			((INetEvent*)EventCallBack)->OnEvent(ne);
-			delete ((IServerClient*)client);
+			found = true;
 			break;
 		}
 		ittr++;
 	}
 	ClientListMutex.releaseLock();
+
+	if(found)
+	{
+		::close(((IServerClient*)client)->Sock);
+		((IServerClient*)client)->Sock = 0;
+		ClientList.erase(ittr);
+		ClientListMutex.releaseLock();
+		NetEvent ne;
+		ne.serverClient = (IServerClient*)client;
+		ne.server = this;
+		ne.enet = ENET_CLIENT_DISCONNECT;
+		ne.clientDisconnect.edr = EDR_KICK;
+		ne.ec = EC_SERVER;
+		((INetEvent*)EventCallBack)->OnEvent(ne);
+	}
 };
 
 void CTCPServer::setMaxUpSpeed(u32 speed)

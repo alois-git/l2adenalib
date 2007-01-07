@@ -61,7 +61,6 @@ void CSQLLite::disconnect()
 
 CQueryResult CSQLLite::query(Query& q)
 {
-	bool ret;
 	char ** table = 0;
 	int rows;
 	int columns;
