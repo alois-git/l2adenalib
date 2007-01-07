@@ -14,6 +14,7 @@ namespace net
 CTCPServerClient::CTCPServerClient(Socket sock, IServer *server)
 : IServerClient(sock, server)
 {
+	UserData = 0;
 	Sock = sock;
 	Server = server;
 	rc = RateController();
@@ -38,7 +39,7 @@ void CTCPServerClient::run()
 		{
 			// Client disconnected.
 			Running = false;
-			if(Running)
+			if(Server->Running)
 				Server->kickClient(this);
 			return;
 		}else if(ret == -1)
