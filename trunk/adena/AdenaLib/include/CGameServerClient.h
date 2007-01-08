@@ -32,6 +32,8 @@
 
 namespace adena
 {
+namespace game_server
+{
 
 	class CGameServerClient
 	{
@@ -45,7 +47,7 @@ namespace adena
 
 		void HandlePacket();
 
-		void SendPacket(IPacket* packet);
+		void sendPacket(IPacket* packet);
 
 	private:
 
@@ -62,9 +64,15 @@ namespace adena
 		void unknownPacket(irr::c8* data);
 
 		// Funtions in order of their packet num starting at 0x00.
-		void protocolVersion(irr::c8* data);
+		void protocolVersion(irr::c8* data); // 0
+		void authLogin(irr::c8* data); // 8
+		void logout(irr::c8* data); // 9
+		void createChar(irr::c8* data); // 11
+		void createCharButtion(irr::c8* data); // 14
 
 	};
+
+}
 }
 
 #endif

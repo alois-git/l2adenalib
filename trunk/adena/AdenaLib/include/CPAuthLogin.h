@@ -1,6 +1,6 @@
 /*
- * CPGGAuth.h - Game gaurd authentication responce.
- * Created January 4, 2007, by Michael 'Bigcheese' Spencer.
+ * CPAuthLogin.h - Authenticate login.
+ * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,41 +21,57 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_GG_AUTH_H_
-#define _ADENA_C_P_GG_AUTH_H_
+#ifndef _ADENA_C_P_AUTH_LOGIN_H_
+#define _ADENA_C_P_AUTH_LOGIN_H_
 
 #include <CPacket.h>
+#include <irrString.h>
 
 namespace adena
 {
-namespace login_server
+namespace game_server
 {
 
-	class CPGGAuth : public CPacket
+	class CPAuthLogin : public CPacket
 	{
 	public:
 
-		CPGGAuth()
+		CPAuthLogin(irr::c8* in_data)
+		: CPacket(), AccountName("")
 		{
-			w8(0x0b);
-			w32(0x0b);
+			Data = in_data;
+			ReadPointer++;
+			rStrW(AccountName);
+			Id1 = r32();
+			Id2 = r32();
+			Id3 = r32();
+			Id4 = r32();
 		};
 
-		virtual ~CPGGAuth()
+		virtual ~CPAuthLogin()
 		{
-
+			Data = 0;
 		};
 
 		virtual irr::c8* getData()
 		{
-			blowfishPad();
-			return Data;
+			return NULL;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return WritePointer;
+			return 0;
 		};
+
+		irr::core::stringc AccountName;
+		irr::u32 Id1; // Corrupt 2nd key. first 2 bytes are always wrong.
+		irr::u32 Id2; // sesionId given at PlayOk.
+		irr::u32 Id3; // sesionId given at LoginOk.
+		irr::u32 Id4; // sesionId given at LoginOk.
+
+	private:
+
+
 
 	};
 

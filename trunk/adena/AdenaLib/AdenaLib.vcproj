@@ -469,11 +469,39 @@
 					RelativePath=".\include\CGameServerNetEvent.h"
 					>
 				</File>
+				<File
+					RelativePath=".\include\SClassTemplate.h"
+					>
+				</File>
 				<Filter
 					Name="ClientPackets"
 					>
 					<File
+						RelativePath=".\include\CPAuthLogin.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPCharCreate.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CPProtocolVersion.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="ServerPackets"
+					>
+					<File
+						RelativePath=".\include\CPCharSelect.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPCharTemplate.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPKeyInit.h"
 						>
 					</File>
 				</Filter>

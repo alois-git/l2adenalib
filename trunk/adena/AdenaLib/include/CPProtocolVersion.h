@@ -28,6 +28,8 @@
 
 namespace adena
 {
+namespace game_server
+{
 
 	class CPProtocolVersion : public CPacket
 	{
@@ -64,6 +66,7 @@ namespace adena
 
 	};
 
+}
 }
 
 #endif

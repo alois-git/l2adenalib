@@ -28,6 +28,8 @@
 
 namespace adena
 {
+namespace login_server
+{
 
 	struct SLoginServerStatus
 	{
@@ -46,6 +48,7 @@ namespace adena
 		irr::u32 UpTime;
 	};
 
+}
 }
 
 #endif

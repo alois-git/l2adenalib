@@ -1,6 +1,6 @@
 /*
- * CPGGAuth.h - Game gaurd authentication responce.
- * Created January 4, 2007, by Michael 'Bigcheese' Spencer.
+ * CPCharCreate.h - Create char.
+ * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,41 +21,74 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_GG_AUTH_H_
-#define _ADENA_C_P_GG_AUTH_H_
+#ifndef _ADENA_C_P_CHAR_CREATE_H_
+#define _ADENA_C_P_CHAR_CREATE_H_
 
 #include <CPacket.h>
+#include <irrString.h>
 
 namespace adena
 {
-namespace login_server
+namespace game_server
 {
 
-	class CPGGAuth : public CPacket
+	class CPCharCreate : public CPacket
 	{
 	public:
 
-		CPGGAuth()
+		CPCharCreate(irr::c8* in_data)
+		: CPacket(), Name("")
 		{
-			w8(0x0b);
-			w32(0x0b);
+			hexdump(in_data, 32);
+			Data = in_data;
+			ReadPointer++;
+			rStrW(Name);
+			Race = r32();
+			Sex = r32();
+			ClassId = r32();
+			Int = r32();
+			Str = r32();
+			Con = r32();
+			Men = r32();
+			Dex = r32();
+			Wit = r32();
+			HairStyle = r32();
+			HairColor = r32();
+			Face = r32();
 		};
 
-		virtual ~CPGGAuth()
+		virtual ~CPCharCreate()
 		{
-
+			Data = 0;
 		};
 
 		virtual irr::c8* getData()
 		{
-			blowfishPad();
-			return Data;
+			return NULL;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return WritePointer;
+			return 0;
 		};
+
+		irr::core::stringc Name;
+		irr::u32 Race;
+		irr::u32 Sex;
+		irr::u32 ClassId;
+		irr::u32 Int;
+		irr::u32 Str;
+		irr::u32 Con;
+		irr::u32 Men;
+		irr::u32 Dex;
+		irr::u32 Wit;
+		irr::u32 HairStyle;
+		irr::u32 HairColor;
+		irr::u32 Face;
+
+	private:
+
+
 
 	};
 

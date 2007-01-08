@@ -29,6 +29,8 @@
 
 namespace adena
 {
+namespace game_server
+{
 
 	class CCrypt
 	{
@@ -46,10 +48,11 @@ namespace adena
 
 	private: 
 
-		char Key[8];
+		irr::c8 Key[8];
 
 	};
 
+}
 }
 
 #endif

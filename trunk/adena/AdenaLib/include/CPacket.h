@@ -107,7 +107,7 @@ namespace adena
 		/*
 		 * Reads a unicode (two byte) null termininated string to str.
 		 */
-		virtual void rStrW(irr::core::stringw &str);
+		virtual void rStrW(irr::core::stringc &str);
 
 		/*
 		 * Copys from data to out_data size data_len.

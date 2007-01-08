@@ -31,8 +31,12 @@
 #include <irrRng.h>
 #include <BDRSA.h>
 #include <CGameServerNetEvent.h>
+#include <irrList.h>
+#include <SClassTemplate.h>
 
 namespace adena
+{
+namespace game_server
 {
 
 	class ADENALIB_API CGameServer : public irr::core::threads::Thread
@@ -52,6 +56,7 @@ namespace adena
 		irr::net::IServer* Server;
 		irr::db::IDatabase* DataBase;
 		irr::IRng* Rng;
+		irr::core::list<SClassTemplate> ClassTemplateList;
 
 	private:
 
@@ -59,6 +64,7 @@ namespace adena
 		
 	};
 
+}
 }
 
 #endif

@@ -180,9 +180,15 @@ void CPacket::rStr(irr::core::stringc &str)
 
 //--------------------------------
 
-void CPacket::rStrW(irr::core::stringw &str)
+void CPacket::rStrW(irr::core::stringc &str)
 {
-	// TODO
+	while(true)
+	{
+		wchar_t temp = r16();
+		if(temp == 0x0000)
+			break;
+		str += (irr::c8)temp;
+	}
 };
 
 //--------------------------------

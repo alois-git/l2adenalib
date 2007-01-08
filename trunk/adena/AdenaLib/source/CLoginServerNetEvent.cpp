@@ -26,6 +26,8 @@
 
 namespace adena
 {
+namespace login_server
+{
 
 NELoginServerNetEvent::NELoginServerNetEvent(void* server)
 : Server(server)
@@ -57,4 +59,5 @@ void NELoginServerNetEvent::OnEvent(irr::net::NetEvent &e)
 	}
 };
 
+}
 }

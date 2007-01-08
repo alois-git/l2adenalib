@@ -37,6 +37,8 @@ using namespace irr;
 
 namespace adena
 {
+namespace login_server
+{
 
 CLoginServerClient::CLoginServerClient(irr::net::IServerClient* client, CLoginServer* server)
 : Client(client), Server(server), SessionId(0)
@@ -137,11 +139,7 @@ void CLoginServerClient::SendPacket(IPacket* packet)
 	c8 enc[RECV_SIZE];
 	irr::c8* data = packet->getData();
 	irr::u32 len = packet->getLen();
-	printf("Data\n");
-	hexdump(data, len);
 	Server->BlowfishCipher->checksum(data, len);
-	printf("Data checksumed\n");
-	hexdump(data, len);
 	Server->BlowfishCipher->crypt(data, len, enc, RECV_SIZE);
 	buff[0] = ((len + 2) & 0xff);
 	buff[1] = (((len + 2) >> 8) & 0xff);
@@ -149,4 +147,5 @@ void CLoginServerClient::SendPacket(IPacket* packet)
 	Client->send(buff, len + 2);
 };
 
+}
 }

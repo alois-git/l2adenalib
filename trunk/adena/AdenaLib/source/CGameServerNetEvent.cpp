@@ -26,6 +26,8 @@
 
 namespace adena
 {
+namespace game_server
+{
 
 NEGameServerNetEvent::NEGameServerNetEvent(void* server)
 : Server(server)
@@ -57,4 +59,5 @@ void NEGameServerNetEvent::OnEvent(irr::net::NetEvent &e)
 	}
 };
 
+}
 }

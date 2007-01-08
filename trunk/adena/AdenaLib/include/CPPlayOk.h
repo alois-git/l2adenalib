@@ -28,6 +28,8 @@
 
 namespace adena
 {
+namespace login_server
+{
 
 	class CPPlayOk : public CPacket
 	{
@@ -58,6 +60,7 @@ namespace adena
 
 	};
 
+}
 }
 
 #endif

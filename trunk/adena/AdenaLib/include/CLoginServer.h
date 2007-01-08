@@ -38,6 +38,8 @@
 
 namespace adena
 {
+namespace login_server
+{
 
 	class ADENALIB_API CLoginServer : public irr::core::threads::Thread
 	{
@@ -72,6 +74,8 @@ namespace adena
 		time_t StartTime;
 		
 	};
+
+}
 }
 
 #endif
