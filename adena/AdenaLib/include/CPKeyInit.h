@@ -1,6 +1,6 @@
 /*
- * CPGGAuth.h - Game gaurd authentication responce.
- * Created January 4, 2007, by Michael 'Bigcheese' Spencer.
+ * CPKeyInit.h - Send key to client.
+ * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,34 +21,43 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_GG_AUTH_H_
-#define _ADENA_C_P_GG_AUTH_H_
+#ifndef _ADENA_C_P_KEY_INIT_H_
+#define _ADENA_C_P_KEY_INIT_H_
 
 #include <CPacket.h>
 
 namespace adena
 {
-namespace login_server
+namespace game_server
 {
 
-	class CPGGAuth : public CPacket
+	class CPKeyInit : public CPacket
 	{
 	public:
 
-		CPGGAuth()
+		CPKeyInit(irr::c8* key)
+		: CPacket()
 		{
-			w8(0x0b);
-			w32(0x0b);
+			w8(0x00);
+			w8(0x01);
+			w8(key[0]);
+			w8(key[1]);
+			w8(key[2]);
+			w8(key[3]);
+			w8(key[4]);
+			w8(key[5]);
+			w8(key[6]);
+			w8(key[7]);
+
 		};
 
-		virtual ~CPGGAuth()
+		virtual ~CPKeyInit()
 		{
 
 		};
 
 		virtual irr::c8* getData()
 		{
-			blowfishPad();
 			return Data;
 		};
 
@@ -56,6 +65,10 @@ namespace login_server
 		{
 			return WritePointer;
 		};
+
+	private:
+
+
 
 	};
 

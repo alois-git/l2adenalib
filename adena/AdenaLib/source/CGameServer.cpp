@@ -25,10 +25,16 @@
 
 namespace adena
 {
+namespace game_server
+{
 
 CGameServer::CGameServer(irr::net::Address &addr)
 : Thread(), Server(0)
 {
+	DataBase = new irr::db::CSQLLite();
+	irr::db::CSQLLiteConParms cp = irr::db::CSQLLiteConParms();
+	cp.FileName = "l2adena.sqlite";
+	DataBase->connect(&cp);
 	EventParser = new NEGameServerNetEvent(this);
 	Server = new irr::net::CTCPServer(EventParser, 10);
 	Server->bind(addr);
@@ -47,4 +53,5 @@ void CGameServer::run()
 		irr::core::threads::sleep(1000);
 };
 
+}
 }

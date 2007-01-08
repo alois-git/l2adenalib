@@ -69,10 +69,10 @@ namespace adena
 			ecx |= (data[i + 2] << 0x10) & 0xff0000;
 			ecx |= (data[i + 3] << 0x18) & 0xff000000;
 
-			data[i] = chksum &0xff;
-			data[i + 1] = (chksum >>0x08) & 0xff;
-			data[i + 2] = (chksum >>0x10) & 0xff;
-			data[i + 3] = (chksum >>0x18) & 0xff;
+			data[i] = (irr::c8)chksum & 0xff;
+			data[i + 1] = (irr::c8)(chksum >>0x08) & 0xff;
+			data[i + 2] = (irr::c8)(chksum >>0x10) & 0xff;
+			data[i + 3] = (irr::c8)(chksum >>0x18) & 0xff;
 
 			return ecx == chksum;	
 		}

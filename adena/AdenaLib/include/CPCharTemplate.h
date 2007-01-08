@@ -1,6 +1,6 @@
 /*
- * CPGGAuth.h - Game gaurd authentication responce.
- * Created January 4, 2007, by Michael 'Bigcheese' Spencer.
+ * CPCharTemplate.h - Char template packet.
+ * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,34 +21,61 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_GG_AUTH_H_
-#define _ADENA_C_P_GG_AUTH_H_
+#ifndef _ADENA_C_P_CHAR_TEMPLATE_H_
+#define _ADENA_C_P_CHAR_TEMPLATE_H_
 
 #include <CPacket.h>
+#include <irrList.h>
+#include <SClassTemplate.h>
 
 namespace adena
 {
-namespace login_server
+namespace game_server
 {
 
-	class CPGGAuth : public CPacket
+	class CPCharTemplate : public CPacket
 	{
 	public:
 
-		CPGGAuth()
+		CPCharTemplate(irr::core::list<SClassTemplate> &list)
+		: CPacket()
 		{
-			w8(0x0b);
-			w32(0x0b);
+			w8(0x17);
+			w32(list.getSize());
+
+			irr::core::list<SClassTemplate>::Iterator ittr;
+			for (ittr = list.begin(); ittr != list.end(); ittr++)
+			{
+				/*w32(temp.race.ordinal());
+				w32(temp.classId.getId());
+				w32(0x46);
+				w32(temp.baseSTR);
+				w32(0x0a);
+				w32(0x46);
+				w32(temp.baseDEX);
+				w32(0x0a);
+				w32(0x46);
+				w32(temp.baseCON);
+				w32(0x0a);
+				w32(0x46);
+				w32(temp.baseINT);
+				w32(0x0a);
+				w32(0x46);
+				w32(temp.baseWIT);
+				w32(0x0a);
+				w32(0x46);
+				w32(temp.baseMEN);
+				w32(0x0a);*/
+			}
 		};
 
-		virtual ~CPGGAuth()
+		virtual ~CPCharTemplate()
 		{
 
 		};
 
 		virtual irr::c8* getData()
 		{
-			blowfishPad();
 			return Data;
 		};
 
@@ -56,6 +83,10 @@ namespace login_server
 		{
 			return WritePointer;
 		};
+
+	private:
+
+
 
 	};
 

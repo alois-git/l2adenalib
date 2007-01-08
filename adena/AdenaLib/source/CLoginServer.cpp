@@ -26,13 +26,17 @@
 
 namespace adena
 {
+namespace login_server
+{
 
 CLoginServer::CLoginServer(irr::net::Address &addr)
 : Thread(),  Server(0)
 {
 	ServerListPacket = new CPServerList();
-	irr::c8 ip[4] = {192, 168, 0, 2};
-	ServerListPacket->addServer(ip, 7777, true, false, 0, 100, false, true, 0, 0);
+	irr::c8 ip[4] = {71, 65, 253, 10};
+	irr::c8 ip2[4] = {192, 168, 0, 2};
+	ServerListPacket->addServer(ip, 7777, true, false, 0, 10000, false, true, 0, 0);
+	ServerListPacket->addServer(ip2, 7777, true, false, 0, 10000, false, true, 0, 1);
 	Rng = new irr::CMersenneTwister();
 	Rng->seed();
 	EventParser = new NELoginServerNetEvent(this);
@@ -44,7 +48,7 @@ CLoginServer::CLoginServer(irr::net::Address &addr)
 	BlowfishCipher = new CBlowfish("_;5.]94-31==-%xT!^[$\000");
 	DataBase = new irr::db::CSQLLite();
 	irr::db::CSQLLiteConParms qp = irr::db::CSQLLiteConParms();
-	qp.FileName = "l2login.sqlite";
+	qp.FileName = "l2adena.sqlite";
 	if(!DataBase->connect(&qp))
 		puts("database connection failed");
 };
@@ -67,7 +71,7 @@ void CLoginServer::run()
 
 SLoginServerStatus CLoginServer::getStatus()
 {
-	ServerStatus.UpTime = (time(NULL) - StartTime);
+	ServerStatus.UpTime = (irr::u32)(time(NULL) - StartTime);
 	return ServerStatus;
 };
 
@@ -101,4 +105,5 @@ void CLoginServer::ScrambleRsaPublicMod()
 	}
 };
 
+}
 }

@@ -25,6 +25,8 @@
 
 namespace adena
 {
+namespace game_server
+{
 
 CCrypt::CCrypt(irr::c8* key)
 {
@@ -39,7 +41,7 @@ CCrypt::~CCrypt()
 void CCrypt::decrypt(irr::c8* data, irr::u32 len)
 {
 	int temp = 0;
-	for (int i = 0; i < len; i++)
+	for (irr::u32 i = 0; i < len; i++)
 	{
 		int temp2 = data[i] & 0xff;
 		data[i] = (temp2 ^ (Key[i & 7] & 0xff) ^ temp);
@@ -61,7 +63,7 @@ void CCrypt::decrypt(irr::c8* data, irr::u32 len)
 
 void CCrypt::encrypt(irr::c8* data, irr::u32 len){
 	int temp = 0;
-	for (int i = 0; i < len; i++)	{
+	for (irr::u32 i = 0; i < len; i++)	{
 		int temp2 = data[i] & 0xff;
 		data[i] = (temp2 ^ (Key[i & 7] & 0xff) ^ temp);
 		temp = data[i];
@@ -84,4 +86,5 @@ const irr::c8* CCrypt::getKey(){
 	return Key;
 };
 
+}
 }

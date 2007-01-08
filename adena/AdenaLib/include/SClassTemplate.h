@@ -1,6 +1,6 @@
 /*
- * CPGGAuth.h - Game gaurd authentication responce.
- * Created January 4, 2007, by Michael 'Bigcheese' Spencer.
+ * SClassTemplate.h - Class template.
+ * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,42 +21,26 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_GG_AUTH_H_
-#define _ADENA_C_P_GG_AUTH_H_
+#ifndef _ADENA_S_CLASS_TEMPLATE_H_
+#define _ADENA_S_CLASS_TEMPLATE_H_
 
-#include <CPacket.h>
+#include <AdenaConfig.h>
 
 namespace adena
 {
-namespace login_server
+namespace game_server
 {
 
-	class CPGGAuth : public CPacket
+	struct SClassTemplate
 	{
-	public:
-
-		CPGGAuth()
-		{
-			w8(0x0b);
-			w32(0x0b);
-		};
-
-		virtual ~CPGGAuth()
-		{
-
-		};
-
-		virtual irr::c8* getData()
-		{
-			blowfishPad();
-			return Data;
-		};
-
-		virtual irr::u32 getLen()
-		{
-			return WritePointer;
-		};
-
+		irr::u32 Race; // L2 defined race id.
+		irr::u32 ClassId; // L2 defined class id.
+		irr::u32 BaseSTR;
+		irr::u32 BaseDEX;
+		irr::u32 BaseCON;
+		irr::u32 BaseINT;
+		irr::u32 BaseWIT;
+		irr::u32 BaseMEN;
 	};
 
 }

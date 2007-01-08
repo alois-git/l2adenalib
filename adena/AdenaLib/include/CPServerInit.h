@@ -28,6 +28,8 @@
 
 namespace adena
 {
+namespace login_server
+{
 
 	class CPServerInit : public CPacket
 	{
@@ -43,6 +45,7 @@ namespace adena
 
 	};
 
+}
 }
 
 #endif

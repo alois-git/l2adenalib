@@ -29,6 +29,9 @@
 
 namespace adena
 {
+namespace login_server
+{
+
 	class NELoginServerNetEvent : public irr::net::INetEvent
 	{
 	public:
@@ -43,6 +46,7 @@ namespace adena
 
 	};
 
+}
 }
 
 #endif

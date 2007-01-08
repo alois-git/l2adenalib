@@ -31,6 +31,9 @@
 
 namespace adena
 {
+namespace login_server
+{
+
 	class CLoginServerClient
 	{
 	public:
@@ -50,6 +53,8 @@ namespace adena
 		irr::s32 SessionId;
 
 	};
+
+}
 }
 
 #endif

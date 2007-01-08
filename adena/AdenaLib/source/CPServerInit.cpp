@@ -25,6 +25,8 @@
 
 namespace adena
 {
+namespace login_server
+{
 
 CPServerInit::CPServerInit(irr::c8* mod)
 {
@@ -72,4 +74,5 @@ irr::u32 CPServerInit::getLen()
 	return 153;
 };
 
+}
 }

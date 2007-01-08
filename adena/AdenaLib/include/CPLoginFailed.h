@@ -28,6 +28,8 @@
 
 namespace adena
 {
+namespace login_server
+{
 
 	class CPLoginFailed : public CPacket
 	{
@@ -66,6 +68,7 @@ namespace adena
 
 	};
 
+}
 }
 
 #endif
