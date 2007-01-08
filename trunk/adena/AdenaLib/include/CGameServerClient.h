@@ -56,6 +56,7 @@ namespace game_server
 		irr::net::IServerClient* Client;
 		CGameServer* Server;
 		irr::s32 SessionId;
+		irr::core::stringc AccountName;
 		bool CryptPackets;
 		packetFunc PacketFunctions[256];
 

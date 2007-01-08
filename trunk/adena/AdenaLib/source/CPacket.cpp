@@ -107,6 +107,42 @@ void CPacket::w32(irr::u32 val)
 
 //--------------------------------
 
+void CPacket::w64(irr::u64 val)
+{
+	if((WritePointer + 8) > DataLen)
+		resize(WritePointer + GROW_SIZE);
+
+	Data[WritePointer++] = (val & 0xff);
+	Data[WritePointer++] = ((val >> 8) & 0xff);
+	Data[WritePointer++] = ((val >> 16) & 0xff);
+	Data[WritePointer++] = ((val >> 24) & 0xff);
+	Data[WritePointer++] = ((val >> 30) & 0xff);
+	Data[WritePointer++] = ((val >> 38) & 0xff);
+	Data[WritePointer++] = ((val >> 46) & 0xff);
+	Data[WritePointer++] = ((val >> 52) & 0xff);
+};
+
+//--------------------------------
+
+void CPacket::wf(irr::u64 val)
+{
+	if((WritePointer + 8) > DataLen)
+		resize(WritePointer + GROW_SIZE);
+
+	Data[WritePointer++] = (val & 0xff);
+	Data[WritePointer++] = ((val >> 8) & 0xff);
+	Data[WritePointer++] = ((val >> 16) & 0xff);
+	Data[WritePointer++] = ((val >> 24) & 0xff);
+	Data[WritePointer++] = ((val >> 30) & 0xff);
+	Data[WritePointer++] = ((val >> 38) & 0xff);
+	Data[WritePointer++] = ((val >> 46) & 0xff);
+	Data[WritePointer++] = ((val >> 52) & 0xff);
+};
+
+
+
+//--------------------------------
+
 void CPacket::wStr(irr::core::stringc &str)
 {
 	if((WritePointer + str.size() + 1) > DataLen)
@@ -119,7 +155,7 @@ void CPacket::wStr(irr::core::stringc &str)
 
 //--------------------------------
 
-void CPacket::wStrW(irr::core::stringw &str)
+void CPacket::wStrW(irr::core::stringc &str)
 {
 	if((WritePointer + (str.size() * 2) + 2) > DataLen)
 		resize(WritePointer + (str.size() * 2) + 2);

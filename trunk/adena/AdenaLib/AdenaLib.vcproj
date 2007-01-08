@@ -493,6 +493,14 @@
 					Name="ServerPackets"
 					>
 					<File
+						RelativePath=".\include\CPCharCreateFailed.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPCharCreateOk.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CPCharSelect.h"
 						>
 					</File>
