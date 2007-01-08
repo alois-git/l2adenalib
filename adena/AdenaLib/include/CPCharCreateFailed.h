@@ -1,5 +1,5 @@
 /*
- * CPCharCreate.h - Create char.
+ * CPCharCreateFailed.h - Char create failed.
  * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
@@ -21,70 +21,49 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_CHAR_CREATE_H_
-#define _ADENA_C_P_CHAR_CREATE_H_
+#ifndef _ADENA_C_P_CHAR_CREATE_FAILED_H_
+#define _ADENA_C_P_CHAR_CREATE_FAILED_H_
 
 #include <CPacket.h>
-#include <irrString.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPCharCreate : public CPacket
+	class CPCharCreateFailed : public CPacket
 	{
 	public:
 
-		CPCharCreate(irr::c8* in_data)
-		: CPacket(), Name("")
+		static enum E_CharCreateFailedReason
 		{
-			Data = in_data;
-			ReadPointer++;
-			rStrW(Name);
-			Race = r32();
-			Sex = r32();
-			ClassId = r32();
-			Int = r32();
-			Str = r32();
-			Con = r32();
-			Men = r32();
-			Dex = r32();
-			Wit = r32();
-			HairStyle = r32();
-			HairColor = r32();
-			Face = r32();
-			hexdump(in_data + 1, ReadPointer - 2);
+			ECCFR_CREATION_FAILED = 0x00,
+			ECCFR_TOO_MANY_CHARACTERS = 0x01,
+			ECCFR_NAME_ALREADY_EXISTS = 0x02,
+			ECCFR_16_ENG_CHARS = 0x03
 		};
 
-		virtual ~CPCharCreate()
+		CPCharCreateFailed(E_CharCreateFailedReason reason)
+		: CPacket()
 		{
-			Data = 0;
+			w8(0x1a);
+			w32((irr::u32)reason);
+		};
+
+		virtual ~CPCharCreateFailed()
+		{
+
 		};
 
 		virtual irr::c8* getData()
 		{
-			return NULL;
+			return Data;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return 0;
+			return WritePointer;
 		};
-
-		irr::core::stringc Name;
-		irr::u32 Race;
-		irr::u32 Sex;
-		irr::u32 ClassId;
-		irr::u32 Int;
-		irr::u32 Str;
-		irr::u32 Con;
-		irr::u32 Men;
-		irr::u32 Dex;
-		irr::u32 Wit;
-		irr::u32 HairStyle;
-		irr::u32 HairColor;
-		irr::u32 Face;
 
 	private:
 

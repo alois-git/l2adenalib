@@ -57,6 +57,7 @@ namespace game_server
 		irr::db::IDatabase* DataBase;
 		irr::IRng* Rng;
 		irr::core::list<SClassTemplate> ClassTemplateList;
+		irr::core::threads::Mutex CreateCharMutex;
 
 	private:
 

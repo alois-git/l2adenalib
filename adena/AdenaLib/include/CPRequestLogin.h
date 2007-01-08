@@ -41,7 +41,6 @@ namespace login_server
 			irr::c8 dec[128];
 			in_data ++; // Skip the packet type byte.
 			rsa->decrypt(in_data, 128, dec, 128);
-			hexdump(dec, 128);
 			irr::c8 user_buff[15];
 			irr::c8 pass_buff[17];
 			memcpy(user_buff, dec + 94, 14);

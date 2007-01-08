@@ -69,6 +69,10 @@ namespace adena
 		 */
 		virtual void w32(irr::u32 val);
 
+		virtual void w64(irr::u64 val);
+
+		virtual void wf(irr::u64 val);
+
 		/*
 		 * Writes a ASCII null terminated string to data.
 		 */
@@ -77,7 +81,7 @@ namespace adena
 		/*
 		 * Writes a unicode (two byte) null termininated string to data.
 		 */
-		virtual void wStrW(irr::core::stringw &str);
+		virtual void wStrW(irr::core::stringc &str);
 
 		/*
 		 * Copys from in_data to data size data_len.

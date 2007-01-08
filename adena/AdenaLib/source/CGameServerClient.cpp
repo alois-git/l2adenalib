@@ -28,6 +28,8 @@
 #include <CPCharSelect.h>
 #include <CPCharTemplate.h>
 #include <CPCharCreate.h>
+#include <CPCharCreateFailed.h>
+#include <CPCharCreateOk.h>
 
 #define RECV_SIZE 65536 // Max size of a L2 packet.
 
@@ -119,8 +121,9 @@ void CGameServerClient::authLogin(irr::c8* data)
 {
 	CPAuthLogin al(data);
 	printf("Account name %s\n", al.AccountName.c_str());
+	AccountName = al.AccountName;
 	printf("Auth login: %d, %d, %d, %d\n", al.Id1, al.Id2, al.Id3, al.Id4);
-	CPCharSelect cs = CPCharSelect();
+	CPCharSelect cs(Server->DataBase, AccountName);
 	sendPacket(&cs);
 };
 
@@ -134,7 +137,34 @@ void CGameServerClient::logout(irr::c8* data)
 void CGameServerClient::createChar(irr::c8* data)
 {
 	CPCharCreate cc(data);
-	printf("Create char %s\n", cc.Name.c_str());
+	Server->CreateCharMutex.getLock();
+	irr::db::Query check_name(irr::core::stringc("SELECT 'id' FROM 'characters' WHERE name = '$name'"));
+	check_name.setVar(irr::core::stringc("$name"), cc.Name);
+	if(Server->DataBase->query(check_name).RowCount != 0)
+	{
+		// Name already taken.
+		CPCharCreateFailed ccf(CPCharCreateFailed::ECCFR_CREATION_FAILED);
+		sendPacket(&ccf);
+	}else
+	{
+		// Add char.
+		irr::db::Query add_char(irr::core::stringc("INSERT INTO 'characters' (account_name, name, race_id, class_id, sex, hair_type, hair_color, face)\
+VALUES ('$acc', '$name', $race, $class, $sex, $hairt, $hairc, $face)"));
+		add_char.setVar(irr::core::stringc("$acc"), AccountName);
+		add_char.setVar(irr::core::stringc("$name"), cc.Name);
+		add_char.setVar(irr::core::stringc("$race"), irr::core::stringc((int)cc.Race));
+		add_char.setVar(irr::core::stringc("$class"), irr::core::stringc((int)cc.ClassId));
+		add_char.setVar(irr::core::stringc("$sex"), irr::core::stringc((int)cc.Sex));
+		add_char.setVar(irr::core::stringc("$hairt"), irr::core::stringc((int)cc.HairStyle));
+		add_char.setVar(irr::core::stringc("$hairc"), irr::core::stringc((int)cc.HairColor));
+		add_char.setVar(irr::core::stringc("$face"), irr::core::stringc((int)cc.Face));
+		Server->DataBase->query(add_char);
+		CPCharCreateOk cco = CPCharCreateOk();
+		sendPacket(&cco);
+		CPCharSelect cs(Server->DataBase, AccountName);
+		sendPacket(&cs);
+	}
+	Server->CreateCharMutex.releaseLock();
 };
 
 // 14

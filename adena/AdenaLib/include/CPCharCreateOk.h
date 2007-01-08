@@ -1,5 +1,5 @@
 /*
- * CPCharCreate.h - Create char.
+ * CPCharCreateOk.h - Char create ok.
  * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
@@ -21,70 +21,41 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_CHAR_CREATE_H_
-#define _ADENA_C_P_CHAR_CREATE_H_
+#ifndef _ADENA_C_P_CHAR_CREATE_OK_H_
+#define _ADENA_C_P_CHAR_CREATE_OK_H_
 
 #include <CPacket.h>
-#include <irrString.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPCharCreate : public CPacket
+	class CPCharCreateOk : public CPacket
 	{
 	public:
 
-		CPCharCreate(irr::c8* in_data)
-		: CPacket(), Name("")
+		CPCharCreateOk()
+		: CPacket()
 		{
-			Data = in_data;
-			ReadPointer++;
-			rStrW(Name);
-			Race = r32();
-			Sex = r32();
-			ClassId = r32();
-			Int = r32();
-			Str = r32();
-			Con = r32();
-			Men = r32();
-			Dex = r32();
-			Wit = r32();
-			HairStyle = r32();
-			HairColor = r32();
-			Face = r32();
-			hexdump(in_data + 1, ReadPointer - 2);
+			w8(0x19);
+			w32(0x01);
 		};
 
-		virtual ~CPCharCreate()
+		virtual ~CPCharCreateOk()
 		{
-			Data = 0;
+
 		};
 
 		virtual irr::c8* getData()
 		{
-			return NULL;
+			return Data;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return 0;
+			return WritePointer;
 		};
-
-		irr::core::stringc Name;
-		irr::u32 Race;
-		irr::u32 Sex;
-		irr::u32 ClassId;
-		irr::u32 Int;
-		irr::u32 Str;
-		irr::u32 Con;
-		irr::u32 Men;
-		irr::u32 Dex;
-		irr::u32 Wit;
-		irr::u32 HairStyle;
-		irr::u32 HairColor;
-		irr::u32 Face;
 
 	private:
 
