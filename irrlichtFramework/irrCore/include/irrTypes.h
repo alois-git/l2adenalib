@@ -42,12 +42,19 @@ typedef unsigned int		u32;
 typedef signed int		s32; 
 
 
+//! 64 bit unsgined variable.
+#ifdef _IRR_WINDOWS_
+typedef unsigned __int64	u64; 
+#else
+typedef unsigned long long	u64; 
+#endif
 
-// 64 bit signed variable.
-// This is a typedef for __int64, it ensures portability of the engine. 
-// This type is currently not used by the engine and not supported by compilers
-// other than Microsoft Compilers, so it is outcommented.
-//typedef __int64				s64; 
+//! 64 bit signed variable.
+#ifdef _IRR_WINDOWS_
+typedef __int64		s64; 
+#else
+typedef long long	s64; 
+#endif
 
 
 

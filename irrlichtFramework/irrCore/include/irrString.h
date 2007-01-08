@@ -719,7 +719,13 @@ public:
 		--used;
 	}
 
-
+	static string<irr::c8> wStrToC(string<wchar_t> &str)
+	{
+		string<irr::c8> ret;
+		for(irr::u32 i = 0; i < str.size(); i++)
+			ret += str[i];
+		return ret;
+	}
 
 private:
 
@@ -749,7 +755,6 @@ private:
 
 		allocator.deallocate(old_array); // delete [] old_array;
 	}
-
 
 	//--- member variables
 
