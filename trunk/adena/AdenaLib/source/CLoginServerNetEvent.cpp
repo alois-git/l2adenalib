@@ -23,6 +23,7 @@
 
 #include <CLoginServerNetEvent.h>
 #include <CLoginServerClient.h>
+#include <CLoginServer.h>
 
 namespace adena
 {
@@ -49,6 +50,8 @@ void NELoginServerNetEvent::OnEvent(irr::net::NetEvent &e)
 			printf("Client connected.\n");
 			break;
 		case irr::net::ENET_CLIENT_DISCONNECT:
+			if(((CLoginServerClient*)e.serverClient->UserData)->AccountId!= 0)
+				((CLoginServer*)Server)->unlogAccount(((CLoginServerClient*)e.serverClient->UserData)->AccountId);
 			delete ((CLoginServerClient*)e.serverClient->UserData);
 			printf("Client disconnected.\n");
 			break;

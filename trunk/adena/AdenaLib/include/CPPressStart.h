@@ -1,19 +1,19 @@
 /*
- * CGameServer.cpp - Game server.
- * Created January 6, 2006, by Michael 'Bigcheese' Spencer.
+ * CPPressStart.h - Enter teh world of l2.
+ * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- *
+ * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- *
+ * 
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -21,51 +21,60 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#include <CGameServer.h>
+#ifndef _ADENA_C_P_PRESS_START_H_
+#define _ADENA_C_P_PRESS_START_H_
+
+#include <CPacket.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-CGameServer::CGameServer(irr::net::Address &addr)
-: Thread(), Server(0)
-{
-	DataBase = new irr::db::CSQLLite();
-	irr::db::CSQLLiteConParms cp = irr::db::CSQLLiteConParms();
-	cp.FileName = "l2adena.sqlite";
-	DataBase->connect(&cp);
-	EventParser = new NEGameServerNetEvent(this);
-	Server = new irr::net::CTCPServer(EventParser, 10);
-	Server->bind(addr);
-};
-
-CGameServer::~CGameServer()
-{
-	if(Server)
-		delete Server;
-};
-
-void CGameServer::loginLinkEvent(SLoginLinkEvent e)
-{
-	if(e.EventType == ELLET_REGISTER_RESULT)
+	class CPPressStart : public CPacket
 	{
-		if(e.Result == ELLR_OK)
-		{
-			printf("Connected\n");
-		}else
-		{
-			printf("Failed to connect\n");
-		}
-	}
-};
+	public:
 
-void CGameServer::run()
-{
-	Server->start();
-	while(Server->Running)
-		irr::core::threads::sleep(1000);
-};
+		CPPressStart(irr::c8* in_data)
+		: CPacket()
+		{
+			Data = in_data;
+			ReadPointer++;
+			CharIndex = r32();
+			Unknown1 = r16();
+			Unknown2 = r32();
+			Unknown3 = r32();
+			Unknown4 = r32();
+		};
+
+		virtual ~CPPressStart()
+		{
+			Data = 0;
+		};
+
+		virtual irr::c8* getData()
+		{
+			return NULL;
+		};
+
+		virtual irr::u32 getLen()
+		{
+			return 0;
+		};
+
+		irr::u32 CharIndex;
+		irr::u32 Unknown1;
+		irr::u32 Unknown2;
+		irr::u32 Unknown3;
+		irr::u32 Unknown4;
+
+	private:
+
+
+
+	};
 
 }
 }
+
+#endif

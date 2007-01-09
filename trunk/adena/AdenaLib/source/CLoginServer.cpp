@@ -23,6 +23,7 @@
 
 #include <CLoginServer.h>
 #include <CMersenneTwister.h>
+#include <IGameServerLink.h>
 
 namespace adena
 {
@@ -33,10 +34,6 @@ CLoginServer::CLoginServer(irr::net::Address &addr)
 : Thread(),  Server(0)
 {
 	ServerListPacket = new CPServerList();
-	irr::c8 ip[4] = {71, 65, 253, 10};
-	irr::c8 ip2[4] = {192, 168, 0, 2};
-	ServerListPacket->addServer(ip, 7777, true, false, 0, 10000, false, true, 0, 0);
-	ServerListPacket->addServer(ip2, 7777, true, false, 0, 10000, false, true, 0, 1);
 	Rng = new irr::CMersenneTwister();
 	Rng->seed();
 	EventParser = new NELoginServerNetEvent(this);
@@ -62,11 +59,53 @@ CLoginServer::~CLoginServer()
 	delete BlowfishCipher;
 };
 
+void CLoginServer::gameLinkEvent(SGameLinkEvent e)
+{
+	if(e.EventType == EGLET_REGISTER_REQUEST)
+	{
+		irr::u32 sID = *((irr::u32*)e.Data);
+		printf("Reg request id: %d\n", sID);
+	}
+};
+
 void CLoginServer::run()
 {
 	Server->start();
 	while(Server->Running)
 		irr::core::threads::sleep(1000);
+};
+
+bool CLoginServer::loginAccount(irr::u32 account_id, irr::net::IServerClient* client)
+{
+	SAccountLocation al;
+	AccountLocationsMutex.getLock();
+	if(AccountLocations.Find(account_id, al))
+	{
+		if(al.Local == true)
+		{
+			AccountLocationsMutex.releaseLock();
+			Server->kickClient(al.Data);
+		}else
+		{
+			AccountLocationsMutex.releaseLock();
+			//GameServerLink->requestKick();
+		}
+		return false;
+	}else
+	{
+		al.Local = true;
+		al.Data = client;
+		AccountLocations.Insert(account_id, al);
+		AccountLocationsMutex.releaseLock();
+		return true;
+	}
+};
+
+void CLoginServer::unlogAccount(irr::u32 account_id)
+{
+	AccountLocationsMutex.getLock();
+	AccountLocations.Remove(account_id);
+	AccountLocationsMutex.releaseLock();
 };
 
 SLoginServerStatus CLoginServer::getStatus()

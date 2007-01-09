@@ -29,6 +29,7 @@
 #include <IPacket.h>
 #include <CGameServer.h>
 #include <CCrypt.h>
+#include <COPlayer.h>
 
 namespace adena
 {
@@ -59,6 +60,7 @@ namespace game_server
 		irr::core::stringc AccountName;
 		bool CryptPackets;
 		packetFunc PacketFunctions[256];
+		COPlayer* Player;
 
 	protected:
 
@@ -66,9 +68,11 @@ namespace game_server
 
 		// Funtions in order of their packet num starting at 0x00.
 		void protocolVersion(irr::c8* data); // 0
+		void clientLoaded(irr::c8* data); // 3
 		void authLogin(irr::c8* data); // 8
 		void logout(irr::c8* data); // 9
 		void createChar(irr::c8* data); // 11
+		void pressStart(irr::c8* data); // 13
 		void createCharButtion(irr::c8* data); // 14
 
 	};

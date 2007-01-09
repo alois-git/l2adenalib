@@ -192,11 +192,19 @@
 				RelativePath=".\source\CPacket.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\source\ip2bytes.cpp"
+				>
+			</File>
 			<Filter
 				Name="LoginServer"
 				>
 				<File
 					RelativePath=".\source\BDRSA.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\CInProcessGameServerLink.cpp"
 					>
 				</File>
 				<File
@@ -359,6 +367,14 @@
 					RelativePath=".\source\CGameServerNetEvent.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\source\CInProcessLoginServerLink.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\COPlayer.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -383,6 +399,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\ip2bytes.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\IPacket.h"
 				>
 			</File>
@@ -391,6 +411,10 @@
 				>
 				<File
 					RelativePath=".\include\BDRSA.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\CInProcessGameServerLink.h"
 					>
 				</File>
 				<File
@@ -403,6 +427,10 @@
 				</File>
 				<File
 					RelativePath=".\include\CLoginServerNetEvent.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\IGameServerLink.h"
 					>
 				</File>
 				<File
@@ -470,6 +498,22 @@
 					>
 				</File>
 				<File
+					RelativePath=".\include\CInProcessLoginServerLink.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\COPawn.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\COPlayer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\ILoginServerLink.h"
+					>
+				</File>
+				<File
 					RelativePath=".\include\SClassTemplate.h"
 					>
 				</File>
@@ -482,6 +526,10 @@
 					</File>
 					<File
 						RelativePath=".\include\CPCharCreate.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPPressStart.h"
 						>
 					</File>
 					<File
@@ -501,7 +549,15 @@
 						>
 					</File>
 					<File
+						RelativePath=".\include\CPCharInfo.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CPCharSelect.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPCharSelected.h"
 						>
 					</File>
 					<File
@@ -510,6 +566,14 @@
 					</File>
 					<File
 						RelativePath=".\include\CPKeyInit.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPLogout.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CPUserInfo.h"
 						>
 					</File>
 				</Filter>
