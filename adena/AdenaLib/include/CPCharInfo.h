@@ -1,0 +1,219 @@
+/*
+ * CPCharInfo.h - Char info ftw.
+ * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
+ *
+ * Copyright (C) 2007 Michael Spencer
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * Michael Spencer - bigcheesegs@gmail.com
+ */
+
+#ifndef _ADENA_C_P_CHAR_INFO_H_
+#define _ADENA_C_P_CHAR_INFO_H_
+
+#include <CPacket.h>
+
+namespace adena
+{
+namespace game_server
+{
+
+	class CPCharInfo : public CPacket
+	{
+	public:
+
+		CPCharInfo()
+		: CPacket()
+		{
+			w8(0x16);
+			w32(0x00); // Char obj id
+			w32(0x00);  // npctype id
+			w32(0x00); // Has karma
+			w32(-71338); // x
+			w32(258271); // y
+			w32(-3104); // z
+			w32(0x00); // Heading
+			w32(0x00);
+			w32(0x01); // Cast speed
+			w32(0x01); // Atk speed
+			w32(200); // Run speed
+			w32(100); // Walk speed
+			w32(200);  // Swim run speed
+			w32(100);  // Swin walk speed
+			w32(0x00); // _flRunSpd
+			w32(0x00); // _flWalkSpd
+			w32(200); // Fly run speed
+			w32(100); // Fly walk speed
+			wf(1.0); // Move speed x
+			wf(1.0); // Atk speed x
+			wf(1.0); // Collision radius
+			wf(1.0); // Collision height
+			w32(0x00); // right hand weapon
+			w32(0);
+			w32(0x00); // left hand weapon
+			w8(1);	// name above char 1=true ... ??
+			w8(0x01); // Running
+			w8(0x00); // Combat
+			w8(0x00); // Dead
+			w8(0x00); // Invisable
+			wStrW(irr::core::stringc("test")); // Char name
+			wStrW(irr::core::stringc("Adena")); // Char name
+			w32(0);
+			w32(0);
+			w32(0);
+
+			w16(0x00);  // Abnormal effect (bit map)
+			w16(0x00);  // C2
+			w32(0);  // C2
+			w32(0);  // C2
+			w32(0);  // C2
+			w32(0);  // C2
+			w8(0);  // C2
+
+			return;
+
+			w8(0x03);		
+			w32(-71338); // x
+			w32(258271); // y
+			w32(-3104); // z
+			w32(0x00); // Heading
+			w32(0x00); // Char object id
+			wStrW(irr::core::stringc("tes")); // Char name
+			w32(0x00); // Race
+			w32(0x00); // Sex
+			w32(0x00); // Class
+
+			w32(0x00); // Underware
+			w32(0x00); // Helmate
+			w32(0x00); // Right hand
+			w32(0x00); // Left hand
+			w32(0x00); // Gloves
+			w32(0x00); // Chest
+			w32(0x00); // Leggings
+			w32(0x00); // Boots
+			w32(0x00); // Back
+			w32(0x00); // Gloves
+			w32(0x00); // Hair
+
+			w32(0x00); // Pvp status
+			w32(0x00); // Karma
+
+			w32(0x01); // Cast speed
+			w32(0x01); // Atk speed
+
+			w32(0x00); // Pvp status
+			w32(0x00); // Karma
+
+			w32(200); // Run speed
+			w32(100); // Walk speed
+			w32(200);  // Swim run speed
+			w32(100);  // Swin walk speed
+			w32(0x00); // _flRunSpd
+			w32(0x00); // _flWalkSpd
+			w32(200); // Fly run speed
+			w32(100); // Fly walk speed
+			wf(1.0); // Move speed x
+			wf(1.0); // Atk speed x
+			wf(1.0); // Collision radius
+			wf(1.0); // Collision height
+
+			w32(0x00); // Hair style
+			w32(0x00); // Hair color
+			w32(0x00); // Face
+
+			wStrW(irr::core::stringc("Adena")); // Title
+			w32(0x00); // Clan id
+			w32(0x00); // Clan crest id
+			w32(0x00); // Ally id
+			w32(0x00); // Ally crest id
+			w32(0);	// Seige flags
+
+			w8(0x01); // Standing
+			w8(0x01); // Running
+			w8(0x00); // Combat
+			w8(0x00); // Dead
+
+			w8(0x00); // Invisable
+			w8(0x00); // Mount type (0 = none, 1 = stryder, 2 = whyfren(sp?))
+			w8(0x00); // Pvt store type (1 sell shop)
+
+			w16(0x00); // Cubics count.
+			/*for()
+				w16(cube id);*/
+
+			w8(0x00); // Find party members
+
+			w32(0x00); // Abnormal effect (bit map)
+
+			w8(0x00); // Recs left
+			w16(0x00); // Recs have
+			w32(0x00); // Class id
+
+			w32(100); // Max cp
+			w32(50); // Current cp
+	        w8(0x00); // Enchant effect
+
+	        w8(0x00); // Team circle around feet (0 = none, 1 = blue, 2 = red)
+
+			w32(0x00); // Clan crest lage id
+			w8(0x00); // Symbol on char menu ctrl+I  
+			w8(0x00); // Hero Aura
+			
+			w8(0x00); // Fishing
+			w32(0x00); // Fish x
+			w32(0x00); // Fish y
+			w32(0x00); // Fish z
+	        w32(0x00); // Name color
+	        
+	        w32(0x00);
+	        
+	        w32(0x00); // Item id face
+	        
+	        w32(0x00);  // Clan class
+	        w32(0x00);
+	        
+	        w32(0x00); // Title color
+	        
+	        w32(0x00);
+	        
+	        w32(0x00); // Cursed weapon lvl
+		};
+
+		virtual ~CPCharInfo()
+		{
+
+		};
+
+		virtual irr::c8* getData()
+		{
+			return Data;
+		};
+
+		virtual irr::u32 getLen()
+		{
+			return WritePointer;
+		};
+
+	private:
+
+
+
+	};
+
+}
+}
+
+#endif

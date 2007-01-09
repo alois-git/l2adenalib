@@ -33,6 +33,7 @@
 #include <CGameServerNetEvent.h>
 #include <irrList.h>
 #include <SClassTemplate.h>
+#include <ILoginServerLink.h>
 
 namespace adena
 {
@@ -51,6 +52,8 @@ namespace game_server
 
 		virtual ~CGameServer();
 
+		virtual void loginLinkEvent(SLoginLinkEvent e);
+
 		virtual void run();
 
 		irr::net::IServer* Server;
@@ -58,6 +61,7 @@ namespace game_server
 		irr::IRng* Rng;
 		irr::core::list<SClassTemplate> ClassTemplateList;
 		irr::core::threads::Mutex CreateCharMutex;
+		ILoginServerLink* LoginServerLink;
 
 	private:
 

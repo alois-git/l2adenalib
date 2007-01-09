@@ -41,7 +41,7 @@ namespace login_server
 {
 
 CLoginServerClient::CLoginServerClient(irr::net::IServerClient* client, CLoginServer* server)
-: Client(client), Server(server), SessionId(0)
+: Client(client), Server(server), SessionId(0), AccountId(0)
 {
 	char send_buff[155];
 	CPServerInit init(Server->ScrambledMod);
@@ -82,7 +82,7 @@ void CLoginServerClient::HandlePacket()
 		in = new CPRequestLogin(dec, Server->RsaCipher);
 		puts(((CPRequestLogin*)in)->Username.c_str());
 		puts(((CPRequestLogin*)in)->Password.c_str());
-		irr::db::Query q = irr::db::Query(irr::core::stringc("SELECT password FROM accounts WHERE username = '$user'"));
+		irr::db::Query q = irr::db::Query(irr::core::stringc("SELECT id,password FROM accounts WHERE username = '$user'"));
 		q.setVar(irr::core::stringc("$user"), ((CPRequestLogin*)in)->Username);
 		irr::db::CQueryResult qr = Server->DataBase->query(q);
 		if(qr.RowCount != 1)
@@ -97,10 +97,18 @@ void CLoginServerClient::HandlePacket()
 			irr::core::stringc hash = md5.quickHash(((CPRequestLogin*)in)->Password);
 			if(qr[0][irr::core::stringc("password")] == hash)
 			{
-				SessionId = Server->Rng->getRandU32();
-				CPLoginOk clo(SessionId);
-				SendPacket(&clo);
-				Server->ServerStatus.LoginSuccesses++;
+				if(Server->loginAccount(AccountId = atoi(qr[0][irr::core::stringc("id")].c_str()), Client))
+				{
+					SessionId = Server->Rng->getRandU32();
+					CPLoginOk clo(SessionId);
+					SendPacket(&clo);
+					Server->ServerStatus.LoginSuccesses++;
+				}else
+				{
+					CPLoginFailed clf(CPLoginFailed::REASON_ACCOUNT_IN_USE);
+					SendPacket(&clf);
+					Server->Server->kickClient(Client);
+				}
 			}else
 			{
 				CPLoginFailed clf(CPLoginFailed::REASON_PASS_WRONG);

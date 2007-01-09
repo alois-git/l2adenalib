@@ -30,6 +30,11 @@
 #include <CPCharCreate.h>
 #include <CPCharCreateFailed.h>
 #include <CPCharCreateOk.h>
+#include <CPCharSelected.h>
+#include <CPPressStart.h>
+#include <CPCharInfo.h>
+#include <CPUserInfo.h>
+#include <CPLogout.h>
 
 #define RECV_SIZE 65536 // Max size of a L2 packet.
 
@@ -41,7 +46,7 @@ namespace game_server
 {
 
 CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServer* server)
-: Client(client), Server(server), SessionId(0), CryptPackets(false)
+: Client(client), Server(server), SessionId(0), CryptPackets(false), Player(0)
 {
 	OutputCipher = new CCrypt((irr::c8*)key);
 	InputCipher = new CCrypt((irr::c8*)key);
@@ -50,15 +55,18 @@ CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServe
 		PacketFunctions[i] = &CGameServerClient::unknownPacket;
 
 	PacketFunctions[0] = &CGameServerClient::protocolVersion;
+	PacketFunctions[3] = &CGameServerClient::clientLoaded;
 	PacketFunctions[8] = &CGameServerClient::authLogin;
 	PacketFunctions[9] = &CGameServerClient::logout;
 	PacketFunctions[11] = &CGameServerClient::createChar;
+	PacketFunctions[13] = &CGameServerClient::pressStart;
 	PacketFunctions[14] = &CGameServerClient::createCharButtion;
 };
 
 CGameServerClient::~CGameServerClient()
 {
-
+	if(!Player)
+		delete Player;
 };
 
 void CGameServerClient::HandlePacket()
@@ -83,6 +91,7 @@ void CGameServerClient::HandlePacket()
 		InputCipher->decrypt(buff, size - 2);
 	}
 
+	printf("Recived packet of type %d\n", (irr::u8)(buff[0] & 0xff));
 	(this->*PacketFunctions[buff[0] & 0xff])(buff);
 };
 
@@ -103,7 +112,7 @@ void CGameServerClient::sendPacket(IPacket* packet)
 
 void CGameServerClient::unknownPacket(irr::c8* data)
 {
-	printf("Recived unknown packet of type %d\n", data[0]);
+	printf("Recived unknown packet of type %d\n", (irr::u8)(data[0] & 0xff));
 };
 
 // 0
@@ -114,6 +123,16 @@ void CGameServerClient::protocolVersion(irr::c8* data)
 	CPKeyInit ki((irr::c8*)key);
 	sendPacket(&ki);
 	CryptPackets = true;
+};
+
+// 1
+
+// 3
+void CGameServerClient::clientLoaded(irr::c8* data)
+{
+	// Client loaded, eat some adena.
+	CPUserInfo ui = CPUserInfo();
+	sendPacket(&ui);
 };
 
 // 8
@@ -131,6 +150,8 @@ void CGameServerClient::authLogin(irr::c8* data)
 void CGameServerClient::logout(irr::c8* data)
 {
 	// Packet has no content.
+	CPLogout l = CPLogout();
+	sendPacket(&l);
 };
 
 // 11
@@ -143,7 +164,7 @@ void CGameServerClient::createChar(irr::c8* data)
 	if(Server->DataBase->query(check_name).RowCount != 0)
 	{
 		// Name already taken.
-		CPCharCreateFailed ccf(CPCharCreateFailed::ECCFR_CREATION_FAILED);
+		CPCharCreateFailed ccf(CPCharCreateFailed::ECCFR_NAME_ALREADY_EXISTS);
 		sendPacket(&ccf);
 	}else
 	{
@@ -167,9 +188,20 @@ VALUES ('$acc', '$name', $race, $class, $sex, $hairt, $hairc, $face)"));
 	Server->CreateCharMutex.releaseLock();
 };
 
+// 13
+void CGameServerClient::pressStart(irr::c8 *data)
+{
+	CPPressStart ps(data);
+	Player = new COPlayer();
+	Player->Name = irr::core::stringc("test");
+	CPCharSelected cs(Player);
+	sendPacket(&cs);
+};
+
 // 14
 void CGameServerClient::createCharButtion(irr::c8* data)
 {
+	// Empty packet.
 	CPCharTemplate ct(Server->ClassTemplateList);
 	sendPacket(&ct);
 };

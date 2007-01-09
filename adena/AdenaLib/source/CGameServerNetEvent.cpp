@@ -50,7 +50,6 @@ void NEGameServerNetEvent::OnEvent(irr::net::NetEvent &e)
 			break;
 		case irr::net::ENET_CLIENT_DISCONNECT:
 			delete ((CGameServerClient*)e.serverClient->UserData);
-			printf("Game Client disconnected.\n");
 			break;
 		case ::irr::net::ENET_RECVDATA:
 			printf("Game Client sent data.\n");

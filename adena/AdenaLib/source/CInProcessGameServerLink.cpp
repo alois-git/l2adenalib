@@ -1,6 +1,6 @@
 /*
- * CGameServer.cpp - Game server.
- * Created January 6, 2006, by Michael 'Bigcheese' Spencer.
+ * CInProcessGameServerLink.cpp - Loginserver -> Gameserver communication when in the same memory space.
+ * Created January 8, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  *
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -21,50 +21,38 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#include <CGameServer.h>
+#include <CInProcessGameServerLink.h>
 
 namespace adena
 {
-namespace game_server
+namespace login_server
 {
 
-CGameServer::CGameServer(irr::net::Address &addr)
-: Thread(), Server(0)
+CInProcessGameServerLink::CInProcessGameServerLink(void* loginserver, void* loginserverlink)
 {
-	DataBase = new irr::db::CSQLLite();
-	irr::db::CSQLLiteConParms cp = irr::db::CSQLLiteConParms();
-	cp.FileName = "l2adena.sqlite";
-	DataBase->connect(&cp);
-	EventParser = new NEGameServerNetEvent(this);
-	Server = new irr::net::CTCPServer(EventParser, 10);
-	Server->bind(addr);
+
 };
 
-CGameServer::~CGameServer()
+CInProcessGameServerLink::~CInProcessGameServerLink()
 {
-	if(Server)
-		delete Server;
+
 };
 
-void CGameServer::loginLinkEvent(SLoginLinkEvent e)
+void CInProcessGameServerLink::registerResult(irr::u32 server_id)
 {
-	if(e.EventType == ELLET_REGISTER_RESULT)
-	{
-		if(e.Result == ELLR_OK)
-		{
-			printf("Connected\n");
-		}else
-		{
-			printf("Failed to connect\n");
-		}
-	}
+	
 };
 
-void CGameServer::run()
+void CInProcessGameServerLink::requestKick(irr::u32 server_id, irr::u32 account_id)
 {
-	Server->start();
-	while(Server->Running)
-		irr::core::threads::sleep(1000);
+	
+};
+
+// For CInProcessLoginServerLink
+
+bool CInProcessGameServerLink::regServer(irr::u32 server_id)
+{
+	return true;
 };
 
 }

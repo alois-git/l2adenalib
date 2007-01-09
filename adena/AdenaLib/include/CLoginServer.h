@@ -29,12 +29,15 @@
 #include <irrNet.h>
 #include <irrDb.h>
 #include <irrRng.h>
+#include <irrList.h>
 #include <BDRSA.h>
 #include <CLoginServerNetEvent.h>
 #include <CBlowfish.h>
 #include <CPServerList.h>
 #include <SLoginServerStatus.h>
 #include <time.h>
+#include <IGameServerLink.h>
+#include <AVL.h>
 
 namespace adena
 {
@@ -45,6 +48,12 @@ namespace login_server
 	{
 	public:
 
+		struct SAccountLocation
+		{
+			bool Local; // true: Data is a pointer to an IServerClient. false: Data is a pointer to an IGameServerLink.
+			void* Data;
+		};
+
 		/*
 		 * @param addr: The address to bind to.
 		 * result: Server is initalized and bound to addr.
@@ -54,9 +63,17 @@ namespace login_server
 
 		virtual ~CLoginServer();
 
+		virtual void gameLinkEvent(SGameLinkEvent e);
+
 		virtual void run();
 
 		virtual SLoginServerStatus getStatus();
+
+		// returns false if account already logged in (kicks client), true if account added to account list.
+		virtual bool loginAccount(irr::u32 account_id, irr::net::IServerClient* client);
+
+		// Called when a client disconnects or the game server tells us a client disconnected.
+		virtual void unlogAccount(irr::u32 account_id);
 
 		char ScrambledMod[128];
 		BDRSA* RsaCipher;
@@ -66,6 +83,10 @@ namespace login_server
 		irr::IRng* Rng;
 		CPServerList* ServerListPacket;
 		SLoginServerStatus ServerStatus;
+		IGameServerLink* GameServerLink;
+
+		AVL<irr::u32, SAccountLocation> AccountLocations;
+		irr::core::threads::Mutex AccountLocationsMutex;
 
 	private:
 
