@@ -206,6 +206,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\irrCore\source\CLogger.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\irrCore\source\CMemoryReadFile.cpp"
 					>
 				</File>
