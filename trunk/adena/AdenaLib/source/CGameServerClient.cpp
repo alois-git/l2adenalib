@@ -91,7 +91,6 @@ void CGameServerClient::HandlePacket()
 		InputCipher->decrypt(buff, size - 2);
 	}
 
-	printf("Recived packet of type %d\n", (irr::u8)(buff[0] & 0xff));
 	(this->*PacketFunctions[buff[0] & 0xff])(buff);
 };
 
@@ -119,7 +118,6 @@ void CGameServerClient::unknownPacket(irr::c8* data)
 void CGameServerClient::protocolVersion(irr::c8* data)
 {
 	CPProtocolVersion pv(data);
-	printf("User connected with proto version %d\n", pv.ProtocolVersion);
 	CPKeyInit ki((irr::c8*)key);
 	sendPacket(&ki);
 	CryptPackets = true;
@@ -139,9 +137,7 @@ void CGameServerClient::clientLoaded(irr::c8* data)
 void CGameServerClient::authLogin(irr::c8* data)
 {
 	CPAuthLogin al(data);
-	printf("Account name %s\n", al.AccountName.c_str());
 	AccountName = al.AccountName;
-	printf("Auth login: %d, %d, %d, %d\n", al.Id1, al.Id2, al.Id3, al.Id4);
 	CPCharSelect cs(Server->DataBase, AccountName);
 	sendPacket(&cs);
 };

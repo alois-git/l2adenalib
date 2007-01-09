@@ -38,6 +38,7 @@
 #include <time.h>
 #include <IGameServerLink.h>
 #include <AVL.h>
+#include <ILogger.h>
 
 namespace adena
 {
@@ -84,6 +85,7 @@ namespace login_server
 		CPServerList* ServerListPacket;
 		SLoginServerStatus ServerStatus;
 		IGameServerLink* GameServerLink;
+		irr::ILogger* Logger;
 
 		AVL<irr::u32, SAccountLocation> AccountLocations;
 		irr::core::threads::Mutex AccountLocationsMutex;

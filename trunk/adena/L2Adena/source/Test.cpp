@@ -59,7 +59,6 @@ int main()
 	adena::game_server::CGameServer* g = new adena::game_server::CGameServer(a2);
 	adena::game_server::CInProcessLoginServerLink iplsl = adena::game_server::CInProcessLoginServerLink(g, s, 0);
 	g->LoginServerLink = &iplsl;
-	g->LoginServerLink->registerWithLoginServer();
 	s->start();
 	g->start();
 	while(s->Running)

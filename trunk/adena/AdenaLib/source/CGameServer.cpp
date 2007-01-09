@@ -22,6 +22,7 @@
  */
 
 #include <CGameServer.h>
+#include <CLogger.h>
 
 namespace adena
 {
@@ -29,12 +30,8 @@ namespace game_server
 {
 
 CGameServer::CGameServer(irr::net::Address &addr)
-: Thread(), Server(0)
+: Thread(), Server(0), Logger(0)
 {
-	DataBase = new irr::db::CSQLLite();
-	irr::db::CSQLLiteConParms cp = irr::db::CSQLLiteConParms();
-	cp.FileName = "l2adena.sqlite";
-	DataBase->connect(&cp);
 	EventParser = new NEGameServerNetEvent(this);
 	Server = new irr::net::CTCPServer(EventParser, 10);
 	Server->bind(addr);
@@ -52,16 +49,24 @@ void CGameServer::loginLinkEvent(SLoginLinkEvent e)
 	{
 		if(e.Result == ELLR_OK)
 		{
-			printf("Connected\n");
+			Logger->log("Connected to login server");
 		}else
 		{
-			printf("Failed to connect\n");
+			Logger->log("Failed to connect to login server");
 		}
 	}
 };
 
 void CGameServer::run()
 {
+	if(Logger == 0)
+		Logger = new irr::CLogger(NULL);
+	DataBase = new irr::db::CSQLLite();
+	irr::db::CSQLLiteConParms cp = irr::db::CSQLLiteConParms();
+	cp.FileName = "l2adena.sqlite";
+	DataBase->connect(&cp);
+	LoginServerLink->registerWithLoginServer();
+	Logger->log("Game Server up and running");
 	Server->start();
 	while(Server->Running)
 		irr::core::threads::sleep(1000);
