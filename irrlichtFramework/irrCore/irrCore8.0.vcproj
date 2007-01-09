@@ -362,6 +362,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\CLogger.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\CMemoryReadFile.cpp"
 				>
 			</File>
@@ -521,6 +525,10 @@
 			</File>
 			<File
 				RelativePath=".\include\CFileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\CLogger.h"
 				>
 			</File>
 			<File
