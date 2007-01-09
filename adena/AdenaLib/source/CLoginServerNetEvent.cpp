@@ -47,16 +47,14 @@ void NELoginServerNetEvent::OnEvent(irr::net::NetEvent &e)
 	{
 		case irr::net::ENET_CLIENT_CONNECT:
 			e.serverClient->UserData = new CLoginServerClient(e.serverClient, (CLoginServer*)Server);
-			printf("Client connected.\n");
+			((CLoginServer*)Server)->ServerStatus.Connections++;
 			break;
 		case irr::net::ENET_CLIENT_DISCONNECT:
 			if(((CLoginServerClient*)e.serverClient->UserData)->AccountId!= 0)
 				((CLoginServer*)Server)->unlogAccount(((CLoginServerClient*)e.serverClient->UserData)->AccountId);
 			delete ((CLoginServerClient*)e.serverClient->UserData);
-			printf("Client disconnected.\n");
 			break;
 		case ::irr::net::ENET_RECVDATA:
-			printf("Client sent data.\n");
 			((CLoginServerClient*)e.serverClient->UserData)->HandlePacket();
 			break;
 	}

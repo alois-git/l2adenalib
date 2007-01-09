@@ -24,6 +24,7 @@
 #include <CLoginServer.h>
 #include <CMersenneTwister.h>
 #include <IGameServerLink.h>
+#include <CLogger.h>
 
 namespace adena
 {
@@ -31,29 +32,19 @@ namespace login_server
 {
 
 CLoginServer::CLoginServer(irr::net::Address &addr)
-: Thread(),  Server(0)
+: Thread(),  Server(0), Logger(0)
 {
-	ServerListPacket = new CPServerList();
-	Rng = new irr::CMersenneTwister();
-	Rng->seed();
 	EventParser = new NELoginServerNetEvent(this);
 	Server = new irr::net::CTCPServer(EventParser, 10);
 	Server->bind(addr);
-	RsaCipher = new BDRSA(1024, 65537);
-	RsaCipher->getMod(ScrambledMod, 128);
-	ScrambleRsaPublicMod();
-	BlowfishCipher = new CBlowfish("_;5.]94-31==-%xT!^[$\000");
-	DataBase = new irr::db::CSQLLite();
-	irr::db::CSQLLiteConParms qp = irr::db::CSQLLiteConParms();
-	qp.FileName = "l2adena.sqlite";
-	if(!DataBase->connect(&qp))
-		puts("database connection failed");
 };
 
 CLoginServer::~CLoginServer()
 {
 	if(Server)
 		delete Server;
+	if(Logger)
+		delete Logger;
 	delete EventParser;
 	delete RsaCipher;
 	delete BlowfishCipher;
@@ -70,7 +61,27 @@ void CLoginServer::gameLinkEvent(SGameLinkEvent e)
 
 void CLoginServer::run()
 {
+	if(Logger == 0)
+		Logger = new irr::CLogger(NULL);
+	ServerListPacket = new CPServerList();
+	Rng = new irr::CMersenneTwister();
+	Rng->seed();
+	Logger->log("Generating RSA key...");
+	RsaCipher = new BDRSA(1024, 65537);
+	RsaCipher->getMod(ScrambledMod, 128);
+	ScrambleRsaPublicMod();
+	Logger->log("RSA key generated and scrambled");
+	BlowfishCipher = new CBlowfish("_;5.]94-31==-%xT!^[$\000");
+	DataBase = new irr::db::CSQLLite();
+	irr::db::CSQLLiteConParms qp = irr::db::CSQLLiteConParms();
+	qp.FileName = "l2adena.sqlite";
+	Logger->log("Attempting to connect to DB...");
+	if(!DataBase->connect(&qp))
+		Logger->log("FATAL ERROR: Failed to connect to DB (Check connection settings)", irr::ELL_ERROR);
+	else
+		Logger->log("DB connection sucsessfull");
 	Server->start();
+	Logger->log("Login Server up and awaiting connections");
 	while(Server->Running)
 		irr::core::threads::sleep(1000);
 };

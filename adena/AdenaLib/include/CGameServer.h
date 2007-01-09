@@ -62,6 +62,7 @@ namespace game_server
 		irr::core::list<SClassTemplate> ClassTemplateList;
 		irr::core::threads::Mutex CreateCharMutex;
 		ILoginServerLink* LoginServerLink;
+		irr::ILogger* Logger;
 
 	private:
 

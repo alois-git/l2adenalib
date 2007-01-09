@@ -46,13 +46,11 @@ void NEGameServerNetEvent::OnEvent(irr::net::NetEvent &e)
 	{
 		case irr::net::ENET_CLIENT_CONNECT:
 			e.serverClient->UserData = new CGameServerClient(e.serverClient, (CGameServer*)Server);
-			printf("Game Client connected.\n");
 			break;
 		case irr::net::ENET_CLIENT_DISCONNECT:
 			delete ((CGameServerClient*)e.serverClient->UserData);
 			break;
 		case ::irr::net::ENET_RECVDATA:
-			printf("Game Client sent data.\n");
 			((CGameServerClient*)e.serverClient->UserData)->HandlePacket();
 			break;
 	}
