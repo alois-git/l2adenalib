@@ -6,6 +6,7 @@
 #include <CCrypt.h>
 #include <CFileSystem.h>
 #include <CInProcessLoginServerLink.h>
+#include <CInProcessGameServerLink.h>
 
 using namespace std;
 using namespace irr;
@@ -53,16 +54,29 @@ int main()
 	loc += addPack(&fs, buff + loc, "pack4");
 	parseBuff(buff, loc);*/
 
-	irr::net::Address a("192.168.0.2", "2106");
-	irr::net::Address a2("192.168.0.2", "7777");
-	adena::login_server::CLoginServer* s = new adena::login_server::CLoginServer(a);
-	adena::game_server::CGameServer* g = new adena::game_server::CGameServer(a2);
-	adena::game_server::CInProcessLoginServerLink iplsl = adena::game_server::CInProcessLoginServerLink(g, s, 0);
-	g->LoginServerLink = &iplsl;
-	s->start();
-	g->start();
-	while(s->Running)
-		irr::core::threads::sleep(1000);
+	adena::login_server::CLoginServer* s = new adena::login_server::CLoginServer();
+	adena::game_server::CGameServer* g = new adena::game_server::CGameServer();
+	adena::login_server::CInProcessGameServerLink GameLink = adena::login_server::CInProcessGameServerLink(s);
+	adena::game_server::CInProcessLoginServerLink LogLink = adena::game_server::CInProcessLoginServerLink(g, &GameLink, 0);
+	s->GameServerLink = &GameLink;
+	g->LoginServerLink = &LogLink;
+	if(s->init("login.ini"))
+	{
+		s->start();
+		if(g->init("game.ini"))
+		{
+			g->start();
+			while(s->Running)
+				irr::core::threads::sleep(1000);
+		}
+		else
+		{
+			cout << "Failed to init game server\n";
+		}
+	}else
+	{
+		cout << "Failed to init login server\n";
+	}
 	system("PAUSE");
 	delete s;
 	delete g;

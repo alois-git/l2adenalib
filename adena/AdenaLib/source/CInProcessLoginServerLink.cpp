@@ -41,9 +41,9 @@ CInProcessLoginServerLink::~CInProcessLoginServerLink()
 
 };
 
-void CInProcessLoginServerLink::registerWithLoginServer()
+void CInProcessLoginServerLink::registerWithLoginServer(irr::c8 ip[4], irr::u16 port)
 {
-	if(((login_server::CInProcessGameServerLink*)GameServerLink)->regServer(ServerId))
+	if(((login_server::CInProcessGameServerLink*)GameServerLink)->regServer(ServerId, this, ip, port))
 	{
 		SLoginLinkEvent lle;
 		lle.EventType = ELLET_REGISTER_RESULT;
@@ -56,6 +56,11 @@ void CInProcessLoginServerLink::registerWithLoginServer()
 		lle.Result = ELLR_AUTH_FAILED;
 		((CGameServer*)GameServer)->loginLinkEvent(lle);
 	}
+};
+
+void CInProcessLoginServerLink::kickAccount(irr::u32 account_id)
+{
+	printf("Login Server requested kick of account_id %d\n", account_id);
 };
 
 }

@@ -50,7 +50,7 @@ void NELoginServerNetEvent::OnEvent(irr::net::NetEvent &e)
 			((CLoginServer*)Server)->ServerStatus.Connections++;
 			break;
 		case irr::net::ENET_CLIENT_DISCONNECT:
-			if(((CLoginServerClient*)e.serverClient->UserData)->AccountId!= 0)
+			if(((CLoginServerClient*)e.serverClient->UserData)->AccountId != 0)
 				((CLoginServer*)Server)->unlogAccount(((CLoginServerClient*)e.serverClient->UserData)->AccountId);
 			delete ((CLoginServerClient*)e.serverClient->UserData);
 			break;

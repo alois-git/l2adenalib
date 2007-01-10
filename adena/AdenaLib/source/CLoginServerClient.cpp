@@ -72,19 +72,17 @@ void CLoginServerClient::HandlePacket()
 		Server->Server->kickClient(Client);
 	}
 
-	Server->BlowfishCipher->decrypt(buff, size - 2, dec, RECV_SIZE);
+	Server->Interfaces.BlowfishCipher->decrypt(buff, size - 2, dec, RECV_SIZE);
 
 	IPacket* in;
 	if(dec[0] == 0)
 	{
 		Server->ServerStatus.LoginAttempts++;
 		// cout << "Auth request.\n";
-		in = new CPRequestLogin(dec, Server->RsaCipher);
-		puts(((CPRequestLogin*)in)->Username.c_str());
-		puts(((CPRequestLogin*)in)->Password.c_str());
+		CPRequestLogin rl(dec, Server->Interfaces.RsaCipher);
 		irr::db::Query q = irr::db::Query(irr::core::stringc("SELECT id,password FROM accounts WHERE username = '$user'"));
-		q.setVar(irr::core::stringc("$user"), ((CPRequestLogin*)in)->Username);
-		irr::db::CQueryResult qr = Server->DataBase->query(q);
+		q.setVar(irr::core::stringc("$user"), rl.Username);
+		irr::db::CQueryResult qr = Server->Interfaces.DataBase->query(q);
 		if(qr.RowCount != 1)
 		{
 			// Don't tell the client that the username does not exist.
@@ -94,12 +92,12 @@ void CLoginServerClient::HandlePacket()
 		}else
 		{
 			irr::crypt::CHashMD5 md5 = irr::crypt::CHashMD5();
-			irr::core::stringc hash = md5.quickHash(((CPRequestLogin*)in)->Password);
+			irr::core::stringc hash = md5.quickHash(rl.Password);
 			if(qr[0][irr::core::stringc("password")] == hash)
 			{
 				if(Server->loginAccount(AccountId = atoi(qr[0][irr::core::stringc("id")].c_str()), Client))
 				{
-					SessionId = Server->Rng->getRandU32();
+					SessionId = Server->Interfaces.Rng->getRandU32();
 					CPLoginOk clo(SessionId);
 					SendPacket(&clo);
 					Server->ServerStatus.LoginSuccesses++;
@@ -118,7 +116,16 @@ void CLoginServerClient::HandlePacket()
 		}
 	}else if(dec[0] == 2)
 	{
-		//CPRequestPlay rp(dec);
+		// Request play
+		CPRequestPlay rp(dec);
+		// Set AccountId to 0 so the login server doesnt remove it when we DC from the login
+		Server->AccountLocationsMutex.getLock();
+		CLoginServer::SAccountLocation al;
+		Server->AccountLocations.Find(AccountId, al);
+		al.Local = false;
+		al.Data = (void*)(rp.ServerIndex - 1);
+		Server->AccountLocationsMutex.releaseLock();
+		AccountId = 0;
 		CPPlayOk po(SessionId);
 		SendPacket(&po);
 	}else if(dec[0] == 5)
@@ -147,8 +154,8 @@ void CLoginServerClient::SendPacket(IPacket* packet)
 	c8 enc[RECV_SIZE];
 	irr::c8* data = packet->getData();
 	irr::u32 len = packet->getLen();
-	Server->BlowfishCipher->checksum(data, len);
-	Server->BlowfishCipher->crypt(data, len, enc, RECV_SIZE);
+	Server->Interfaces.BlowfishCipher->checksum(data, len);
+	Server->Interfaces.BlowfishCipher->crypt(data, len, enc, RECV_SIZE);
 	buff[0] = ((len + 2) & 0xff);
 	buff[1] = (((len + 2) >> 8) & 0xff);
 	memcpy(buff + 2, enc, len);

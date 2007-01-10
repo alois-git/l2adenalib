@@ -1,6 +1,6 @@
 /*
- * CGameServer.h - Game server.
- * Created January 6, 2006, by Michael 'Bigcheese' Spencer.
+ * CPlayerCache.h - Interface for getting player info from the SQL database.
+ * Created January 9, 2006, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,51 +21,47 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_GAME_SERVER_H_
-#define _ADENA_C_GAME_SERVER_H_
+#ifndef _ADENA_C_PLAYER_CACHE_H_
+#define _ADENA_C_PLAYER_CACHE_H_
 
 #include <AdenaConfig.h>
 #include <irrThread.h>
-#include <irrNet.h>
-#include <CGameServerNetEvent.h>
-#include <SGameServerInterfaces.h>
-#include <irrList.h>
-#include <SClassTemplate.h>
-#include <ILoginServerLink.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class ADENALIB_API CGameServer : public irr::core::threads::Thread
+	/*
+	 * The player cache is used to load player data from the SQL sever and save it intermitently
+	 * 
+	 */
+	class CPlayerCache : public irr::core::threads::Thread
 	{
 	public:
 
+		CPlayerCache();
+
+		virtual ~CPlayerCache();
+
 		/*
-		 * @param addr: The address to bind to.
-		 * result: Server is initalized and bound to addr.
+		 * return: true if creation sucessfull, false if name already taken
 		 */
-		CGameServer();
+		virtual bool createChar();
 
-		virtual ~CGameServer();
+		/*
+		 * @param account_id: [IN] The account id of the characters to load
+		 * return: The number of chars loaded
+		 * note: Accesses SQL
+		 */
+		virtual irr::u32 loadCharSelect(irr::u32 account_id);
 
-		virtual bool init(const char* config_file);
+		/*
+		 * @param account_id: [IN] The account id of the char to load
+		 * @param char_index: [IN] The index (as shown on the char select screen starting at 0) of the char to load
+		 */
+		virtual void loadChar(irr::u32 account_id, irr::u32 char_index);
 
-		virtual void loginLinkEvent(SLoginLinkEvent e);
-
-		virtual void run();
-
-		SGameServerInterfaces Interfaces;
-		irr::net::IServer* Server;
-		irr::core::list<SClassTemplate> ClassTemplateList;
-		irr::core::threads::Mutex CreateCharMutex;
-		ILoginServerLink* LoginServerLink;
-
-	private:
-
-		NEGameServerNetEvent* EventParser;
-		
 	};
 
 }
