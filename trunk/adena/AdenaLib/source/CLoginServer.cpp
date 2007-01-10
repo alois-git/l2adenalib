@@ -31,57 +31,87 @@ namespace adena
 namespace login_server
 {
 
-CLoginServer::CLoginServer(irr::net::Address &addr)
-: Thread(),  Server(0), Logger(0)
+CLoginServer::CLoginServer()
+: Thread(),  Server(0)
 {
+	memset(&Interfaces, 0, sizeof(Interfaces));
 	EventParser = new NELoginServerNetEvent(this);
 	Server = new irr::net::CTCPServer(EventParser, 10);
-	Server->bind(addr);
+
+	InternalServerListPacket = new CPServerList();
+	ExternalServerListPacket = new CPServerList();
 };
 
 CLoginServer::~CLoginServer()
 {
 	if(Server)
 		delete Server;
-	if(Logger)
-		delete Logger;
+	if(Interfaces.Logger)
+		delete Interfaces.Logger;
 	delete EventParser;
-	delete RsaCipher;
-	delete BlowfishCipher;
+	delete Interfaces.RsaCipher;
+	delete Interfaces.BlowfishCipher;
+};
+
+bool CLoginServer::init(const char* config_file)
+{
+	if(Interfaces.Logger == 0)
+		Interfaces.Logger = new irr::CLogger(NULL);
+
+	try
+	{
+		Interfaces.ConfigFile = new BCini(config_file);
+	}catch (std::exception e)
+	{
+		Interfaces.Logger->log(e.what());
+		return false;
+	}
+
+	irr::net::Address a((*Interfaces.ConfigFile)["loginserver"]["host"].getData(), (*Interfaces.ConfigFile)["loginserver"]["port"].getData());
+	Server->bind(a);
+
+	// Random number generator setup
+	if(Interfaces.Rng == 0)
+		Interfaces.Rng = new irr::CMersenneTwister();
+	Interfaces.Rng->seed();
+
+	// Rsa setup
+	Interfaces.Logger->log("Generating RSA key...");
+	Interfaces.RsaCipher = new BDRSA(1024, 65537);
+	Interfaces.RsaCipher->getMod(ScrambledMod, 128);
+	ScrambleRsaPublicMod();
+	Interfaces.Logger->log("RSA key generated and scrambled");
+
+	// Blowfish setup
+	Interfaces.BlowfishCipher = new CBlowfish("_;5.]94-31==-%xT!^[$\000");
+
+	// Database setup
+	Interfaces.DataBase = new irr::db::CSQLLite();
+	irr::db::CSQLLiteConParms qp = irr::db::CSQLLiteConParms();
+	qp.FileName = (*Interfaces.ConfigFile)["sqlite"]["file"].getData();
+	Interfaces.Logger->log("Attempting to connect to DB...");
+	if(!Interfaces.DataBase->connect(&qp))
+	{
+		Interfaces.Logger->log("FATAL ERROR: Failed to connect to DB (Check connection settings)", irr::ELL_ERROR);
+		return false;
+	}else
+		Interfaces.Logger->log("DB connection sucsessfull");
+
+	return true;
 };
 
 void CLoginServer::gameLinkEvent(SGameLinkEvent e)
 {
 	if(e.EventType == EGLET_REGISTER_REQUEST)
 	{
-		irr::u32 sID = *((irr::u32*)e.Data);
-		printf("Reg request id: %d\n", sID);
+		ExternalServerListPacket->addServer(e.RegisterRequest.Ip, e.RegisterRequest.Port, true, false, 0, 1000, false, true, 1, e.ServerId);
 	}
 };
 
 void CLoginServer::run()
 {
-	if(Logger == 0)
-		Logger = new irr::CLogger(NULL);
-	ServerListPacket = new CPServerList();
-	Rng = new irr::CMersenneTwister();
-	Rng->seed();
-	Logger->log("Generating RSA key...");
-	RsaCipher = new BDRSA(1024, 65537);
-	RsaCipher->getMod(ScrambledMod, 128);
-	ScrambleRsaPublicMod();
-	Logger->log("RSA key generated and scrambled");
-	BlowfishCipher = new CBlowfish("_;5.]94-31==-%xT!^[$\000");
-	DataBase = new irr::db::CSQLLite();
-	irr::db::CSQLLiteConParms qp = irr::db::CSQLLiteConParms();
-	qp.FileName = "l2adena.sqlite";
-	Logger->log("Attempting to connect to DB...");
-	if(!DataBase->connect(&qp))
-		Logger->log("FATAL ERROR: Failed to connect to DB (Check connection settings)", irr::ELL_ERROR);
-	else
-		Logger->log("DB connection sucsessfull");
 	Server->start();
-	Logger->log("Login Server up and awaiting connections");
+	Interfaces.Logger->log("Login Server up and awaiting connections");
 	while(Server->Running)
 		irr::core::threads::sleep(1000);
 };
@@ -99,7 +129,7 @@ bool CLoginServer::loginAccount(irr::u32 account_id, irr::net::IServerClient* cl
 		}else
 		{
 			AccountLocationsMutex.releaseLock();
-			//GameServerLink->requestKick();
+			GameServerLink->requestKick((irr::u32)al.Data, account_id);
 		}
 		return false;
 	}else

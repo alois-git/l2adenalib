@@ -38,7 +38,8 @@ namespace login_server
 
 	enum E_GameLinkEventType
 	{
-		EGLET_REGISTER_REQUEST = 0
+		EGLET_REGISTER_REQUEST = 0,
+		EGLET_CLIENT_DROPED
 	};
 
 	enum E_GameLinkResult
@@ -52,7 +53,20 @@ namespace login_server
 		E_GameLinkEventType EventType;
 		E_GameLinkResult Result;
 		irr::u32 ServerId;
-		void* Data;
+
+		union
+		{
+			struct
+			{
+				irr::c8 Ip[4];
+				irr::u16 Port;
+			} RegisterRequest;
+
+			struct
+			{
+				irr::u32 AccountId;
+			} ClientDroped;
+		};
 	};
 
 	class IGameServerLink

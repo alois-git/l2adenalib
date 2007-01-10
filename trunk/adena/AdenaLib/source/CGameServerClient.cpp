@@ -73,11 +73,13 @@ void CGameServerClient::HandlePacket()
 {
 	irr::c8 buff[RECV_SIZE];
 
+	// Take the first 2 bytes to get the packet size
 	Client->recv(buff, 2);
 	int size = 0;
 	size += (unsigned char)buff[0];
 	size += ((unsigned char)(buff[1]) * 256);
 
+	// Get the rest of the packet
 	int recv_len = Client->recv(buff, size - 2);
 
 	if(recv_len != (size - 2))
@@ -88,9 +90,11 @@ void CGameServerClient::HandlePacket()
 
 	if(CryptPackets)
 	{
+		// Decrypt the data using L2s usless xor cipher
 		InputCipher->decrypt(buff, size - 2);
 	}
 
+	// Function pointers FTW
 	(this->*PacketFunctions[buff[0] & 0xff])(buff);
 };
 
@@ -138,7 +142,7 @@ void CGameServerClient::authLogin(irr::c8* data)
 {
 	CPAuthLogin al(data);
 	AccountName = al.AccountName;
-	CPCharSelect cs(Server->DataBase, AccountName);
+	CPCharSelect cs(Server->Interfaces.DataBase, AccountName);
 	sendPacket(&cs);
 };
 
@@ -157,7 +161,7 @@ void CGameServerClient::createChar(irr::c8* data)
 	Server->CreateCharMutex.getLock();
 	irr::db::Query check_name(irr::core::stringc("SELECT 'id' FROM 'characters' WHERE name = '$name'"));
 	check_name.setVar(irr::core::stringc("$name"), cc.Name);
-	if(Server->DataBase->query(check_name).RowCount != 0)
+	if(Server->Interfaces.DataBase->query(check_name).RowCount != 0)
 	{
 		// Name already taken.
 		CPCharCreateFailed ccf(CPCharCreateFailed::ECCFR_NAME_ALREADY_EXISTS);
@@ -175,10 +179,10 @@ VALUES ('$acc', '$name', $race, $class, $sex, $hairt, $hairc, $face)"));
 		add_char.setVar(irr::core::stringc("$hairt"), irr::core::stringc((int)cc.HairStyle));
 		add_char.setVar(irr::core::stringc("$hairc"), irr::core::stringc((int)cc.HairColor));
 		add_char.setVar(irr::core::stringc("$face"), irr::core::stringc((int)cc.Face));
-		Server->DataBase->query(add_char);
+		Server->Interfaces.DataBase->query(add_char);
 		CPCharCreateOk cco = CPCharCreateOk();
 		sendPacket(&cco);
-		CPCharSelect cs(Server->DataBase, AccountName);
+		CPCharSelect cs(Server->Interfaces.DataBase, AccountName);
 		sendPacket(&cs);
 	}
 	Server->CreateCharMutex.releaseLock();

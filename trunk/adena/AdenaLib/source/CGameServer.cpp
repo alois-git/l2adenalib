@@ -23,24 +23,71 @@
 
 #include <CGameServer.h>
 #include <CLogger.h>
+#include <ip2bytes.h>
+#include <CMersenneTwister.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-CGameServer::CGameServer(irr::net::Address &addr)
-: Thread(), Server(0), Logger(0)
+CGameServer::CGameServer()
+: Thread(), Server(0)
 {
+	memset(&Interfaces, 0, sizeof(Interfaces));
 	EventParser = new NEGameServerNetEvent(this);
 	Server = new irr::net::CTCPServer(EventParser, 10);
-	Server->bind(addr);
+
 };
 
 CGameServer::~CGameServer()
 {
 	if(Server)
 		delete Server;
+	if(Interfaces.Logger)
+		delete Interfaces.Logger;
+	delete EventParser;
+};
+
+bool CGameServer::init(const char* config_file)
+{	
+	if(Interfaces.Logger == 0)
+		Interfaces.Logger = new irr::CLogger(NULL);
+	
+	try
+	{
+		Interfaces.ConfigFile = new BCini(config_file);
+	}catch (std::exception e)
+	{
+		Interfaces.Logger->log(e.what());
+		return false;
+	}
+
+	irr::net::Address a((*Interfaces.ConfigFile)["gameserver"]["internal_host"].getData(), (*Interfaces.ConfigFile)["gameserver"]["port"].getData());
+	Server->bind(a);
+
+	// Random number generator setup
+	if(Interfaces.Rng == 0)
+		Interfaces.Rng = new irr::CMersenneTwister();
+	Interfaces.Rng->seed();
+
+	// Database setup
+	Interfaces.DataBase = new irr::db::CSQLLite();
+	irr::db::CSQLLiteConParms qp = irr::db::CSQLLiteConParms();
+	qp.FileName = (*Interfaces.ConfigFile)["sqlite"]["file"].getData();
+	Interfaces.Logger->log("Attempting to connect to DB...");
+	if(!Interfaces.DataBase->connect(&qp))
+	{
+		Interfaces.Logger->log("FATAL ERROR: Failed to connect to DB (Check connection settings)", irr::ELL_ERROR);
+		return false;
+	}else
+		Interfaces.Logger->log("DB connection sucsessfull");
+
+	// Register with login server
+	irr::c8 ip[4];
+	ip2bytes((*Interfaces.ConfigFile)["gameserver"]["external_host"].getData(), ip);
+	LoginServerLink->registerWithLoginServer(ip, atoi((*Interfaces.ConfigFile)["gameserver"]["port"].getData()));
+	return true;
 };
 
 void CGameServer::loginLinkEvent(SLoginLinkEvent e)
@@ -49,25 +96,18 @@ void CGameServer::loginLinkEvent(SLoginLinkEvent e)
 	{
 		if(e.Result == ELLR_OK)
 		{
-			Logger->log("Connected to login server");
+			Interfaces.Logger->log("Connected to login server");
 		}else
 		{
-			Logger->log("Failed to connect to login server");
+			Interfaces.Logger->log("Failed to connect to login server");
 		}
 	}
 };
 
 void CGameServer::run()
 {
-	if(Logger == 0)
-		Logger = new irr::CLogger(NULL);
-	DataBase = new irr::db::CSQLLite();
-	irr::db::CSQLLiteConParms cp = irr::db::CSQLLiteConParms();
-	cp.FileName = "l2adena.sqlite";
-	DataBase->connect(&cp);
-	LoginServerLink->registerWithLoginServer();
-	Logger->log("Game Server up and running");
 	Server->start();
+	Interfaces.Logger->log("Game Server up and running");
 	while(Server->Running)
 		irr::core::threads::sleep(1000);
 };

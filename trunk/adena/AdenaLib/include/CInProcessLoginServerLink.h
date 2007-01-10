@@ -45,14 +45,14 @@ namespace game_server
 
 		virtual ~CInProcessLoginServerLink();
 
-		virtual void registerWithLoginServer();
+		virtual void registerWithLoginServer(irr::c8 ip[4], irr::u16 port);
 
 		void* GameServerLink;
 		void* GameServer;
 
 		// For CInProcessGameServerLink
 
-
+		void kickAccount(irr::u32 account_id);
 
 	private:
 

@@ -46,7 +46,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="0"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
@@ -124,7 +124,7 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ADENALIB_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="0"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
@@ -184,6 +184,10 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath=".\source\BCini.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\source\BlowfishEngine.cpp"
 				>
@@ -387,6 +391,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\BCini.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\BlowfishEngine.h"
 				>
 			</File>
@@ -431,6 +439,10 @@
 				</File>
 				<File
 					RelativePath=".\include\IGameServerLink.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\SLoginServerInterfaces.h"
 					>
 				</File>
 				<File
@@ -510,11 +522,19 @@
 					>
 				</File>
 				<File
+					RelativePath=".\include\CPlayerCache.h"
+					>
+				</File>
+				<File
 					RelativePath=".\include\ILoginServerLink.h"
 					>
 				</File>
 				<File
 					RelativePath=".\include\SClassTemplate.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\SGameServerInterfaces.h"
 					>
 				</File>
 				<Filter

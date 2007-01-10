@@ -25,6 +25,8 @@
 #define _ADENA_C_IN_PROCESS_GAME_SERVER_LINK_H_
 
 #include <IGameServerLink.h>
+#include <irrArray.h>
+#include <CMutex.h>
 
 namespace adena
 {
@@ -41,7 +43,7 @@ namespace login_server
 	{
 	public:
 
-		CInProcessGameServerLink(void* loginserver, void* loginserverlink);
+		CInProcessGameServerLink(void* loginserver);
 
 		virtual ~CInProcessGameServerLink();
 
@@ -49,15 +51,17 @@ namespace login_server
 
 		virtual void requestKick(irr::u32 server_id, irr::u32 account_id);
 
-		void* LoginServerLink;
 		void* LoginServer;
 
 		// For CInProcessLoginServerLink
 
-		bool regServer(irr::u32 server_id);
+		bool regServer(irr::u32 server_id, void* login_server_link, irr::c8 ip[4], irr::u16 port);
 
 	private:
 
+		// Pointers to CInProcessLoginServerLinks
+		irr::core::array<void*> LoginLinks;
+		irr::core::threads::Mutex LoginLinksMutex;
 		irr::u32 ServerId;
 
 	};
