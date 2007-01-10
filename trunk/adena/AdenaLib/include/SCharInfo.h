@@ -1,6 +1,6 @@
 /*
- * CPCharCreateFailed.h - Char create failed.
- * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
+ * SCharInfo.h - Persistant character info.
+ * Created January 10, 2006, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,54 +21,29 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_CHAR_CREATE_FAILED_H_
-#define _ADENA_C_P_CHAR_CREATE_FAILED_H_
+#ifndef _ADENA_S_CHAR_INFO_H_
+#define _ADENA_S_CHAR_INFO_H_
 
-#include <CPacket.h>
+#include <AdenaConfig.h>
+#include <irrString.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPCharCreateFailed : public CPacket
+	struct SCharInfo
 	{
-	public:
-
-		static enum E_CharCreateFailedReason
-		{
-			ECCFR_CREATION_FAILED = 0x00,
-			ECCFR_TOO_MANY_CHARACTERS = 0x01,
-			ECCFR_NAME_ALREADY_EXISTS = 0x02,
-			ECCFR_16_ENG_CHARS = 0x03
-		};
-
-		CPCharCreateFailed(E_CharCreateFailedReason reason)
-		: CPacket()
-		{
-			w8(0x1a);
-			w32((irr::u32)reason);
-		};
-
-		virtual ~CPCharCreateFailed()
-		{
-
-		};
-
-		virtual irr::c8* getData()
-		{
-			return Data;
-		};
-
-		virtual irr::u32 getLen()
-		{
-			return WritePointer;
-		};
-
-	private:
-
-
-
+		irr::u32 CharacterId;
+		irr::u32 AccountId;
+		irr::core::stringc Name;
+		irr::core::stringc Title;
+		irr::u32 RaceId;
+		irr::u32 ClassId;
+		irr::u32 Sex;
+		irr::u32 HairType;
+		irr::u32 HairColor;
+		irr::u32 FaceType;
 	};
 
 }
