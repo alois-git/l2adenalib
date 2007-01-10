@@ -84,9 +84,10 @@ namespace irr
 
 		#ifdef _IRR_WINDOWS_
 		typedef SOCKET Socket;
-		#define close(x) closesocket(x)
+		#define nclose(x) closesocket(x)
 		#else
 		typedef int Socket;
+		#define nclose(x) close(x)
 		#endif
 	}
 }

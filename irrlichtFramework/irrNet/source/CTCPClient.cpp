@@ -21,7 +21,7 @@ CTCPClient::CTCPClient(void* eventCallBack)
 
 CTCPClient::~CTCPClient()
 {
-	::close(Sock);
+	::nclose(Sock);
 };
 
 void CTCPClient::run()
@@ -66,7 +66,7 @@ bool CTCPClient::connect(Address &a, s32 af)
 
 		if(::connect(Sock, a.resActive->ai_addr, a.resActive->ai_addrlen) < 0)
 		{
-			::close(Sock);
+			::nclose(Sock);
 			Sock = -1;
 			return false;
 		}
@@ -81,7 +81,7 @@ bool CTCPClient::connect(Address &a, s32 af)
 
 			if(::connect(Sock, a.resActive->ai_addr, a.resActive->ai_addrlen) < 0)
 			{
-				::close(Sock);
+				::nclose(Sock);
 				Sock = -1;
 				continue;
 			}else
@@ -95,7 +95,7 @@ bool CTCPClient::connect(Address &a, s32 af)
 
 void CTCPClient::disconnect()
 {
-	::close(Sock);
+	::nclose(Sock);
 };
 
 void CTCPClient::send(c8* data, u32 len)
