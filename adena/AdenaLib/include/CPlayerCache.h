@@ -4,19 +4,19 @@
  *
  * Copyright (C) 2007 Michael Spencer
  * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Michael Spencer - bigcheesegs@gmail.com
  */
@@ -26,6 +26,8 @@
 
 #include <AdenaConfig.h>
 #include <irrThread.h>
+#include <SCharInfo.h>
+#include <irrDb.h>
 
 namespace adena
 {
@@ -36,31 +38,55 @@ namespace game_server
 	 * The player cache is used to load player data from the SQL sever and save it intermitently
 	 * 
 	 */
-	class CPlayerCache : public irr::core::threads::Thread
+	class CPlayerCache // : public irr::core::threads::Thread
 	{
 	public:
 
-		CPlayerCache();
+		CPlayerCache(void* interfaces);
 
 		virtual ~CPlayerCache();
 
 		/*
 		 * return: true if creation sucessfull, false if name already taken
 		 */
-		virtual bool createChar();
+		virtual bool createChar(SCharInfo &char_info);
 
 		/*
 		 * @param account_id: [IN] The account id of the characters to load
 		 * return: The number of chars loaded
-		 * note: Accesses SQL
 		 */
 		virtual irr::u32 loadCharSelect(irr::u32 account_id);
 
 		/*
 		 * @param account_id: [IN] The account id of the char to load
 		 * @param char_index: [IN] The index (as shown on the char select screen starting at 0) of the char to load
+		 * return: A pointer to the selected char info
 		 */
-		virtual void loadChar(irr::u32 account_id, irr::u32 char_index);
+		virtual SCharInfo* loadChar(irr::u32 account_id, irr::u32 char_index);
+
+		/*
+		 * @param char_id: [IN] The id of the char (not the index used in loadChar)
+		 * return: A pointer to the selected char info
+		 */
+		virtual SCharInfo* loadChar(irr::u32 char_id);
+
+		/*
+		 * Saves a char to the database. Should be called periodicly and when a client disconnects,
+		 * or when the server chrashes
+		 *
+		 * @param char_id: [IN] The id of the char (not the index used in loadChar)
+		 */
+		virtual void saveChar(irr::u32 char_id);
+
+		/*
+		 * Delalocats all un used chars
+		 * @param full_collect: [IN] if true, remove all (even if in game) chars. If false only remove chars not in game
+		 */
+		virtual void garbageCollect(bool full_collect = false);
+
+	private:
+
+		void* Interfaces;
 
 	};
 

@@ -4,19 +4,19 @@
  *
  * Copyright (C) 2007 Michael Spencer
  * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Michael Spencer - bigcheesegs@gmail.com
  */
@@ -35,11 +35,11 @@ namespace game_server
 	{
 	public:
 
-		CPCharSelect(irr::db::IDatabase* db, irr::core::stringc& acc)
+		CPCharSelect(irr::db::IDatabase* db, irr::u32 acc)
 		: CPacket()
 		{
-			irr::db::Query chars(irr::core::stringc("SELECT * FROM characters WHERE account_name = '$acc'"));
-			chars.setVar(irr::core::stringc("$acc"), acc);
+			irr::db::Query chars(irr::core::stringc("SELECT * FROM characters WHERE account_id = $acc"));
+			chars.setVar(irr::core::stringc("$acc"), irr::core::stringc((int)acc));
 			irr::db::CQueryResult qr = db->query(chars);
 
 			irr::u32 len = qr.RowCount;
@@ -51,7 +51,7 @@ namespace game_server
 			{
 				wStrW(qr[i][irr::core::stringc("name")]); // Char name
 				w32(atoi(qr[i][irr::core::stringc("id")].c_str())); // Char id, no reason
-				wStrW(acc); // Account name, no reason.
+				wStrW(irr::core::stringc("1337")); // Account name, no reason
 
 				w32(0x00);
 				w32(0x00);
@@ -71,7 +71,7 @@ namespace game_server
 				wf(0x00); // Current mp
 				w32(0x00); // Current sp
 				w64(0x00); // Current xp
-				w32(80);  // Current level
+				w32(0x01);  // Current level
 
 				w32(0x00); // Current karma
 				w32(0x00);

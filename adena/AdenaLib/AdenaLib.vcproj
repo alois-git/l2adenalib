@@ -379,6 +379,10 @@
 					RelativePath=".\source\COPlayer.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\source\CPlayerCache.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -412,6 +416,10 @@
 			</File>
 			<File
 				RelativePath=".\include\IPacket.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SGameServerInfo.h"
 				>
 			</File>
 			<Filter
@@ -527,6 +535,10 @@
 				</File>
 				<File
 					RelativePath=".\include\ILoginServerLink.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\SCharInfo.h"
 					>
 				</File>
 				<File

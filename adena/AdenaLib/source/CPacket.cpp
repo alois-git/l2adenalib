@@ -4,19 +4,19 @@
  *
  * Copyright (C) 2007 Michael Spencer
  * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Michael Spencer - bigcheesegs@gmail.com
  */
@@ -124,19 +124,13 @@ void CPacket::w64(irr::u64 val)
 
 //--------------------------------
 
-void CPacket::wf(irr::u64 val)
+void CPacket::wf(irr::f64 val)
 {
 	if((WritePointer + 8) > DataLen)
 		resize(WritePointer + GROW_SIZE);
 
-	Data[WritePointer++] = (val & 0xff);
-	Data[WritePointer++] = ((val >> 8) & 0xff);
-	Data[WritePointer++] = ((val >> 16) & 0xff);
-	Data[WritePointer++] = ((val >> 24) & 0xff);
-	Data[WritePointer++] = ((val >> 30) & 0xff);
-	Data[WritePointer++] = ((val >> 38) & 0xff);
-	Data[WritePointer++] = ((val >> 46) & 0xff);
-	Data[WritePointer++] = ((val >> 52) & 0xff);
+	memcpy(&val, Data + WritePointer, 8);
+	WritePointer += 8;
 };
 
 

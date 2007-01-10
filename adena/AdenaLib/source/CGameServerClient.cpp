@@ -4,19 +4,19 @@
  *
  * Copyright (C) 2007 Michael Spencer
  * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Michael Spencer - bigcheesegs@gmail.com
  */
@@ -35,6 +35,7 @@
 #include <CPCharInfo.h>
 #include <CPUserInfo.h>
 #include <CPLogout.h>
+#include <SCharInfo.h>
 
 #define RECV_SIZE 65536 // Max size of a L2 packet.
 
@@ -142,8 +143,8 @@ void CGameServerClient::authLogin(irr::c8* data)
 {
 	CPAuthLogin al(data);
 	AccountName = al.AccountName;
-	CPCharSelect cs(Server->Interfaces.DataBase, AccountName);
-	sendPacket(&cs);
+	//CPCharSelect cs(Server->Interfaces.DataBase, AccountName);
+	//sendPacket(&cs);
 };
 
 // 9
@@ -159,32 +160,32 @@ void CGameServerClient::createChar(irr::c8* data)
 {
 	CPCharCreate cc(data);
 	Server->CreateCharMutex.getLock();
-	irr::db::Query check_name(irr::core::stringc("SELECT 'id' FROM 'characters' WHERE name = '$name'"));
-	check_name.setVar(irr::core::stringc("$name"), cc.Name);
-	if(Server->Interfaces.DataBase->query(check_name).RowCount != 0)
+
+	SCharInfo ci;
+	//ci.AccountId = 
+	ci.Name = cc.Name;
+	ci.Title = "";
+	ci.RaceId = cc.Race;
+	ci.ClassId = cc.ClassId; // TODO: Trusting the client to much
+	ci.Sex = cc.Sex;
+	ci.HairType = cc.HairStyle;
+	ci.HairColor = cc.HairColor;
+	ci.FaceType = cc.Face;
+
+	if(Server->Interfaces.PlayerCache->createChar(ci))
 	{
-		// Name already taken.
-		CPCharCreateFailed ccf(CPCharCreateFailed::ECCFR_NAME_ALREADY_EXISTS);
-		sendPacket(&ccf);
-	}else
-	{
-		// Add char.
-		irr::db::Query add_char(irr::core::stringc("INSERT INTO 'characters' (account_name, name, race_id, class_id, sex, hair_type, hair_color, face)\
-VALUES ('$acc', '$name', $race, $class, $sex, $hairt, $hairc, $face)"));
-		add_char.setVar(irr::core::stringc("$acc"), AccountName);
-		add_char.setVar(irr::core::stringc("$name"), cc.Name);
-		add_char.setVar(irr::core::stringc("$race"), irr::core::stringc((int)cc.Race));
-		add_char.setVar(irr::core::stringc("$class"), irr::core::stringc((int)cc.ClassId));
-		add_char.setVar(irr::core::stringc("$sex"), irr::core::stringc((int)cc.Sex));
-		add_char.setVar(irr::core::stringc("$hairt"), irr::core::stringc((int)cc.HairStyle));
-		add_char.setVar(irr::core::stringc("$hairc"), irr::core::stringc((int)cc.HairColor));
-		add_char.setVar(irr::core::stringc("$face"), irr::core::stringc((int)cc.Face));
-		Server->Interfaces.DataBase->query(add_char);
+		// Char created
 		CPCharCreateOk cco = CPCharCreateOk();
 		sendPacket(&cco);
-		CPCharSelect cs(Server->Interfaces.DataBase, AccountName);
-		sendPacket(&cs);
+		//CPCharSelect cs(Server->Interfaces.DataBase, AccountName);
+		//sendPacket(&cs);
+	}else
+	{
+		// Char creation failed
+		CPCharCreateFailed ccf(CPCharCreateFailed::ECCFR_NAME_ALREADY_EXISTS);
+		sendPacket(&ccf);
 	}
+
 	Server->CreateCharMutex.releaseLock();
 };
 
