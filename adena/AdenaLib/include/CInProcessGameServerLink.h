@@ -51,11 +51,15 @@ namespace login_server
 
 		virtual void requestKick(irr::u32 server_id, irr::u32 account_id);
 
+		virtual void requestServerInfo(irr::u32 server_id);
+
+		virtual void requestPlay(irr::u32 server_id, irr::core::stringc account_name, irr::u32 account_id, irr::u32 session_id);
+
 		void* LoginServer;
 
 		// For CInProcessLoginServerLink
 
-		bool regServer(irr::u32 server_id, void* login_server_link, irr::c8 ip[4], irr::u16 port);
+		bool regServer(irr::u32 server_id, void* login_server_link);
 
 	private:
 

@@ -63,15 +63,28 @@ void CInProcessGameServerLink::requestKick(irr::u32 server_id, irr::u32 account_
 	}
 };
 
+void CInProcessGameServerLink::requestServerInfo(irr::u32 server_id)
+{
+	SGameServerInfo gsi = ((game_server::CInProcessLoginServerLink*)LoginLinks[server_id])->getServerInfo();
+	SGameLinkEvent gle;
+	gle.ServerId = gsi.ServerId;
+	gle.EventType = EGLET_SERVER_INFO;
+	gle.ServerInfo.GameServerInfo = gsi;
+	((CLoginServer*)LoginServer)->gameLinkEvent(gle);
+};
+
+void CInProcessGameServerLink::requestPlay(irr::u32 server_id, irr::core::stringc account_name, irr::u32 account_id, irr::u32 session_id)
+{
+	((game_server::CInProcessLoginServerLink*)LoginLinks[server_id])->requestPlay(account_name, account_id, session_id);
+}
+
 // For CInProcessLoginServerLink
 
-bool CInProcessGameServerLink::regServer(irr::u32 server_id, void* login_server_link, irr::c8 ip[4], irr::u16 port)
+bool CInProcessGameServerLink::regServer(irr::u32 server_id, void* login_server_link)
 {
 	SGameLinkEvent gle;
 	gle.ServerId = server_id;
 	gle.EventType = EGLET_REGISTER_REQUEST;
-	memcpy(gle.RegisterRequest.Ip, ip, 4);
-	gle.RegisterRequest.Port = port;
 
 	LoginLinksMutex.getLock();
 

@@ -27,18 +27,19 @@
 #include <AdenaConfig.h>
 #include <irrThread.h>
 #include <irrNet.h>
-#include <CGameServerNetEvent.h>
-#include <SGameServerInterfaces.h>
 #include <irrList.h>
+#include <CLogger.h>
+#include <SGameServerInterfaces.h>
 #include <SClassTemplate.h>
 #include <ILoginServerLink.h>
+#include <AVL.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class ADENALIB_API CGameServer : public irr::core::threads::Thread
+	class ADENALIB_API CGameServer : public irr::core::threads::Thread, public irr::net::INetEvent
 	{
 	public:
 
@@ -49,6 +50,8 @@ namespace game_server
 		CGameServer();
 
 		virtual ~CGameServer();
+
+		virtual void OnEvent(irr::net::NetEvent &e);
 
 		virtual bool init(const char* config_file);
 
@@ -62,9 +65,22 @@ namespace game_server
 		irr::core::threads::Mutex CreateCharMutex;
 		ILoginServerLink* LoginServerLink;
 
-	private:
+		irr::u32 CurrentPlayerCount;
 
-		NEGameServerNetEvent* EventParser;
+		struct SAccountUser
+		{
+			irr::u32 AccountId;
+			irr::u32 SessionId;
+			irr::c8 LoginState; // 0 = waiting to log in, 1 = logged in, 2 = kick request before use could log in.
+		};
+
+		// Maps account names to account/session ids
+		AVL<irr::core::stringc, SAccountUser> WaitingToLogin;
+		irr::core::threads::Mutex WaitingToLoginMutex;
+
+		// Maps account ids to user info
+		AVL<irr::u32, SAccountUser> AccountUsers;
+		irr::core::threads::Mutex AccountUsersMutex;
 		
 	};
 

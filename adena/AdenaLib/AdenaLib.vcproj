@@ -368,10 +368,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\CGameServerNetEvent.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\source\CInProcessLoginServerLink.cpp"
 					>
 				</File>
@@ -419,7 +415,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SGameServerInfo.h"
+				RelativePath=".\include\SGameServerInfo.h"
 				>
 			</File>
 			<Filter
@@ -511,10 +507,6 @@
 				</File>
 				<File
 					RelativePath=".\include\CGameServerClient.h"
-					>
-				</File>
-				<File
-					RelativePath=".\include\CGameServerNetEvent.h"
 					>
 				</File>
 				<File

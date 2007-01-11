@@ -38,6 +38,7 @@ namespace game_server
 
 	class CGameServerClient
 	{
+	friend CGameServer;
 	public:
 
 		typedef void (CGameServerClient::*packetFunc) (irr::c8*);
@@ -50,7 +51,7 @@ namespace game_server
 
 		void sendPacket(IPacket* packet);
 
-	private:
+	protected:
 
 		CCrypt* OutputCipher;
 		CCrypt* InputCipher;
@@ -58,6 +59,7 @@ namespace game_server
 		CGameServer* Server;
 		irr::s32 SessionId;
 		irr::core::stringc AccountName;
+		irr::u32 AccountId;
 		bool CryptPackets;
 		packetFunc PacketFunctions[256];
 		COPlayer* Player;

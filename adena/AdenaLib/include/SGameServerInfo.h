@@ -1,6 +1,6 @@
 /*
- * CGameServerNetEvent.h - Game server network events.
- * Created January 6, 2007, by Michael 'Bigcheese' Spencer.
+ * SGameServerInfo.h - Info about the game server requested by the login server.
+ * Created January 10, 2006, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,32 +21,24 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_GAME_SERVER_NET_EVENT_H_
-#define _ADENA_C_GAME_SERVER_NET_EVENT_H_
+#ifndef _ADENA_S_GAME_SERVER_INFO_H_
+#define _ADENA_S_GAME_SERVER_INFO_H_
 
 #include <AdenaConfig.h>
-#include <irrNet.h>
 
 namespace adena
 {
-namespace game_server
-{
 
-	class NEGameServerNetEvent : public irr::net::INetEvent
+	struct SGameServerInfo
 	{
-	public:
-
-		NEGameServerNetEvent(void* server);
-
-		~NEGameServerNetEvent();
-
-		virtual void OnEvent(irr::net::NetEvent &e);
-
-		void* Server;
-
+		irr::u32 ServerId;
+		irr::u32 ConnectedClients;
+		irr::u32 MaxClients;
+		irr::c8 InternalIp[4];
+		irr::c8 ExternalIp[4];
+		irr::u16 Port;
 	};
 
-}
 }
 
 #endif
