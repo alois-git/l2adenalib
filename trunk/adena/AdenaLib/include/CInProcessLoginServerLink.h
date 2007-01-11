@@ -25,6 +25,7 @@
 #define _ADENA_C_IN_PROCESS_LOGIN_SERVER_LINK_H_
 
 #include <ILoginServerLink.h>
+#include <SGameServerInfo.h>
 
 namespace adena
 {
@@ -45,7 +46,7 @@ namespace game_server
 
 		virtual ~CInProcessLoginServerLink();
 
-		virtual void registerWithLoginServer(irr::c8 ip[4], irr::u16 port);
+		virtual void registerWithLoginServer();
 
 		void* GameServerLink;
 		void* GameServer;
@@ -53,6 +54,10 @@ namespace game_server
 		// For CInProcessGameServerLink
 
 		void kickAccount(irr::u32 account_id);
+
+		SGameServerInfo getServerInfo();
+
+		void requestPlay(irr::core::stringc account_name, irr::u32 account_id, irr::u32 session_id);
 
 	private:
 

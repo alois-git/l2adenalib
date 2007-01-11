@@ -104,7 +104,12 @@ void CLoginServer::gameLinkEvent(SGameLinkEvent e)
 {
 	if(e.EventType == EGLET_REGISTER_REQUEST)
 	{
-		ExternalServerListPacket->addServer(e.RegisterRequest.Ip, e.RegisterRequest.Port, true, false, 0, 1000, false, true, 1, e.ServerId);
+		//ExternalServerListPacket->addServer(e.RegisterRequest.Ip, e.RegisterRequest.Port, true, false, 0, 1000, false, true, 1, e.ServerId);
+		GameServerLink->requestServerInfo(e.ServerId);
+	}else if(e.EventType == EGLET_SERVER_INFO)
+	{
+		ExternalServerListPacket->addServer(e.ServerInfo.GameServerInfo.ExternalIp, e.ServerInfo.GameServerInfo.Port, true, false, 0, 1000, false, true, 1, e.ServerId);
+		InternalServerListPacket->addServer(e.ServerInfo.GameServerInfo.InternalIp, e.ServerInfo.GameServerInfo.Port, true, false, 0, 1000, false, true, 1, e.ServerId);
 	}
 };
 

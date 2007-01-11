@@ -142,9 +142,30 @@ void CGameServerClient::clientLoaded(irr::c8* data)
 void CGameServerClient::authLogin(irr::c8* data)
 {
 	CPAuthLogin al(data);
-	AccountName = al.AccountName;
-	//CPCharSelect cs(Server->Interfaces.DataBase, AccountName);
-	//sendPacket(&cs);
+	CGameServer::SAccountUser au;
+
+	Server->WaitingToLoginMutex.getLock();
+	if(Server->WaitingToLogin.Find(al.AccountName, au))
+	{
+		if(au.SessionId == al.Id2)
+		{
+			Server->WaitingToLogin.Remove(al.AccountName);
+			AccountName = al.AccountName;
+			AccountId = au.AccountId;
+			CPCharSelect cs(Server->Interfaces.DataBase, au.AccountId);
+			sendPacket(&cs);
+		}else
+		{
+			// An obvious hack attempt, or a code error :P
+			Server->Interfaces.Logger->log("[HACK ALERT] User attempted to connect to game server with the correct account, but wrong session id");
+		}
+	}else
+	{
+		// An obvious hack attempt, or a code error :P
+		Server->Interfaces.Logger->log("[HACK ALERT] User attempted to connect to game server with an account name not in the waiting list");
+	}
+	Server->WaitingToLoginMutex.releaseLock();
+
 };
 
 // 9
@@ -162,7 +183,7 @@ void CGameServerClient::createChar(irr::c8* data)
 	Server->CreateCharMutex.getLock();
 
 	SCharInfo ci;
-	//ci.AccountId = 
+	ci.AccountId = AccountId;
 	ci.Name = cc.Name;
 	ci.Title = "";
 	ci.RaceId = cc.Race;
@@ -177,8 +198,8 @@ void CGameServerClient::createChar(irr::c8* data)
 		// Char created
 		CPCharCreateOk cco = CPCharCreateOk();
 		sendPacket(&cco);
-		//CPCharSelect cs(Server->Interfaces.DataBase, AccountName);
-		//sendPacket(&cs);
+		CPCharSelect cs(Server->Interfaces.DataBase, AccountId);
+		sendPacket(&cs);
 	}else
 	{
 		// Char creation failed

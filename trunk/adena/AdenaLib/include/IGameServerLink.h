@@ -26,6 +26,7 @@
 
 #include <AdenaConfig.h>
 #include <SGameServerInfo.h>
+#include <irrString.h>
 
 namespace adena
 {
@@ -82,9 +83,24 @@ namespace login_server
 
 		virtual ~IGameServerLink() {}
 
+		/*
+		 * @param server_id: Index of the server (0 base what shows on the server list) to request from.
+		 * @param account_id: Account id of the client to disconnect.
+		 */
 		virtual void requestKick(irr::u32 server_id, irr::u32 account_id) = 0;
 
-		virtual void requestServerInfo() = 0;
+		/*
+		 * @param server_id: Index of the server (0 base what shows on the server list) to request from.
+		 */
+		virtual void requestServerInfo(irr::u32 server_id) = 0;
+
+		/*
+		 * @param server_id: Index of the server (0 base what shows on the server list) to request from.
+		 * @param account_name: The name of the account, sent to game server by client.
+		 * @param account_id: Account id of the client connecting.
+		 * @param session_id: The client session id, sent to game server by client.
+		 */
+		virtual void requestPlay(irr::u32 server_id, irr::core::stringc account_name, irr::u32 account_id, irr::u32 session_id) = 0;
 
 	private:
 

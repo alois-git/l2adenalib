@@ -97,6 +97,7 @@ void CLoginServerClient::HandlePacket()
 			{
 				if(Server->loginAccount(AccountId = atoi(qr[0][irr::core::stringc("id")].c_str()), Client))
 				{
+					AccountName = rl.Username;
 					SessionId = Server->Interfaces.Rng->getRandU32();
 					CPLoginOk clo(SessionId);
 					SendPacket(&clo);
@@ -118,6 +119,7 @@ void CLoginServerClient::HandlePacket()
 	{
 		// Request play
 		CPRequestPlay rp(dec);
+		Server->GameServerLink->requestPlay(rp.ServerIndex - 1, AccountName, AccountId, SessionId);
 		// Set AccountId to 0 so the login server doesnt remove it when we DC from the login
 		Server->AccountLocationsMutex.getLock();
 		CLoginServer::SAccountLocation al;
@@ -133,7 +135,7 @@ void CLoginServerClient::HandlePacket()
 		// Request server list.
 		if(SessionId)// User has logged in.
 		{
-			SendPacket(Server->ExternalServerListPacket);
+			SendPacket(Server->InternalServerListPacket);
 		}else
 		{
 			// Should never get here unless not using l2 client.

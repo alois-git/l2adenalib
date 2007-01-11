@@ -22,9 +22,9 @@
  */
 
 #include <CGameServer.h>
-#include <CLogger.h>
 #include <ip2bytes.h>
 #include <CMersenneTwister.h>
+#include <CGameServerClient.h>
 
 namespace adena
 {
@@ -35,8 +35,7 @@ CGameServer::CGameServer()
 : Thread(), Server(0)
 {
 	memset(&Interfaces, 0, sizeof(Interfaces));
-	EventParser = new NEGameServerNetEvent(this);
-	Server = new irr::net::CTCPServer(EventParser, 10);
+	Server = new irr::net::CTCPServer((irr::net::INetEvent*)this, 10);
 };
 
 CGameServer::~CGameServer()
@@ -45,14 +44,69 @@ CGameServer::~CGameServer()
 		delete Server;
 	if(Interfaces.Logger)
 		delete Interfaces.Logger;
-	delete EventParser;
+};
+
+void CGameServer::OnEvent(irr::net::NetEvent &e)
+{
+	switch(e.enet)
+	{
+		case irr::net::ENET_CLIENT_CONNECT:
+			e.serverClient->UserData = new CGameServerClient(e.serverClient, this);
+			break;
+		case irr::net::ENET_CLIENT_DISCONNECT:
+			if(((CGameServerClient*)e.serverClient->UserData)->AccountId != 0)
+			{
+				
+			}
+			delete ((CGameServerClient*)e.serverClient->UserData);
+			break;
+		case ::irr::net::ENET_RECVDATA:
+			((CGameServerClient*)e.serverClient->UserData)->HandlePacket();
+			break;
+	}
+};
+
+void CGameServer::loginLinkEvent(SLoginLinkEvent e)
+{
+	if(e.EventType == ELLET_REGISTER_RESULT)
+	{
+		if(e.Result == ELLR_OK)
+		{
+			Interfaces.Logger->log("Connected to login server");
+		}else
+		{
+			Interfaces.Logger->log("Failed to connect to login server");
+		}
+	}else if(e.EventType == ELLET_REQUEST_SERVER_INFO)
+	{
+		e.RequestServerInfo.ServerInfo->ConnectedClients = 0;
+		e.RequestServerInfo.ServerInfo->MaxClients = 100;
+		e.RequestServerInfo.ServerInfo->ServerId = 0;
+
+		e.RequestServerInfo.ServerInfo->Port = atoi((*Interfaces.ConfigFile)["gameserver"]["port"].getData());
+
+		irr::c8 ip[4];
+		ip2bytes((*Interfaces.ConfigFile)["gameserver"]["external_host"].getData(), ip);
+		memcpy(e.RequestServerInfo.ServerInfo->ExternalIp, ip, 4);
+		ip2bytes((*Interfaces.ConfigFile)["gameserver"]["internal_host"].getData(), ip);
+		memcpy(e.RequestServerInfo.ServerInfo->InternalIp, ip, 4);
+	}else if(e.EventType == ELLET_PLAY_REQUEST)
+	{
+		SAccountUser au;
+		au.AccountId = e.PlayRequest.AccountId;
+		au.SessionId = e.PlayRequest.SessionId;
+
+		WaitingToLoginMutex.getLock();
+		WaitingToLogin.Insert(e.PlayRequest.AccountName, au);
+		WaitingToLoginMutex.releaseLock();
+	}
 };
 
 bool CGameServer::init(const char* config_file)
 {	
 	if(Interfaces.Logger == 0)
 		Interfaces.Logger = new irr::CLogger(NULL);
-	
+
 	try
 	{
 		Interfaces.ConfigFile = new BCini(config_file);
@@ -83,10 +137,7 @@ bool CGameServer::init(const char* config_file)
 		Interfaces.Logger->log("DB connection sucsessfull");
 
 	// Register with login server
-	irr::c8 ip[4];
-	//ip2bytes((*Interfaces.ConfigFile)["gameserver"]["external_host"].getData(), ip);
-	ip2bytes((*Interfaces.ConfigFile)["gameserver"]["internal_host"].getData(), ip);
-	LoginServerLink->registerWithLoginServer(ip, atoi((*Interfaces.ConfigFile)["gameserver"]["port"].getData()));
+	LoginServerLink->registerWithLoginServer();
 
 	// Create caches
 	Interfaces.PlayerCache = new CPlayerCache(&Interfaces);
@@ -94,19 +145,6 @@ bool CGameServer::init(const char* config_file)
 	return true;
 };
 
-void CGameServer::loginLinkEvent(SLoginLinkEvent e)
-{
-	if(e.EventType == ELLET_REGISTER_RESULT)
-	{
-		if(e.Result == ELLR_OK)
-		{
-			Interfaces.Logger->log("Connected to login server");
-		}else
-		{
-			Interfaces.Logger->log("Failed to connect to login server");
-		}
-	}
-};
 
 void CGameServer::run()
 {

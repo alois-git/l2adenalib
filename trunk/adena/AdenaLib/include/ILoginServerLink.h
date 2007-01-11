@@ -25,6 +25,8 @@
 #define _ADENA_I_LOGIN_SERVER_LINK_H_
 
 #include <AdenaConfig.h>
+#include <SGameServerInfo.h>
+#include <irrString.h>
 
 namespace adena
 {
@@ -33,13 +35,14 @@ namespace game_server
 
 	/*
 	 * This class allows us to hide the interface used between the login server and game server.
-	 * All calls are async, so when you call registerWithLoginServer, the LoginServerLink will call
-	 * registerWithLoginServerResult(bool) on the game server.
+	 * All calls are async.
 	 */
 
 	enum E_LoginLinkEventType
 	{
-		ELLET_REGISTER_RESULT = 0
+		ELLET_REGISTER_RESULT = 0,
+		ELLET_REQUEST_SERVER_INFO,
+		ELLET_PLAY_REQUEST
 	};
 
 	enum E_LoginLinkResult
@@ -53,7 +56,19 @@ namespace game_server
 	{
 		E_LoginLinkEventType EventType;
 		E_LoginLinkResult Result;
-		void* Data;
+
+		struct
+		{
+			SGameServerInfo* ServerInfo;
+		} RequestServerInfo;
+
+		struct
+		{
+			irr::core::stringc AccountName;
+			irr::u32 AccountId;
+			irr::u32 SessionId;
+		} PlayRequest;
+		
 	};
 
 	class ILoginServerLink
@@ -62,7 +77,7 @@ namespace game_server
 
 		virtual ~ILoginServerLink() {}
 
-		virtual void registerWithLoginServer(irr::c8 ip[4], irr::u16 port) = 0;
+		virtual void registerWithLoginServer() = 0;
 
 	private:
 

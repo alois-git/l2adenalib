@@ -41,9 +41,9 @@ CInProcessLoginServerLink::~CInProcessLoginServerLink()
 
 };
 
-void CInProcessLoginServerLink::registerWithLoginServer(irr::c8 ip[4], irr::u16 port)
+void CInProcessLoginServerLink::registerWithLoginServer()
 {
-	if(((login_server::CInProcessGameServerLink*)GameServerLink)->regServer(ServerId, this, ip, port))
+	if(((login_server::CInProcessGameServerLink*)GameServerLink)->regServer(ServerId, this))
 	{
 		SLoginLinkEvent lle;
 		lle.EventType = ELLET_REGISTER_RESULT;
@@ -61,6 +61,28 @@ void CInProcessLoginServerLink::registerWithLoginServer(irr::c8 ip[4], irr::u16 
 void CInProcessLoginServerLink::kickAccount(irr::u32 account_id)
 {
 	printf("Login Server requested kick of account_id %d\n", account_id);
+};
+
+SGameServerInfo CInProcessLoginServerLink::getServerInfo()
+{
+	SGameServerInfo ret;
+	SLoginLinkEvent lle;
+	lle.EventType = ELLET_REQUEST_SERVER_INFO;
+	lle.Result = ELLR_OK;
+	lle.RequestServerInfo.ServerInfo = &ret;
+	((CGameServer*)GameServer)->loginLinkEvent(lle);
+	return ret;
+};
+
+void CInProcessLoginServerLink::requestPlay(irr::core::stringc account_name, irr::u32 account_id, irr::u32 session_id)
+{
+	SLoginLinkEvent lle;
+	lle.EventType = ELLET_PLAY_REQUEST;
+	lle.Result = ELLR_OK;
+	lle.PlayRequest.AccountName = account_name;
+	lle.PlayRequest.AccountId = account_id;
+	lle.PlayRequest.SessionId = session_id;
+	((CGameServer*)GameServer)->loginLinkEvent(lle);
 };
 
 }
