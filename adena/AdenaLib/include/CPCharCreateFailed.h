@@ -24,14 +24,14 @@
 #ifndef _ADENA_C_P_CHAR_CREATE_FAILED_H_
 #define _ADENA_C_P_CHAR_CREATE_FAILED_H_
 
-#include <CPacket.h>
+#include <CServerPacket.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPCharCreateFailed : public CPacket
+	class CPCharCreateFailed : public CServerPacket
 	{
 	public:
 
@@ -44,15 +44,21 @@ namespace game_server
 		};
 
 		CPCharCreateFailed(E_CharCreateFailedReason reason)
-		: CPacket()
+		: CServerPacket(), Reason(reason)
 		{
-			w8(0x1a);
-			w32((irr::u32)reason);
+
 		};
 
 		virtual ~CPCharCreateFailed()
 		{
 
+		};
+
+		virtual bool writePacket()
+		{
+			w8(0x1a);
+			w32((irr::u32)Reason);
+			return true;
 		};
 
 		virtual irr::c8* getData()
@@ -67,7 +73,7 @@ namespace game_server
 
 	private:
 
-
+		E_CharCreateFailedReason Reason;
 
 	};
 

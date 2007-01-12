@@ -25,20 +25,23 @@
 #define _ADENA_C_PACKET_H_
 
 #include <IPacket.h>
+#include <irrThread.h>
 #include <irrString.h>
 
-#define GROW_SIZE 16
+#define GROW_SIZE 128
 
 namespace adena
 {
 
-	class CPacket : public IPacket
+	class CPacket : public irr::core::threads::Thread, public IPacket
 	{
 	public:
 
 		CPacket();
 
 		virtual ~CPacket();
+
+		virtual void run() {}
 
 		virtual irr::c8* getData() = 0;
 
@@ -51,14 +54,14 @@ namespace adena
 		 * Writes one byte to data. (Little endian)
 		 * byte[0] = val[0]
 		 */
-		virtual void w8(irr::u32 val);
+		virtual void w8(irr::s32 val);
 
 		/*
 		 * Writes two bytes to data. (Little endian)
 		 * byte[0] = val[0]
 		 * byte[1] = val[1]
 		 */
-		virtual void w16(irr::u32 val);
+		virtual void w16(irr::s32 val);
 
 		/*
 		 * Writes four bytes to data. (Little endian)
@@ -67,9 +70,9 @@ namespace adena
  		 * byte[2] = val[2]
 		 * byte[3] = val[3]
 		 */
-		virtual void w32(irr::u32 val);
+		virtual void w32(irr::s32 val);
 
-		virtual void w64(irr::u64 val);
+		virtual void w64(irr::s64 val);
 
 		virtual void wf(irr::f64 val);
 
@@ -91,17 +94,17 @@ namespace adena
 		/*
 		 * Reads one byte from data. (Little endian)
 		 */
-		virtual irr::u32 r8();
+		virtual irr::s32 r8();
 
 		/*
 		 * Reads two byte from data. (Little endian)
 		 */
-		virtual irr::u32 r16();
+		virtual irr::s32 r16();
 
 		/*
 		 * Reads four byte from data. (Little endian)
 		 */
-		virtual irr::u32 r32();
+		virtual irr::s32 r32();
 
 		/*
 		 * Reads a ASCII null terminated string to str.

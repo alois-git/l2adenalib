@@ -28,11 +28,18 @@
 #include <irrThread.h>
 #include <SCharInfo.h>
 #include <irrDb.h>
+#include <AVL.h>
 
 namespace adena
 {
 namespace game_server
 {
+
+	struct SCharSelectIds
+	{
+		irr::u32 Chars;
+		irr::u32 CharIds[7];
+	};
 
 	/*
 	 * The player cache is used to load player data from the SQL sever and save it intermitently
@@ -53,20 +60,13 @@ namespace game_server
 
 		/*
 		 * @param account_id: [IN] The account id of the characters to load
-		 * return: The number of chars loaded
+		 * return: SCharSelectIds with the id of the chars for that account
 		 */
-		virtual irr::u32 loadCharSelect(irr::u32 account_id);
+		virtual SCharSelectIds loadCharSelect(irr::u32 account_id);
 
 		/*
-		 * @param account_id: [IN] The account id of the char to load
-		 * @param char_index: [IN] The index (as shown on the char select screen starting at 0) of the char to load
-		 * return: A pointer to the selected char info
-		 */
-		virtual SCharInfo* loadChar(irr::u32 account_id, irr::u32 char_index);
-
-		/*
-		 * @param char_id: [IN] The id of the char (not the index used in loadChar)
-		 * return: A pointer to the selected char info
+		 * @param char_id: [IN] The id of the char
+		 * return: A pointer to the selected char info, NULL on fail
 		 */
 		virtual SCharInfo* loadChar(irr::u32 char_id);
 
@@ -87,6 +87,9 @@ namespace game_server
 	private:
 
 		void* Interfaces;
+
+		AVL<irr::u32, SCharInfo*> CharInfos;
+		irr::core::threads::Mutex CharInfosMutex;
 
 	};
 

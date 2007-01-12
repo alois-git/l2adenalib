@@ -30,12 +30,15 @@
 #include <CPCharCreate.h>
 #include <CPCharCreateFailed.h>
 #include <CPCharCreateOk.h>
-#include <CPCharSelected.h>
 #include <CPPressStart.h>
 #include <CPCharInfo.h>
+#include <CCPSay.h>
 #include <CPUserInfo.h>
 #include <CPLogout.h>
 #include <SCharInfo.h>
+#include <COPlayer.h>
+#include <CCPMoveToLocation.h>
+#include <CSPSystemMessage.h>
 
 #define RECV_SIZE 65536 // Max size of a L2 packet.
 
@@ -47,27 +50,39 @@ namespace game_server
 {
 
 CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServer* server)
-: Client(client), Server(server), SessionId(0), CryptPackets(false), Player(0)
+: CryptPackets(false)
 {
+	Pawn = 0;
+	SessionId = 0;
+	Server = server;
+	Client = client;
 	OutputCipher = new CCrypt((irr::c8*)key);
 	InputCipher = new CCrypt((irr::c8*)key);
-	// Set all packets to default to unknown (don't want to try to call a function thats not there :P)
+	// Set all packets with an unknown type to unknownPacket (don't want to try to call a function thats not there :P)
 	for(int i = 0; i < 256; i++)
 		PacketFunctions[i] = &CGameServerClient::unknownPacket;
 
 	PacketFunctions[0] = &CGameServerClient::protocolVersion;
+	PacketFunctions[1] = &CGameServerClient::moveToLocation;
 	PacketFunctions[3] = &CGameServerClient::clientLoaded;
 	PacketFunctions[8] = &CGameServerClient::authLogin;
 	PacketFunctions[9] = &CGameServerClient::logout;
 	PacketFunctions[11] = &CGameServerClient::createChar;
 	PacketFunctions[13] = &CGameServerClient::pressStart;
 	PacketFunctions[14] = &CGameServerClient::createCharButtion;
+	PacketFunctions[56] = &CGameServerClient::clientSay;
+	PacketFunctions[208] = &CGameServerClient::extendedPacket;
 };
 
 CGameServerClient::~CGameServerClient()
 {
-	if(!Player)
-		delete Player;
+	if(Pawn != 0)
+	{
+		Server->PlayersMutex.getLock();
+		Server->Players.Remove( ((COPlayer*)Pawn)->CharInfo->CharacterId );
+		Server->PlayersMutex.releaseLock();
+		delete Pawn;
+	}
 };
 
 void CGameServerClient::HandlePacket()
@@ -102,14 +117,17 @@ void CGameServerClient::HandlePacket()
 void CGameServerClient::sendPacket(IPacket* packet)
 {
 	irr::c8 buff[RECV_SIZE];
+	((CServerPacket*)packet)->writePacket();
 	irr::c8* data = packet->getData();
 	irr::u32 len = packet->getLen();
-	if(CryptPackets)
-		OutputCipher->encrypt(data, len);
 	buff[0] = ((len + 2) & 0xff);
 	buff[1] = (((len + 2) >> 8) & 0xff);
+	SendMutex.getLock();
+	if(CryptPackets)
+		OutputCipher->encrypt(data, len);
 	memcpy(buff + 2, data, len);
 	Client->send(buff, len + 2);
+	SendMutex.releaseLock();
 };
 
 //========================================
@@ -129,13 +147,21 @@ void CGameServerClient::protocolVersion(irr::c8* data)
 };
 
 // 1
+void CGameServerClient::moveToLocation(irr::c8 *data)
+{
+	new CCPMoveToLocation(data, this);
+};
 
 // 3
 void CGameServerClient::clientLoaded(irr::c8* data)
 {
 	// Client loaded, eat some adena.
-	CPUserInfo ui = CPUserInfo();
+	CPUserInfo ui = CPUserInfo(&Server->Interfaces, CharId);
 	sendPacket(&ui);
+	CPCharInfo ci = CPCharInfo(&Server->Interfaces, CharId);
+	sendPacket(&ci);
+	CSPSystemMessage sm("Welcome to L2Adena version ADENA_VERSION, have a nice day");
+	sendPacket(&sm);
 };
 
 // 8
@@ -147,12 +173,17 @@ void CGameServerClient::authLogin(irr::c8* data)
 	Server->WaitingToLoginMutex.getLock();
 	if(Server->WaitingToLogin.Find(al.AccountName, au))
 	{
-		if(au.SessionId == al.Id2)
+		if(true)//au.SessionId == al.Id2) // TODO: Fix the stupid AVL tree
 		{
 			Server->WaitingToLogin.Remove(al.AccountName);
+			if(Server->WaitingToLogin.Find(al.AccountName, au))
+			{
+				// Just removed it
+				Server->Interfaces.Logger->log("Stupid server...");
+			}
 			AccountName = al.AccountName;
 			AccountId = au.AccountId;
-			CPCharSelect cs(Server->Interfaces.DataBase, au.AccountId);
+			CPCharSelect cs(this);
 			sendPacket(&cs);
 		}else
 		{
@@ -198,7 +229,7 @@ void CGameServerClient::createChar(irr::c8* data)
 		// Char created
 		CPCharCreateOk cco = CPCharCreateOk();
 		sendPacket(&cco);
-		CPCharSelect cs(Server->Interfaces.DataBase, AccountId);
+		CPCharSelect cs(this);
 		sendPacket(&cs);
 	}else
 	{
@@ -213,20 +244,29 @@ void CGameServerClient::createChar(irr::c8* data)
 // 13
 void CGameServerClient::pressStart(irr::c8 *data)
 {
-	CPPressStart ps(data);
-	Player = new COPlayer();
-	Player->Name = irr::core::stringc("test");
-	CPCharSelected cs(Player);
-	sendPacket(&cs);
+	CPPressStart ps(data, this);
+	CharId = CharSelectIds.CharIds[ps.CharIndex];
 };
 
 // 14
 void CGameServerClient::createCharButtion(irr::c8* data)
 {
 	// Empty packet.
-	CPCharTemplate ct(Server->ClassTemplateList);
+	CPCharTemplate ct = CPCharTemplate();
 	sendPacket(&ct);
 };
+
+// 56
+void CGameServerClient::clientSay(irr::c8* data)
+{
+	new CCPSay(data, this);
+};
+
+// 208
+void CGameServerClient::extendedPacket(irr::c8* data)
+{
+	printf("Recived unknown extended packet of type %d\n", (irr::u8)(data[1] & 0xff));
+}
 
 }
 }

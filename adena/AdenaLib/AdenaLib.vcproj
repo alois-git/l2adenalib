@@ -356,6 +356,14 @@
 				Name="GameServer"
 				>
 				<File
+					RelativePath=".\source\CCharTemplates.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\include\CClientPacket.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\source\CCrypt.cpp"
 					>
 				</File>
@@ -498,6 +506,10 @@
 				Name="GameServer"
 				>
 				<File
+					RelativePath=".\include\CCharTemplates.h"
+					>
+				</File>
+				<File
 					RelativePath=".\include\CCrypt.h"
 					>
 				</File>
@@ -526,6 +538,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\include\IGameServerClient.h"
+					>
+				</File>
+				<File
 					RelativePath=".\include\ILoginServerLink.h"
 					>
 				</File>
@@ -544,6 +560,18 @@
 				<Filter
 					Name="ClientPackets"
 					>
+					<File
+						RelativePath=".\include\CClientPacket.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CCPMoveToLocation.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CCPSay.h"
+						>
+					</File>
 					<File
 						RelativePath=".\include\CPAuthLogin.h"
 						>
@@ -598,6 +626,22 @@
 					</File>
 					<File
 						RelativePath=".\include\CPUserInfo.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CServerPacket.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPCreatureSay.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPMoveToLocation.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPSystemMessage.h"
 						>
 					</File>
 				</Filter>

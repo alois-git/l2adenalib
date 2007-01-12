@@ -62,15 +62,14 @@ void parseBuff(c8* buff, u32 buff_len)
 
 int main()
 {
-	/*c8 buff[65536];
+	c8 buff[65536];
 	u32 loc = 0;
 	io::CFileSystem fs = io::CFileSystem();
-	loc += addPack(&fs, buff + loc, "pack0");
-	loc += addPack(&fs, buff + loc, "pack1");
-	loc += addPack(&fs, buff + loc, "pack2");
-	loc += addPack(&fs, buff + loc, "pack3");
-	loc += addPack(&fs, buff + loc, "pack4");
-	parseBuff(buff, loc);*/
+	for(int i = 1; i <= 7; i++)
+	{
+		loc += addPack(&fs, buff + loc, (irr::c8*)(irr::core::stringc("sp0") + i).c_str());
+	}
+	parseBuff(buff, loc);
 
 	adena::login_server::CLoginServer* s = new adena::login_server::CLoginServer();
 	adena::game_server::CGameServer* g = new adena::game_server::CGameServer();

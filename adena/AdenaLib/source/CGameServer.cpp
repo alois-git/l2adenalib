@@ -141,6 +141,7 @@ bool CGameServer::init(const char* config_file)
 
 	// Create caches
 	Interfaces.PlayerCache = new CPlayerCache(&Interfaces);
+	Interfaces.CharTemplates = new CCharTemplates(Interfaces.DataBase);
 
 	return true;
 };

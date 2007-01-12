@@ -1,9 +1,9 @@
 /*
- * COPlayer.h - A player.
- * Created January 8, 2007, by Michael 'Bigcheese' Spencer.
+ * CServerPacket.h - L2 GameServer Server Packet, threads FTW.
+ * Created January 11, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,31 +21,34 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_O_PLAYER_H_
-#define _ADENA_C_O_PLAYER_H_
+#ifndef _ADENA_C_SERVER_PACKET_H_
+#define _ADENA_C_SERVER_PACKET_H_
 
-#include <COPawn.h>
-#include <irrString.h>
-#include <SCharInfo.h>
-#include <CGameServerClient.h>
+#include <CPacket.h>
+#include <irrThread.h>
+#include <IGameServerClient.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class COPlayer : public COPawn
+	class CServerPacket : public CPacket
 	{
 	public:
 
-		COPlayer();
+		virtual ~CServerPacket() {}
 
-		virtual ~COPlayer() {}
+		/*
+		 * Any long tasks the the packet needs to do. Like sending other packets.
+		 */
+		virtual void run() {}
 
-		SCharInfo* CharInfo;
-		CGameServerClient* Client;
+		virtual bool writePacket() = 0;
 
-	private:
+	protected:
+
+		IGameServerClient* Client;
 
 	};
 

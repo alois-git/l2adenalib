@@ -33,6 +33,7 @@
 #include <SClassTemplate.h>
 #include <ILoginServerLink.h>
 #include <AVL.h>
+#include <COPawn.h>
 
 namespace adena
 {
@@ -81,6 +82,14 @@ namespace game_server
 		// Maps account ids to user info
 		AVL<irr::u32, SAccountUser> AccountUsers;
 		irr::core::threads::Mutex AccountUsersMutex;
+
+		// Maps char ids to players
+		AVL<irr::u32, COPawn*> Players;
+		irr::core::threads::Mutex PlayersMutex;
+
+		// Maps account names to char ids
+		AVL<irr::core::stringc, irr::u32> Accounts;
+		irr::core::threads::Mutex AccountsMutex;
 		
 	};
 

@@ -1,6 +1,6 @@
 /*
- * CPPressStart.h - Enter teh world of l2.
- * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
+ * CCPMoveToLocation.h - Move packet
+ * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,52 +21,65 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_PRESS_START_H_
-#define _ADENA_C_P_PRESS_START_H_
+#ifndef _ADENA_C_C_P_MOVE_TO_LOCATION_H_
+#define _ADENA_C_C_P_SAY_H_
 
 #include <CClientPacket.h>
-#include <CPCharSelected.h>
+#include <irrString.h>
+#include <CSPMoveToLocation.h>
+#include <vector3d.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPPressStart : public CClientPacket
+	class CCPMoveToLocation : public CClientPacket
 	{
 	public:
 
-		CPPressStart(irr::c8* in_data, IGameServerClient* client)
+		CCPMoveToLocation(irr::c8* in_data, IGameServerClient* client)
 		: CClientPacket()
 		{
 			Client = client;
 			Data = in_data;
 			ReadPointer++;
-			CharIndex = r32();
-			Unknown1 = r16();
-			Unknown2 = r32();
-			Unknown3 = r32();
-			Unknown4 = r32();
-			run(); // Because it's to freeking stupid to actualy work...
+
+			Target.X = r32();
+			Target.Y = r32();
+			Target.Z = r32();
+			Origin.X = r32();
+			Origin.Y = r32();
+			Origin.Z = r32();
+			MoveType = r32();
+
+			start();
 		};
 
-		virtual ~CPPressStart()
+		virtual ~CCPMoveToLocation()
 		{
 			Data = 0;
 		};
 
 		virtual void run()
 		{
-			Client->CharInfo = Client->Server->Interfaces.PlayerCache->loadChar(Client->CharSelectIds.CharIds[CharIndex]);
-			COPlayer* p = new COPlayer();
-			Client->Pawn = p;
-			p->Client = (CGameServerClient*)Client;
-			p->CharInfo = Client->CharInfo;
-			Client->Server->PlayersMutex.getLock();
-			Client->Server->Players.Insert(Client->CharId, Client->Pawn);
-			Client->Server->PlayersMutex.releaseLock();
-			CPCharSelected cs(&Client->Server->Interfaces, Client->CharSelectIds.CharIds[CharIndex]);
-			Client->sendPacket(&cs);
+			//Client->s
+			AVL<irr::u32, COPawn*>::Iterator<irr::u32, COPawn*> ittr(&Client->Server->Players);
+			irr::u32 key;
+			COPawn* item;
+			if(ittr.GetFirst(key, item))
+			{
+				CSPMoveToLocation mtl(Client->CharInfo->CharacterId, Target, Origin);
+				while(true)
+				{
+					// Do stuff with item
+					COPlayer* p = (COPlayer*)item;
+					p->Client->sendPacket(&mtl);
+					if(!ittr.GetNext(key, item))
+						break;
+				}
+			}
+			delete this;
 		};
 
 		virtual irr::c8* getData()
@@ -79,16 +92,9 @@ namespace game_server
 			return 0;
 		};
 
-		irr::u32 CharIndex;
-		irr::u32 Unknown1;
-		irr::u32 Unknown2;
-		irr::u32 Unknown3;
-		irr::u32 Unknown4;
-
-	private:
-
-
-
+		irr::core::vector3di Target;
+		irr::core::vector3di Origin;
+		irr::u32 MoveType;
 	};
 
 }

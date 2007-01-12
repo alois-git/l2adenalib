@@ -24,21 +24,31 @@
 #ifndef _ADENA_C_P_CHAR_INFO_H_
 #define _ADENA_C_P_CHAR_INFO_H_
 
-#include <CPacket.h>
+#include <CServerPacket.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPCharInfo : public CPacket
+	class CPCharInfo : public CServerPacket
 	{
 	public:
 
-		CPCharInfo()
-		: CPacket()
+		CPCharInfo(SGameServerInterfaces* interfaces, irr::u32 char_id)
+		: CServerPacket(), Interfaces(interfaces), CharId(char_id)
 		{
-			w8(0x16);
+
+		};
+
+		virtual ~CPCharInfo()
+		{
+
+		};
+
+		virtual bool writePacket()
+		{
+			/*w8(0x16);
 			w32(0x00); // Char obj id
 			w32(0x00);  // npctype id
 			w32(0x00); // Has karma
@@ -83,19 +93,24 @@ namespace game_server
 			w32(0);  // C2
 			w8(0);  // C2
 
-			return;
+			return;*/
+			SCharInfo* ci = Interfaces->PlayerCache->loadChar(CharId);
+			if(ci == 0)
+				return false;
+			SClassTemplate* ct = Interfaces->CharTemplates->loadTemplate(ci->ClassId);
 
 			w8(0x03);		
-			w32(-71338); // x
-			w32(258271); // y
-			w32(-3104); // z
+			w32(ci->x); // x
+			w32(ci->y); // y
+			w32(ci->z); // z
 			w32(0x00); // Heading
-			w32(0x00); // Char object id
-			wStrW(irr::core::stringc("tes")); // Char name
-			w32(0x00); // Race
-			w32(0x00); // Sex
-			w32(0x00); // Class
+			w32(ci->CharacterId); // Char object id
+			wStrW(ci->Name); // Char name
+			w32(ci->RaceId); // Race
+			w32(ci->Sex); // Sex
+			w32(ci->ClassId); // Class
 
+			// item ids
 			w32(0x00); // Underware
 			w32(0x00); // Helmate
 			w32(0x00); // Right hand
@@ -111,30 +126,37 @@ namespace game_server
 			w32(0x00); // Pvp status
 			w32(0x00); // Karma
 
-			w32(0x01); // Cast speed
-			w32(0x01); // Atk speed
+			w32(ct->M_SPD); // Cast speed
+			w32(ct->P_SPD); // Atk speed
 
 			w32(0x00); // Pvp status
 			w32(0x00); // Karma
 
-			w32(200); // Run speed
+			w32(ct->RUN_SPEED); // Run speed
 			w32(100); // Walk speed
-			w32(200);  // Swim run speed
+			w32(ct->RUN_SPEED);  // Swim run speed
 			w32(100);  // Swin walk speed
-			w32(0x00); // _flRunSpd
+			w32(ct->RUN_SPEED); // _flRunSpd
 			w32(0x00); // _flWalkSpd
-			w32(200); // Fly run speed
+			w32(ct->RUN_SPEED); // Fly run speed
 			w32(100); // Fly walk speed
 			wf(1.0); // Move speed x
 			wf(1.0); // Atk speed x
-			wf(1.0); // Collision radius
-			wf(1.0); // Collision height
+			if(ci->Sex == 0)
+			{
+				wf(ct->M_COL_R); // Collision radius
+				wf(ct->M_COL_H * 10); // Collision height
+			}else
+			{
+				wf(ct->F_COL_R); // Collision radius
+				wf(ct->F_COL_H * 10); // Collision height
+			}
 
-			w32(0x00); // Hair style
-			w32(0x00); // Hair color
-			w32(0x00); // Face
+			w32(ci->HairType); // Hair style
+			w32(ci->HairColor); // Hair color
+			w32(ci->FaceType); // Face
 
-			wStrW(irr::core::stringc("Adena")); // Title
+			wStrW(ci->Title); // Title
 			w32(0x00); // Clan id
 			w32(0x00); // Clan crest id
 			w32(0x00); // Ally id
@@ -160,10 +182,10 @@ namespace game_server
 
 			w8(0x00); // Recs left
 			w16(0x00); // Recs have
-			w32(0x00); // Class id
+			w32(ci->ClassId); // Class id
 
 			w32(100); // Max cp
-			w32(50); // Current cp
+			w32(ci->cp); // Current cp
 	        w8(0x00); // Enchant effect
 
 	        w8(0x00); // Team circle around feet (0 = none, 1 = blue, 2 = red)
@@ -176,7 +198,7 @@ namespace game_server
 			w32(0x00); // Fish x
 			w32(0x00); // Fish y
 			w32(0x00); // Fish z
-	        w32(0x00); // Name color
+			w32(0xffffff); // Name color - 0xrrggbb, rr = red, gg = green, bb = blue
 	        
 	        w32(0x00);
 	        
@@ -190,11 +212,7 @@ namespace game_server
 	        w32(0x00);
 	        
 	        w32(0x00); // Cursed weapon lvl
-		};
-
-		virtual ~CPCharInfo()
-		{
-
+			return true;
 		};
 
 		virtual irr::c8* getData()
@@ -209,7 +227,8 @@ namespace game_server
 
 	private:
 
-
+		SGameServerInterfaces* Interfaces;
+		irr::u32 CharId;
 
 	};
 

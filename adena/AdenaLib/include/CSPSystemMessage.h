@@ -1,6 +1,6 @@
 /*
- * COPlayer.h - A player.
- * Created January 8, 2007, by Michael 'Bigcheese' Spencer.
+ * CSPSystemMessage.h - The lil text that you never read...
+ * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  *
@@ -21,31 +21,61 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_O_PLAYER_H_
-#define _ADENA_C_O_PLAYER_H_
+#ifndef _ADENA_C_S_P_SYSTEM_MESSAGE_H_
+#define _ADENA_C_S_P_SYSTEM_MESSAGE_H_
 
-#include <COPawn.h>
+#include <CServerPacket.h>
 #include <irrString.h>
-#include <SCharInfo.h>
-#include <CGameServerClient.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class COPlayer : public COPawn
+	class CSPSystemMessage : public CServerPacket
 	{
 	public:
 
-		COPlayer();
+		CSPSystemMessage(irr::core::stringc msg)
+		: CServerPacket(), Message(msg)
+		{
 
-		virtual ~COPlayer() {}
+		};
 
-		SCharInfo* CharInfo;
-		CGameServerClient* Client;
+		virtual ~CSPSystemMessage() {};
+
+		virtual bool writePacket()
+		{
+			static bool writen = false;
+
+			if(!writen)
+			{
+				w8(0x64);
+
+				w32(0x00);
+				wStrW(Message);
+
+				writen = true;
+			}
+			return true;
+		};
+
+		virtual irr::c8* getData()
+		{
+			return Data;
+		};
+
+		virtual irr::u32 getLen()
+		{
+			return WritePointer;
+		};
 
 	private:
+
+		irr::u32 CharId;
+		irr::u32 MessageType;
+		irr::core::stringc Messenger;
+		irr::core::stringc Message;
 
 	};
 

@@ -31,17 +31,46 @@ namespace adena
 namespace game_server
 {
 
-	struct SClassTemplate
-	{
-		irr::u32 Race; // L2 defined race id.
-		irr::u32 ClassId; // L2 defined class id.
-		irr::u32 BaseSTR;
-		irr::u32 BaseDEX;
-		irr::u32 BaseCON;
-		irr::u32 BaseINT;
-		irr::u32 BaseWIT;
-		irr::u32 BaseMEN;
-	};
+		struct SClassTemplate
+		{
+			irr::u8 ClassId;
+			irr::core::stringc ClassName;
+			irr::u8 RaceId;
+			irr::u8 STR;
+			irr::u8 CON;
+			irr::u8 DEX;
+			irr::u8 INT;
+			irr::u8 WIT;
+			irr::u8 MEN;
+			irr::u32 P_ATK;
+			irr::u32 P_DEF;
+			irr::u32 M_ATK;
+			irr::u32 M_DEF;
+			irr::u32 P_SPD; // Atk speed
+			irr::u32 M_SPD; // Cast speed
+			irr::u32 ACC; // Acuracy
+			irr::u32 CRIT; // Crit rate
+			irr::u32 EVASION;
+			irr::u32 RUN_SPEED;
+			irr::u32 MAX_WEIGHT;
+			irr::s32 x;
+			irr::s32 y;
+			irr::s32 z;
+			irr::u8 canCraft;
+			irr::f64 M_UNK1;
+			irr::f64 M_UNK2;
+			irr::f64 M_COL_R;
+			irr::f64 M_COL_H;
+			irr::f64 F_UNK1;
+			irr::f64 F_UNK2;
+			irr::f64 F_COL_R;
+			irr::f64 F_COL_H;
+			irr::u32 items1;
+			irr::u32 items2;
+			irr::u32 items3;
+			irr::u32 items4;
+			irr::u32 items5;
+		};
 
 }
 }

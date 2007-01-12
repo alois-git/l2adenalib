@@ -34,6 +34,8 @@ namespace game_server
 
 	struct SCharInfo
 	{
+		// Char currently in game?
+		bool InUse;
 		irr::u32 CharacterId;
 		irr::u32 AccountId;
 		irr::core::stringc Name;
@@ -44,6 +46,14 @@ namespace game_server
 		irr::u32 HairType;
 		irr::u32 HairColor;
 		irr::u32 FaceType;
+		irr::u32 Level;
+		irr::u64 xp;
+		irr::u32 hp;
+		irr::u32 mp;
+		irr::u32 cp;
+		irr::s32 x;
+		irr::s32 y;
+		irr::s32 z;
 	};
 
 }

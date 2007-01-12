@@ -24,42 +24,53 @@
 #ifndef _ADENA_C_P_CHAR_SELECT_H_
 #define _ADENA_C_P_CHAR_SELECT_H_
 
-#include <CPacket.h>
+#include <CServerPacket.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPCharSelect : public CPacket
+	class CPCharSelect : public CServerPacket
 	{
 	public:
 
-		CPCharSelect(irr::db::IDatabase* db, irr::u32 acc)
-		: CPacket()
+		CPCharSelect(IGameServerClient* client)
+		: CServerPacket()
 		{
-			irr::db::Query chars(irr::core::stringc("SELECT * FROM characters WHERE account_id = $acc"));
-			chars.setVar(irr::core::stringc("$acc"), irr::core::stringc((int)acc));
-			irr::db::CQueryResult qr = db->query(chars);
+			Client = client;
+		};
 
-			irr::u32 len = qr.RowCount;
+		virtual ~CPCharSelect()
+		{
+
+		};
+
+		virtual bool writePacket()
+		{
+			Client->CharSelectIds = Client->Server->Interfaces.PlayerCache->loadCharSelect(Client->AccountId);
+
+			// Would much rather allocate memory once :P
+			resize(Client->CharSelectIds.Chars * 256);
 
 			w8(0x13);
-			w32(len);
+			w32(Client->CharSelectIds.Chars);
 
-			for (int i = 0; i < len; i++)
+			for (int i = 0; i < Client->CharSelectIds.Chars; i++)
 			{
-				wStrW(qr[i][irr::core::stringc("name")]); // Char name
-				w32(atoi(qr[i][irr::core::stringc("id")].c_str())); // Char id, no reason
-				wStrW(irr::core::stringc("1337")); // Account name, no reason
+				SCharInfo* ci = Client->Server->Interfaces.PlayerCache->loadChar(Client->CharSelectIds.CharIds[i]);
+
+				wStrW(ci->Name); // Char name
+				w32(ci->CharacterId); // Char id
+				wStrW(irr::core::stringc("1337")); // Account name
 
 				w32(0x00);
 				w32(0x00);
 				w32(0x00);
 
-				w32(atoi(qr[i][irr::core::stringc("sex")].c_str())); // sex
-				w32(atoi(qr[i][irr::core::stringc("race_id")].c_str())); // race id
-				w32(atoi(qr[i][irr::core::stringc("class_id")].c_str())); // class id
+				w32(ci->Sex); // sex
+				w32(ci->RaceId); // race id
+				w32(ci->ClassId); // class id
 
 				w32(0x01);
 
@@ -67,11 +78,11 @@ namespace game_server
 				w32(0x00); // y
 				w32(0x00); // z
 
-				wf(0x00); // Current hp
-				wf(0x00); // Current mp
+				wf(ci->hp); // Current hp
+				wf(ci->mp); // Current mp
 				w32(0x00); // Current sp
-				w64(0x00); // Current xp
-				w32(0x01);  // Current level
+				w64(ci->xp); // Current xp
+				w32(ci->Level);  // Current level
 
 				w32(0x00); // Current karma
 				w32(0x00);
@@ -120,16 +131,16 @@ namespace game_server
 				w32(0x00); // Left right hand
 				w32(0x00); // Hair
 
-				w32(atoi(qr[i][irr::core::stringc("hair_type")].c_str())); // Hair type
-				w32(atoi(qr[i][irr::core::stringc("hair_color")].c_str())); // Hair color
-				w32(atoi(qr[i][irr::core::stringc("face")].c_str())); // Face type
+				w32(ci->HairType); // Hair type
+				w32(ci->HairColor); // Hair color
+				w32(ci->FaceType); // Face type
 
 				wf(100); // Max hp
 				wf(100); // Max mp
 
 				w32(0x00); // Days before delete
 
-				w32(atoi(qr[i][irr::core::stringc("class_id")].c_str())); // Class id
+				w32(ci->ClassId); // Class id
 
 				w32(0x00); // Bool, last used
 
@@ -137,11 +148,7 @@ namespace game_server
 				w32(0x00); // Object id mask
 				w32(0x00); // Item id mask
 			}
-		};
-
-		virtual ~CPCharSelect()
-		{
-
+			return true;
 		};
 
 		virtual irr::c8* getData()
@@ -155,8 +162,6 @@ namespace game_server
 		};
 
 	private:
-
-
 
 	};
 

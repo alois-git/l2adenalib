@@ -1,9 +1,9 @@
 /*
- * COPlayer.h - A player.
- * Created January 8, 2007, by Michael 'Bigcheese' Spencer.
+ * CCharTemplates.h - Caches the default char templates.
+ * Created January 11, 2006, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,31 +21,37 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_O_PLAYER_H_
-#define _ADENA_C_O_PLAYER_H_
+#ifndef _ADENA_C_CHAR_TEMPLATES_H_
+#define _ADENA_C_CHAR_TEMPLATES_H_
 
-#include <COPawn.h>
-#include <irrString.h>
-#include <SCharInfo.h>
-#include <CGameServerClient.h>
+#include <AdenaConfig.h>
+#include <irrThread.h>
+#include <irrDb.h>
+#include <AVL.h>
+#include <SClassTemplate.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class COPlayer : public COPawn
+	class CCharTemplates
 	{
 	public:
 
-		COPlayer();
+		CCharTemplates(irr::db::IDatabase* database);
 
-		virtual ~COPlayer() {}
+		virtual ~CCharTemplates();
 
-		SCharInfo* CharInfo;
-		CGameServerClient* Client;
+		SClassTemplate* loadTemplate(irr::u32 class_id);
 
 	private:
+
+		void loadTemplates();
+
+		irr::db::IDatabase* DataBase;
+
+		AVL<irr::u32, SClassTemplate*> Templates;
 
 	};
 
