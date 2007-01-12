@@ -14,4 +14,6 @@ Packet ids
   * 074 - 0x4a : Creature Say
   * 100 - 0x64 : System Message
   * 126 - 0x7e : Logout
+  * 208 - 0xd0 : Extended Packets
 
+== Extended Server Packets ==
