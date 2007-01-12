@@ -14,6 +14,8 @@ Packet ids
   * 074 - 0x4a : Creature Say
   * 100 - 0x64 : System Message
   * 126 - 0x7e : Logout
+  * 127 - 0x7f : Buff Bar
   * 208 - 0xd0 : Extended Packets
+  * 231 - 0xe7 : Macro List
 
 == Extended Server Packets ==
