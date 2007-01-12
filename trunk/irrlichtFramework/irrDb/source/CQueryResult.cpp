@@ -25,7 +25,7 @@ u32 CQueryResultRow::getColumns()
 	return ColumnCount;
 };
 
-core::stringc CQueryResultRow::operator [](core::stringc &str)
+core::stringc CQueryResultRow::operator [](core::stringc str)
 {
 	core::stringc item("");
 	Data.Find(str, item);

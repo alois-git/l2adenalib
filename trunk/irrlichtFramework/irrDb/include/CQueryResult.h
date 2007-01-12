@@ -26,7 +26,7 @@ namespace db
 
 		u32 getColumns();
 
-		core::stringc operator [](core::stringc& str);
+		core::stringc operator [](core::stringc str);
 
 		AVL<core::stringc, core::stringc> Data;
 

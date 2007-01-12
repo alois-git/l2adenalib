@@ -10,6 +10,7 @@
 #include <irrAddress.h>
 #include <irrNetTypes.h>
 #include <IServer.h>
+#include <irrString.h>
 
 namespace irr
 {
@@ -39,10 +40,13 @@ namespace net
 
 		virtual s32 recv(c8* data, u32 len) = 0;
 
+		virtual irr::core::stringc getHostName() = 0;
+
 		void* UserData;
 
 	protected:
 
+		irr::c8 Addr[16];
 		Socket Sock;
 		s32 AddressFamily;
 		IServer* Server;

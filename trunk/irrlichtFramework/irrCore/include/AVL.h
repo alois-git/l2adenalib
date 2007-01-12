@@ -100,7 +100,7 @@ public:
 
 	AVL() : m_pRoot(0) { }
 	~AVL() { }
-	
+
 	void 	Insert(KeyType key, ItemType item);
 	void 	Remove(KeyType key);
 	bool 	Find  (KeyType key, ItemType& item);

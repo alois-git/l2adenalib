@@ -31,6 +31,8 @@ namespace net
 
 		virtual s32 recv(c8* data, u32 len);
 
+		virtual irr::core::stringc getHostName();
+
 	protected:
 
 		Socket Sock;
