@@ -18,6 +18,7 @@ Packet ids
   * 126 - 0x7e : Logout
   * 127 - 0x7f : Buff Bar
   * 208 - 0xd0 : Extended Packets
+  * 228 - 0xe4 : Dyes
   * 231 - 0xe7 : Macro List
 
 == Extended Server Packets ==
