@@ -1,9 +1,9 @@
 /*
- * CSPSystemMessage.h - The lil text that you never read...
+ * CSPStopMove.h - Notifies that a obj stoped moving.
  * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,28 +21,28 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_SYSTEM_MESSAGE_H_
-#define _ADENA_C_S_P_SYSTEM_MESSAGE_H_
+#ifndef _ADENA_C_S_P_STOP_MOVE_H_
+#define _ADENA_C_S_P_STOP_MOVE_H_
 
 #include <CServerPacket.h>
-#include <irrString.h>
+#include <vector3d.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPSystemMessage : public CServerPacket
+	class CSPStopMove : public CServerPacket
 	{
 	public:
 
-		CSPSystemMessage(irr::core::stringc msg)
-		: CServerPacket(), Message(msg)
+		CSPStopMove(irr::u32 char_id, irr::core::vector3di loc, irr::s32 heading)
+		: CServerPacket(), CharId(char_id), Loc(loc), Heading(heading)
 		{
 
 		};
 
-		virtual ~CSPSystemMessage() {};
+		virtual ~CSPStopMove() {};
 
 		virtual bool writePacket()
 		{
@@ -50,14 +50,12 @@ namespace game_server
 
 			if(!writen)
 			{
-				w8(0x64);
-
-				w32(614); // Message id
-				w32(0x01); // Types
-
-				// For loop
-				w32(0x00); // Type id
-				wStrW(Message);
+				w8(0x47);
+				w32(CharId);
+				w32(Loc.X);
+				w32(Loc.Y);
+				w32(Loc.Z);
+				w32(Heading);
 
 				writen = true;
 			}
@@ -77,9 +75,8 @@ namespace game_server
 	private:
 
 		irr::u32 CharId;
-		irr::u32 MessageType;
-		irr::core::stringc Messenger;
-		irr::core::stringc Message;
+		irr::core::vector3di Loc;
+		irr::s32 Heading;
 
 	};
 

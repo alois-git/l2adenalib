@@ -6,13 +6,13 @@
 
 CREATE TABLE accounts (
   id        integer PRIMARY KEY NOT NULL,
-  username  varchar(32),
-  password  varchar(14)
+  username  varchar(14),
+  password  varchar(32)
 );
 
 CREATE TABLE characters (
   id            int PRIMARY KEY NOT NULL,
-  account_name  varchar(14) NOT NULL,
+  account_id    int NOT NULL,
   name          varchar(16) NOT NULL,
   race_id       int NOT NULL,
   class_id      int NOT NULL,

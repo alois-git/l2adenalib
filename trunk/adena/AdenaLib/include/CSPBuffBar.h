@@ -1,9 +1,9 @@
 /*
- * CSPSystemMessage.h - The lil text that you never read...
+ * CSPBuffBar.h - Send the buff bar to the client.
  * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,46 +21,41 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_SYSTEM_MESSAGE_H_
-#define _ADENA_C_S_P_SYSTEM_MESSAGE_H_
+#ifndef _ADENA_C_S_P_BUFF_BAR_H_
+#define _ADENA_C_S_P_BUFF_BAR_H_
 
 #include <CServerPacket.h>
-#include <irrString.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPSystemMessage : public CServerPacket
+	class CSPBuffBar : public CServerPacket
 	{
 	public:
 
-		CSPSystemMessage(irr::core::stringc msg)
-		: CServerPacket(), Message(msg)
+		CSPBuffBar()
+		: CServerPacket()
 		{
 
 		};
 
-		virtual ~CSPSystemMessage() {};
+		virtual ~CSPBuffBar() {};
 
 		virtual bool writePacket()
 		{
-			static bool writen = false;
+			w8(0x7f);
 
-			if(!writen)
+			w16(0x00); // Number of buffs
+		
+			/*for (;;)
 			{
-				w8(0x64);
+				w32(0x00); // Skill id
+				w16(0x00); // Skill level
+	            w32(0x00); // Duration
+			}*/
 
-				w32(614); // Message id
-				w32(0x01); // Types
-
-				// For loop
-				w32(0x00); // Type id
-				wStrW(Message);
-
-				writen = true;
-			}
 			return true;
 		};
 
@@ -73,13 +68,6 @@ namespace game_server
 		{
 			return WritePointer;
 		};
-
-	private:
-
-		irr::u32 CharId;
-		irr::u32 MessageType;
-		irr::core::stringc Messenger;
-		irr::core::stringc Message;
 
 	};
 

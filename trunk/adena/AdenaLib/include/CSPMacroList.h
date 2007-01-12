@@ -1,9 +1,9 @@
 /*
- * CSPSystemMessage.h - The lil text that you never read...
+ * CSPMacroList.h - Send the client their macro list.
  * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,46 +21,57 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_SYSTEM_MESSAGE_H_
-#define _ADENA_C_S_P_SYSTEM_MESSAGE_H_
+#ifndef _ADENA_C_S_P_MACRO_LIST_H_
+#define _ADENA_C_S_P_MACRO_LIST_H_
 
 #include <CServerPacket.h>
-#include <irrString.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPSystemMessage : public CServerPacket
+	class CSPMacroList : public CServerPacket
 	{
 	public:
 
-		CSPSystemMessage(irr::core::stringc msg)
-		: CServerPacket(), Message(msg)
+		CSPMacroList()
+		: CServerPacket()
 		{
 
 		};
 
-		virtual ~CSPSystemMessage() {};
+		virtual ~CSPMacroList() {};
 
 		virtual bool writePacket()
 		{
-			static bool writen = false;
-
-			if(!writen)
+			w8(0xe7);
+			
+			w32(0x00); // Macro change revision (changes after each macro edition)
+			w8(0x00);    // Unknown
+			w8(0x00);    // Count of Macros
+			w8(0x00);    // Are there any macros?
+			
+			/*if (there are macros)
 			{
-				w8(0x64);
+				w32(0x00); 	// Macro ID
+				wStrW(); 	// Macro Name
+				wStrW(); 	// Desc
+				wStrW(); 	// Acronym
+				w8();		// Icon
+				
+				w8();		// Commands
+				
+				for (;;)
+				{
+					w8(0x00);		// Index
+					w8(1);	// Type  1 = skill, 3 = action, 4 = shortcut
+					w32(0x00);	// Skill id
+					w8(0x00);		// Shortcut id
+					wStrW();	// Command name
+				}
+			}*/
 
-				w32(614); // Message id
-				w32(0x01); // Types
-
-				// For loop
-				w32(0x00); // Type id
-				wStrW(Message);
-
-				writen = true;
-			}
 			return true;
 		};
 
@@ -73,13 +84,6 @@ namespace game_server
 		{
 			return WritePointer;
 		};
-
-	private:
-
-		irr::u32 CharId;
-		irr::u32 MessageType;
-		irr::core::stringc Messenger;
-		irr::core::stringc Message;
 
 	};
 
