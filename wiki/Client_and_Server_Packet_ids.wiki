@@ -11,6 +11,8 @@ Packet ids
   * 023 - 0x17 : Char Templates
   * 025 - 0x19 : Char Create Ok
   * 026 - 0x1a : Char Create Failed
+  * 027 - 0x1b : Item List
+  * 069 - 0x45 : Skill Bar
   * 074 - 0x4a : Creature Say
   * 100 - 0x64 : System Message
   * 126 - 0x7e : Logout
