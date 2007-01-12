@@ -1,5 +1,5 @@
 /*
- * CPCharCreateOk.h - Char create ok.
+ * CSPMoveToLocation.h - Tell ppl about the movement.
  * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
@@ -21,36 +21,49 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_CHAR_CREATE_OK_H_
-#define _ADENA_C_P_CHAR_CREATE_OK_H_
+#ifndef _ADENA_C_S_P_MOVE_TO_LOCATION_H_
+#define _ADENA_C_S_P_MOVE_TO_LOCATION_H_
 
 #include <CServerPacket.h>
+#include <vector3d.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPCharCreateOk : public CServerPacket
+	class CSPMoveToLocation : public CServerPacket
 	{
 	public:
 
-		CPCharCreateOk()
-		: CServerPacket()
-		{
-			w8(0x19);
-			w32(0x01);
-		};
-
-		virtual ~CPCharCreateOk()
+		CSPMoveToLocation(irr::u32 char_id, irr::core::vector3di target, irr::core::vector3di origin)
+		: CServerPacket(), CharId(char_id), Target(target), Origin(origin)
 		{
 
 		};
+
+		virtual ~CSPMoveToLocation() {};
 
 		virtual bool writePacket()
 		{
-			w8(0x19);
-			w32(0x01);
+			static bool writen = false;
+
+			if(!writen)
+			{
+				w8(0x01);
+				
+				w32(CharId);
+				
+				w32(Target.X);
+				w32(Target.Y);
+				w32(Target.Z);
+				
+				w32(Origin.X);
+				w32(Origin.Y);
+				w32(Origin.Z);
+
+				writen = true;
+			}
 			return true;
 		};
 
@@ -66,8 +79,12 @@ namespace game_server
 
 	private:
 
-
-
+		irr::u32 CharId;
+		irr::u32 MessageType;
+		irr::core::stringc Messenger;
+		irr::core::stringc Message;
+		irr::core::vector3di Target;
+		irr::core::vector3di Origin;
 	};
 
 }

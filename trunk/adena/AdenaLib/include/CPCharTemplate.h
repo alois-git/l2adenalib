@@ -24,7 +24,7 @@
 #ifndef _ADENA_C_P_CHAR_TEMPLATE_H_
 #define _ADENA_C_P_CHAR_TEMPLATE_H_
 
-#include <CPacket.h>
+#include <CServerPacket.h>
 #include <irrList.h>
 #include <SClassTemplate.h>
 
@@ -33,45 +33,50 @@ namespace adena
 namespace game_server
 {
 
-	class CPCharTemplate : public CPacket
+	class CPCharTemplate : public CServerPacket
 	{
 	public:
 
-		CPCharTemplate(irr::core::list<SClassTemplate> &list)
-		: CPacket()
+		CPCharTemplate()
+		: CServerPacket()
 		{
-			w8(0x17);
-			w32(list.getSize());
 
-			irr::core::list<SClassTemplate>::Iterator ittr;
-			for (ittr = list.begin(); ittr != list.end(); ittr++)
-			{
-				/*w32(temp.race.ordinal());
-				w32(temp.classId.getId());
-				w32(0x46);
-				w32(temp.baseSTR);
-				w32(0x0a);
-				w32(0x46);
-				w32(temp.baseDEX);
-				w32(0x0a);
-				w32(0x46);
-				w32(temp.baseCON);
-				w32(0x0a);
-				w32(0x46);
-				w32(temp.baseINT);
-				w32(0x0a);
-				w32(0x46);
-				w32(temp.baseWIT);
-				w32(0x0a);
-				w32(0x46);
-				w32(temp.baseMEN);
-				w32(0x0a);*/
-			}
 		};
 
 		virtual ~CPCharTemplate()
 		{
 
+		};
+
+		virtual bool writePacket()
+		{
+			w8(0x17);
+			w32(0);
+
+			//for (;;)
+			{
+				/*w32(); // Race id
+				w32(); // Class id
+				w32(0x46);
+				w32(); // STR
+				w32(0x0a);
+				w32(0x46);
+				w32(); // DEX
+				w32(0x0a);
+				w32(0x46);
+				w32(); // CON
+				w32(0x0a);
+				w32(0x46);
+				w32(); // INT
+				w32(0x0a);
+				w32(0x46);
+				w32(); // WIT
+				w32(0x0a);
+				w32(0x46);
+				w32(); // MEN
+				w32(0x0a);*/
+			}
+			return true;
 		};
 
 		virtual irr::c8* getData()

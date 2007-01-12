@@ -24,19 +24,26 @@
 #ifndef _ADENA_C_P_KEY_INIT_H_
 #define _ADENA_C_P_KEY_INIT_H_
 
-#include <CPacket.h>
+#include <CServerPacket.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPKeyInit : public CPacket
+	class CPKeyInit : public CServerPacket
 	{
 	public:
 
-		CPKeyInit(irr::c8* key)
-		: CPacket()
+		CPKeyInit(irr::c8* Key)
+		: CServerPacket(), key(Key)
+		{
+
+		};
+
+		virtual ~CPKeyInit() {};
+
+		virtual bool writePacket()
 		{
 			w8(0x00);
 			w8(0x01);
@@ -48,12 +55,7 @@ namespace game_server
 			w8(key[5]);
 			w8(key[6]);
 			w8(key[7]);
-
-		};
-
-		virtual ~CPKeyInit()
-		{
-
+			return true;
 		};
 
 		virtual irr::c8* getData()
@@ -68,7 +70,7 @@ namespace game_server
 
 	private:
 
-
+		irr::c8* key;
 
 	};
 

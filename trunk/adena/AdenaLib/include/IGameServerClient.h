@@ -1,9 +1,9 @@
 /*
- * COPlayer.h - A player.
- * Created January 8, 2007, by Michael 'Bigcheese' Spencer.
+ * IGameServerClient.h - Login server client interface (Because i need to beable to call sendpacket in packets).
+ * Created January 11, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,32 +21,40 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_O_PLAYER_H_
-#define _ADENA_C_O_PLAYER_H_
+#ifndef _ADENA_I_GAME_SERVER_CLIENT_H_
+#define _ADENA_I_GAME_SERVER_CLIENT_H_
 
+#include <AdenaConfig.h>
+#include <IPacket.h>
+#include <irrNet.h>
+#include <CGameServer.h>
+#include <CCrypt.h>
 #include <COPawn.h>
-#include <irrString.h>
 #include <SCharInfo.h>
-#include <CGameServerClient.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class COPlayer : public COPawn
+	class IGameServerClient
 	{
+	friend CGameServer;
 	public:
 
-		COPlayer();
+		virtual ~IGameServerClient() {}
 
-		virtual ~COPlayer() {}
+		virtual void sendPacket(IPacket* packet) = 0;
 
+		irr::net::IServerClient* Client;
+		CGameServer* Server;
+		irr::s32 SessionId;
+		irr::core::stringc AccountName;
+		irr::u32 AccountId;
+		COPawn* Pawn;
 		SCharInfo* CharInfo;
-		CGameServerClient* Client;
-
-	private:
-
+		SCharSelectIds CharSelectIds;
+		irr::u32 CharId;
 	};
 
 }

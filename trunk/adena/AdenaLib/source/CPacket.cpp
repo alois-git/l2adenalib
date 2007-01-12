@@ -29,7 +29,7 @@ namespace adena
 //================ Con/De structor ================
 
 CPacket::CPacket()
-: Data(0), DataLen(0), WritePointer(0), ReadPointer(0)
+: Thread(), Data(0), DataLen(0), WritePointer(0), ReadPointer(0)
 {
 
 };
@@ -73,7 +73,7 @@ void CPacket::blowfishPad()
 //================ Public ================
 //================ Write ================
 
-void CPacket::w8(irr::u32 val)
+void CPacket::w8(irr::s32 val)
 {
 	if((WritePointer + 1) > DataLen)
 		resize(WritePointer + GROW_SIZE);
@@ -83,7 +83,7 @@ void CPacket::w8(irr::u32 val)
 
 //--------------------------------
 
-void CPacket::w16(irr::u32 val)
+void CPacket::w16(irr::s32 val)
 {
 	if((WritePointer + 2) > DataLen)
 		resize(WritePointer + GROW_SIZE);
@@ -94,7 +94,7 @@ void CPacket::w16(irr::u32 val)
 
 //--------------------------------
 
-void CPacket::w32(irr::u32 val)
+void CPacket::w32(irr::s32 val)
 {
 	if((WritePointer + 4) > DataLen)
 		resize(WritePointer + GROW_SIZE);
@@ -107,7 +107,7 @@ void CPacket::w32(irr::u32 val)
 
 //--------------------------------
 
-void CPacket::w64(irr::u64 val)
+void CPacket::w64(irr::s64 val)
 {
 	if((WritePointer + 8) > DataLen)
 		resize(WritePointer + GROW_SIZE);
@@ -172,7 +172,7 @@ void CPacket::wArray(irr::c8* in_data, irr::u32 data_len)
 
 //================ Read ================
 
-irr::u32 CPacket::r8()
+irr::s32 CPacket::r8()
 {
 	int result = Data[ReadPointer++] &0xff;
 	return result;
@@ -180,7 +180,7 @@ irr::u32 CPacket::r8()
 
 //--------------------------------
 
-irr::u32 CPacket::r16()
+irr::s32 CPacket::r16()
 {
 	int result = Data[ReadPointer++] &0xff;
 	result |= ((Data[ReadPointer++] << 8) & 0xff00);
@@ -189,7 +189,7 @@ irr::u32 CPacket::r16()
 
 //--------------------------------
 
-irr::u32 CPacket::r32()
+irr::s32 CPacket::r32()
 {
 	int result = Data[ReadPointer++] &0xff;
 	result |= ((Data[ReadPointer++] << 8) & 0xff00);

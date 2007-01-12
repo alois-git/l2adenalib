@@ -24,26 +24,29 @@
 #ifndef _ADENA_C_P_LOGOUT_H_
 #define _ADENA_C_P_LOGOUT_H_
 
-#include <CPacket.h>
+#include <CServerPacket.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPLogout : public CPacket
+	class CPLogout : public CServerPacket
 	{
 	public:
 
 		CPLogout()
-		: CPacket()
+		: CServerPacket()
 		{
-			w8(0x7e);
+
 		};
 
-		virtual ~CPLogout()
-		{
+		virtual ~CPLogout() {};
 
+		virtual bool writePacket()
+		{
+			w8(0x7e);
+			return true;
 		};
 
 		virtual irr::c8* getData()

@@ -24,7 +24,7 @@
 #ifndef _ADENA_C_P_CHAR_SELECTED_H_
 #define _ADENA_C_P_CHAR_SELECTED_H_
 
-#include <CPacket.h>
+#include <CServerPacket.h>
 #include <COPlayer.h>
 
 namespace adena
@@ -32,42 +32,58 @@ namespace adena
 namespace game_server
 {
 
-	class CPCharSelected : public CPacket
+	class CPCharSelected : public CServerPacket
 	{
 	public:
 
-		CPCharSelected(COPlayer* player)
-		: CPacket()
+		CPCharSelected(SGameServerInterfaces* interfaces, irr::u32 char_id)
+		: CServerPacket(), Interfaces(interfaces), CharId(char_id)
 		{
+
+		};
+
+		virtual ~CPCharSelected()
+		{
+
+		};
+
+		virtual bool writePacket()
+		{
+			SCharInfo* ci = Interfaces->PlayerCache->loadChar(CharId);
+			if(ci == 0)
+				return false;
+			SClassTemplate* ct = Interfaces->CharTemplates->loadTemplate(ci->ClassId);
+
 			w8(0x15);
 
-			wStrW(player->Name); // Name
-			w32(0x00); // Char object id
-			wStrW(irr::core::stringc("OMG I R TEH NUB")); // Title
+			wStrW(ci->Name); // Name
+			w32(ci->CharacterId); // Char object id
+			wStrW(ci->Title); // Title
 			w32(0x00); // session id (why do we send this so many times?)
 			w32(0x00); // Clan id
 			w32(0x00);
-			w32(0x00); // Sex
-			w32(0x00); // Race
-			w32(0x00); // Class
+			w32(ci->Sex); // Sex
+			w32(ci->RaceId); // Race
+			w32(ci->ClassId); // Class
 			w32(0x01);
-			w32(-71338); // x
-			w32(258271); // y
-			w32(-3104); // z
 
-			wf(0x00); // Current hp
-			wf(0x00); // Current mp
+			w32(ci->x); // x
+			w32(ci->y); // y
+			w32(ci->z); // z
+
+			wf(ci->hp); // Current hp
+			wf(ci->mp); // Current mp
 			w32(0x00); // Current sp
-			w64(0x00); // Current xp
-			w32(80); // Current lvl
+			w64(ci->xp); // Current xp
+			w32(ci->Level); // Current lvl
 			w32(0x00); // Current karma
-			w32(0x0);
-			w32(0x00); // INT
-			w32(0x00); // STR
-			w32(0x00); // CON
-			w32(0x00); // MEN
-			w32(0x00); // DEX
-			w32(0x00); // WIT
+			w32(0x00);
+			w32(ct->INT); // INT
+			w32(ct->STR); // STR
+			w32(ct->CON); // CON
+			w32(ct->MEN); // MEN
+			w32(ct->DEX); // DEX
+			w32(ct->WIT); // WIT
 
 			for(irr::u32 i = 0; i < 30; i++)
 			{
@@ -79,6 +95,7 @@ namespace game_server
 			w32(0x00);
             w32(0x00);
             w32(0x00);
+            w32(0x00); // Time
             w32(0x00);
             w32(0x00);
             w32(0x00);
@@ -91,12 +108,10 @@ namespace game_server
             w32(0x00);
             w32(0x00);
             w32(0x00);
-            w32(0x00);
-		};
-
-		virtual ~CPCharSelected()
-		{
-
+			w32(0x00);
+			w32(0x00);
+			w32(0x00);
+			return true;
 		};
 
 		virtual irr::c8* getData()
@@ -111,7 +126,8 @@ namespace game_server
 
 	private:
 
-
+		SGameServerInterfaces* Interfaces;
+		irr::u32 CharId;
 
 	};
 

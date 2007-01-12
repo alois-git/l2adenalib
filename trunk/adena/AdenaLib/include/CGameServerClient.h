@@ -25,18 +25,14 @@
 #define _ADENA_C_GAME_SERVER_CLIENT_H_
 
 #include <AdenaConfig.h>
-#include <irrNet.h>
-#include <IPacket.h>
-#include <CGameServer.h>
-#include <CCrypt.h>
-#include <COPlayer.h>
+#include <IGameServerClient.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CGameServerClient
+	class CGameServerClient : public IGameServerClient
 	{
 	friend CGameServer;
 	public:
@@ -49,34 +45,29 @@ namespace game_server
 
 		void HandlePacket();
 
-		void sendPacket(IPacket* packet);
+		virtual void sendPacket(IPacket* packet);
 
 	protected:
 
 		CCrypt* OutputCipher;
 		CCrypt* InputCipher;
-		irr::net::IServerClient* Client;
-		CGameServer* Server;
-		irr::s32 SessionId;
-		irr::core::stringc AccountName;
-		irr::u32 AccountId;
 		bool CryptPackets;
 		packetFunc PacketFunctions[256];
-		COPlayer* Player;
-
-	protected:
+		irr::core::threads::Mutex SendMutex;
 
 		void unknownPacket(irr::c8* data);
 
 		// Funtions in order of their packet num starting at 0x00.
-		void protocolVersion(irr::c8* data); // 0
-		void clientLoaded(irr::c8* data); // 3
-		void authLogin(irr::c8* data); // 8
-		void logout(irr::c8* data); // 9
-		void createChar(irr::c8* data); // 11
-		void pressStart(irr::c8* data); // 13
-		void createCharButtion(irr::c8* data); // 14
-
+		void protocolVersion(irr::c8* data);	// 000 - 0x00
+		void moveToLocation(irr::c8* data);		// 001 - 0x01
+		void clientLoaded(irr::c8* data);		// 003 - 0x03
+		void authLogin(irr::c8* data);			// 008 - 0x08
+		void logout(irr::c8* data);				// 009 - 0x09
+		void createChar(irr::c8* data);			// 011 - 0x0b
+		void pressStart(irr::c8* data);			// 013 - 0x0d
+		void createCharButtion(irr::c8* data);	// 014 - 0x0e
+		void clientSay(irr::c8* data);			// 056 - 0x38
+		void extendedPacket(irr::c8* data);		// 208 - 0xd0
 	};
 
 }

@@ -120,7 +120,6 @@ void CLoginServerClient::HandlePacket()
 		// Request play
 		CPRequestPlay rp(dec);
 		Server->GameServerLink->requestPlay(rp.ServerIndex - 1, AccountName, AccountId, SessionId);
-		// Set AccountId to 0 so the login server doesnt remove it when we DC from the login
 		Server->AccountLocationsMutex.getLock();
 		CLoginServer::SAccountLocation al;
 		Server->AccountLocations.Find(AccountId, al);
@@ -135,7 +134,11 @@ void CLoginServerClient::HandlePacket()
 		// Request server list.
 		if(SessionId)// User has logged in.
 		{
-			SendPacket(Server->InternalServerListPacket);
+			if(Client->getHostName().find("192.168") == -1)
+				SendPacket(Server->ExternalServerListPacket);
+			else
+				SendPacket(Server->InternalServerListPacket);
+			
 		}else
 		{
 			// Should never get here unless not using l2 client.

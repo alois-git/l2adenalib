@@ -1,6 +1,6 @@
 /*
- * CPCharCreateOk.h - Char create ok.
- * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
+ * CSPCreatureSay.h - Chat FTW.
+ * Created January 11, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,36 +21,43 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_CHAR_CREATE_OK_H_
-#define _ADENA_C_P_CHAR_CREATE_OK_H_
+#ifndef _ADENA_C_S_P_CREATURE_SAY_H_
+#define _ADENA_C_S_P_CREATURE_SAY_H_
 
 #include <CServerPacket.h>
+#include <irrString.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPCharCreateOk : public CServerPacket
+	class CSPCreatureSay : public CServerPacket
 	{
 	public:
 
-		CPCharCreateOk()
-		: CServerPacket()
-		{
-			w8(0x19);
-			w32(0x01);
-		};
-
-		virtual ~CPCharCreateOk()
+		CSPCreatureSay(irr::u32 char_id, irr::u32 message_type, irr::core::stringc &messenger, irr::core::stringc &msg)
+		: CServerPacket(), CharId(char_id), MessageType(message_type), Messenger(messenger), Message(msg)
 		{
 
 		};
+
+		virtual ~CSPCreatureSay() {};
 
 		virtual bool writePacket()
 		{
-			w8(0x19);
-			w32(0x01);
+			static bool writen = false;
+
+			if(!writen)
+			{
+			w8(0x4a);
+
+			w32(CharId);
+			w32(MessageType);
+			wStrW(Messenger);
+			wStrW(Message);
+			writen = true;
+			}
 			return true;
 		};
 
@@ -66,7 +73,10 @@ namespace game_server
 
 	private:
 
-
+		irr::u32 CharId;
+		irr::u32 MessageType;
+		irr::core::stringc Messenger;
+		irr::core::stringc Message;
 
 	};
 

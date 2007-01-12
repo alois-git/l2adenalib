@@ -30,6 +30,7 @@
 #include <ILogger.h>
 #include <BCini.h>
 #include <CPlayerCache.h>
+#include <CCharTemplates.h>
 
 namespace adena
 {
@@ -43,6 +44,7 @@ namespace game_server
 		irr::IRng* Rng;
 		BCini* ConfigFile;
 		CPlayerCache* PlayerCache;
+		CCharTemplates* CharTemplates;
 	};
 
 }
