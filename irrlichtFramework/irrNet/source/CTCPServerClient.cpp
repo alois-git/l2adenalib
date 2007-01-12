@@ -100,5 +100,12 @@ s32 CTCPServerClient::recv(c8* data, u32 len)
 	}
 };
 
+irr::core::stringc CTCPServerClient::getHostName()
+{
+	irr::c8 buff[16];
+	sprintf(buff, "%d.%d.%d.%d", Addr[0] & 0xff, Addr[1] & 0xff, Addr[2] & 0xff, Addr[3] & 0xff);
+	return irr::core::stringc(buff);
+};
+
 }
 }

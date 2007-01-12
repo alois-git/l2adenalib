@@ -6,6 +6,7 @@
 #include <CTCPServer.h>
 #include <CTCPServerClient.h>
 #include <INetEvent.h>
+#include <hexdump.h>
 
 namespace irr
 {
@@ -23,7 +24,7 @@ CTCPServer::CTCPServer(void* eventCallBack, u32 backLog)
 CTCPServer::~CTCPServer()
 {
 	if(Sock)
-		::close(Sock);
+		::nclose(Sock);
 };
 
 void CTCPServer::run()
@@ -34,10 +35,15 @@ void CTCPServer::run()
 	if(::listen(Sock, BackLog) != 0)
 		return;
 	while(Running){
-		Socket s = ::accept(Sock, NULL, NULL);
+		sockaddr_in addr;
+		addr.sin_family = AF_INET;
+		int blah = sizeof(sockaddr_in);
+		Socket s = ::accept(Sock, (sockaddr*)&addr, &blah);
+		hexdump((irr::c8*)&addr.sin_addr, 4);
 		if(s != 0)
 		{
 			IServerClient* sc = new CTCPServerClient(s, this);
+			memcpy(&sc->Addr, &addr.sin_addr, blah);
 			addClient(sc);
 			NetEvent ne;
 			ne.serverClient = sc;
@@ -115,7 +121,7 @@ void CTCPServer::kickClient(void* client)
 
 	if(found)
 	{
-		::close(((IServerClient*)client)->Sock);
+		::nclose(((IServerClient*)client)->Sock);
 		((IServerClient*)client)->Sock = 0;
 		ClientList.erase(ittr);
 		ClientListMutex.releaseLock();
