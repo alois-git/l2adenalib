@@ -1,9 +1,9 @@
 /*
- * CSPSystemMessage.h - The lil text that you never read...
+ * CSPSkillBar.h - Send the client their skill bar.
  * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,46 +21,64 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_SYSTEM_MESSAGE_H_
-#define _ADENA_C_S_P_SYSTEM_MESSAGE_H_
+#ifndef _ADENA_C_S_P_SKILL_BAR_H_
+#define _ADENA_C_S_P_SKILL_BAR_H_
 
 #include <CServerPacket.h>
-#include <irrString.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPSystemMessage : public CServerPacket
+	class CSPSkillBar : public CServerPacket
 	{
 	public:
 
-		CSPSystemMessage(irr::core::stringc msg)
-		: CServerPacket(), Message(msg)
+		CSPSkillBar()
+		: CServerPacket()
 		{
 
 		};
 
-		virtual ~CSPSystemMessage() {};
+		virtual ~CSPSkillBar() {};
 
 		virtual bool writePacket()
 		{
-			static bool writen = false;
+			w8(0x45);
+			w32(0x00); // Num skills
 
-			if(!writen)
+			/*for(;;)
 			{
-				w8(0x64);
+				w32(0x01); // Type 1 = Item, 2 = Skill, 3 = Action, 4 = Macro, 5 = Recipe
+				w32(0x00); // slot + (page * 12)
 
-				w32(614); // Message id
-				w32(0x01); // Types
+				switch() // Type
+				{
+				case 1: //1
+            		w32(0x00); // Item id
+            		break;
+				case 2: //2
+            		w32(0x00); // Skill id
+            		w32(0x00); // Skill lvl
+            		w8(0x00); // C5 
+            		break;
+				case 3: //3
+            		w32(0x00); // Id
+            		break;
+				case 4: //4
+            		w32(0x00); // Id
+            		break;
+				case 5: //5
+            		w32(0x00); // Id
+            		break;
+				default:
+            		w32(0x00); // id
+				}
+	            
+				writeD(1); //??
+			}*/
 
-				// For loop
-				w32(0x00); // Type id
-				wStrW(Message);
-
-				writen = true;
-			}
 			return true;
 		};
 
@@ -73,13 +91,6 @@ namespace game_server
 		{
 			return WritePointer;
 		};
-
-	private:
-
-		irr::u32 CharId;
-		irr::u32 MessageType;
-		irr::core::stringc Messenger;
-		irr::core::stringc Message;
 
 	};
 

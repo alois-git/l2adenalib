@@ -39,6 +39,12 @@
 #include <COPlayer.h>
 #include <CCPMoveToLocation.h>
 #include <CSPSystemMessage.h>
+#include <CSPBuffBar.h>
+#include <CSPMacroList.h>
+#include <CSPItemList.h>
+#include <CSPSkillBar.h>
+#include <CSPDyes.h>
+#include <CSPQuestList.h>
 
 #define RECV_SIZE 65536 // Max size of a L2 packet.
 
@@ -160,7 +166,22 @@ void CGameServerClient::clientLoaded(irr::c8* data)
 	sendPacket(&ui);
 	CPCharInfo ci = CPCharInfo(&Server->Interfaces, CharId);
 	sendPacket(&ci);
-	CSPSystemMessage sm("Welcome to L2Adena version ADENA_VERSION, have a nice day");
+	CSPBuffBar bb = CSPBuffBar();
+	sendPacket(&bb);
+	CSPMacroList ml = CSPMacroList();
+	sendPacket(&ml);
+	CSPItemList il(false);
+	sendPacket(&il);
+	CSPSkillBar sb = CSPSkillBar();
+	sendPacket(&sb);
+	CSPDyes d = CSPDyes();
+	sendPacket(&d);
+	CSPQuestList ql = CSPQuestList();
+	sendPacket(&ql);
+
+	irr::core::stringc msg("Welcome to L2Adena version $ver, have a nice day");
+	msg.replaceStr(irr::core::stringc("$ver"), irr::core::stringc(ADENA_VERSION));
+	CSPSystemMessage sm(msg);
 	sendPacket(&sm);
 };
 

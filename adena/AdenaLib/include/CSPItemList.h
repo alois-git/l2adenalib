@@ -1,9 +1,9 @@
 /*
- * CSPSystemMessage.h - The lil text that you never read...
+ * CSPItemList.h - Send the client their item list.
  * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,46 +21,55 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_SYSTEM_MESSAGE_H_
-#define _ADENA_C_S_P_SYSTEM_MESSAGE_H_
+#ifndef _ADENA_C_S_P_ITEM_LIST_H_
+#define _ADENA_C_S_P_ITEM_LIST_H_
 
 #include <CServerPacket.h>
-#include <irrString.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPSystemMessage : public CServerPacket
+	class CSPItemList : public CServerPacket
 	{
 	public:
 
-		CSPSystemMessage(irr::core::stringc msg)
-		: CServerPacket(), Message(msg)
+		CSPItemList(bool show_window)
+		: CServerPacket(), ShowWindow(show_window)
 		{
 
 		};
 
-		virtual ~CSPSystemMessage() {};
+		virtual ~CSPItemList() {};
 
 		virtual bool writePacket()
 		{
-			static bool writen = false;
-
-			if(!writen)
+			w8(0x1b);
+			if (ShowWindow)
 			{
-				w8(0x64);
-
-				w32(614); // Message id
-				w32(0x01); // Types
-
-				// For loop
-				w32(0x00); // Type id
-				wStrW(Message);
-
-				writen = true;
+				w16(0x01);
+			}else
+			{
+				w16(0x00);
 			}
+
+			w16(0x01); // Items
+
+			//for(;;)
+			{				
+				w16(0x00); // Item type1
+				w32(0x01); // Object id
+				w32(57); // Item id ADENA PLIX!
+				w32(2147483647); // Count
+				w16(0x00);	// Item type2
+				w16(0x00);	// Item type3
+				w16(0x00); // Equipted?
+				w32(0x00);	// Body part rev 415  slot 0006-lr.ear  0008-neck  0030-lr.finger  0040-head  0080-??  0100-l.hand  0200-gloves  0400-chest  0800-pants  1000-feet  2000-??  4000-r.hand  8000-r.hand
+				w16(0x00);	// Enchant level
+				w16(0x00);	// Item type3
+			}
+
 			return true;
 		};
 
@@ -76,10 +85,7 @@ namespace game_server
 
 	private:
 
-		irr::u32 CharId;
-		irr::u32 MessageType;
-		irr::core::stringc Messenger;
-		irr::core::stringc Message;
+		bool ShowWindow;
 
 	};
 

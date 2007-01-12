@@ -29,7 +29,7 @@
 #include <irrMath.h>
 #include <memory.h>
 
-#define ADENA_VERSION 0.0.1
+#define ADENA_VERSION "0.0.1"
 
 #ifdef _IRR_WINDOWS_
 #ifdef ADENALIB_EXPORTS

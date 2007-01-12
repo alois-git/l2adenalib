@@ -28,6 +28,7 @@
 #include <irrString.h>
 #include <CSPMoveToLocation.h>
 #include <vector3d.h>
+#include <CSPStopMove.h>
 
 namespace adena
 {
@@ -79,6 +80,22 @@ namespace game_server
 						break;
 				}
 			}
+
+			irr::core::threads::sleep(1000);
+
+			if(ittr.GetFirst(key, item))
+			{
+				CSPStopMove sm(Client->CharInfo->CharacterId, Target, 0x00);
+				while(true)
+				{
+					// Do stuff with item
+					COPlayer* p = (COPlayer*)item;
+					p->Client->sendPacket(&sm);
+					if(!ittr.GetNext(key, item))
+						break;
+				}
+			}
+
 			delete this;
 		};
 

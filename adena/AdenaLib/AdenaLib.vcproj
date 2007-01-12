@@ -633,11 +633,39 @@
 						>
 					</File>
 					<File
+						RelativePath=".\include\CSPBuffBar.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CSPCreatureSay.h"
 						>
 					</File>
 					<File
+						RelativePath=".\include\CSPDyes.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPItemList.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPMacroList.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CSPMoveToLocation.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPQuestList.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPSkillBar.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPStopMove.h"
 						>
 					</File>
 					<File
