@@ -26,13 +26,15 @@
 
 #include <AdenaConfig.h>
 #include <IGameServerClient.h>
+#include <CPacketQueue.h>
+#include <irrThread.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CGameServerClient : public IGameServerClient
+	class CGameServerClient : public irr::core::threads::Thread, public IGameServerClient
 	{
 	friend CGameServer;
 	public:
@@ -43,6 +45,8 @@ namespace game_server
 
 		virtual ~CGameServerClient();
 
+		virtual void run();
+
 		void HandlePacket();
 
 		virtual void sendPacket(IPacket* packet);
@@ -51,23 +55,26 @@ namespace game_server
 
 		CCrypt* OutputCipher;
 		CCrypt* InputCipher;
-		bool CryptPackets;
 		packetFunc PacketFunctions[256];
-		irr::core::threads::Mutex SendMutex;
+		CPacketQueue* PacketQueue;
+		irr::u32 ProtocolRevision;
 
 		void unknownPacket(irr::c8* data);
 
 		// Funtions in order of their packet num starting at 0x00.
-		void protocolVersion(irr::c8* data);	// 000 - 0x00
-		void moveToLocation(irr::c8* data);		// 001 - 0x01
-		void clientLoaded(irr::c8* data);		// 003 - 0x03
-		void authLogin(irr::c8* data);			// 008 - 0x08
-		void logout(irr::c8* data);				// 009 - 0x09
-		void createChar(irr::c8* data);			// 011 - 0x0b
-		void pressStart(irr::c8* data);			// 013 - 0x0d
-		void createCharButtion(irr::c8* data);	// 014 - 0x0e
-		void clientSay(irr::c8* data);			// 056 - 0x38
-		void extendedPacket(irr::c8* data);		// 208 - 0xd0
+		void protocolVersion(irr::c8* data);		// 000 - 0x00
+		void moveToLocation(irr::c8* data);			// 001 - 0x01
+		void clientLoaded(irr::c8* data);			// 003 - 0x03
+		void authLogin(irr::c8* data);				// 008 - 0x08
+		void logout(irr::c8* data);					// 009 - 0x09
+		void createChar(irr::c8* data);				// 011 - 0x0b
+		void pressStart(irr::c8* data);				// 013 - 0x0d
+		void createCharButtion(irr::c8* data);		// 014 - 0x0e
+		void requestItemList(irr::c8* data);		// 015 - 0x0f
+		void clientSay(irr::c8* data);				// 056 - 0x38
+		void validatePosition(irr::c8* data);		// 072 - 0x48
+		void requestSkillCoolTime(irr::c8* data);	// 157 - 0x9d
+		void extendedPacket(irr::c8* data);			// 208 - 0xd0
 	};
 
 }

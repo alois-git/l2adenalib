@@ -29,9 +29,24 @@
 namespace adena
 {
 
+	/*
+	 * The packets priority, used to decide which packets to send.
+	 * If the packet queue gets above max_packet_queue_size set in the config, packets marked as EPP_NOT_REQUIRED will be removed.
+	 */
+	enum E_Packet_Priority
+	{
+		EPP_URGENT = 0,		// Move and Atk packets
+		EPP_HIGH = 1,
+		EPP_NORMAL = 2,
+		EPP_LOW = 3,
+		EPP_NOT_REQUIRED = 4// Item list updates, effect notifications, etc
+	};
+
 	class IPacket
 	{
 	public:
+
+		IPacket() : RefCount(0), Crypt(true) {}
 
 		virtual ~IPacket() {}
 
@@ -41,6 +56,16 @@ namespace adena
          * Returns the total size of the data returned by getData.
 		 */
 		virtual irr::u32 getLen() = 0;
+
+		void getRef() {RefCount++;}
+
+		void drop() {RefCount--; if(RefCount <= 0) delete this;}
+
+		E_Packet_Priority Priority;
+
+		irr::u32 RefCount;
+
+		bool Crypt;
 
 	protected:
 

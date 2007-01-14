@@ -29,7 +29,7 @@ namespace adena
 //================ Con/De structor ================
 
 CPacket::CPacket()
-: Thread(), Data(0), DataLen(0), WritePointer(0), ReadPointer(0)
+: Thread(), IPacket(), Data(0), DataLen(0), WritePointer(0), ReadPointer(0)
 {
 
 };
@@ -129,7 +129,7 @@ void CPacket::wf(irr::f64 val)
 	if((WritePointer + 8) > DataLen)
 		resize(WritePointer + GROW_SIZE);
 
-	memcpy(&val, Data + WritePointer, 8);
+	memcpy(Data + WritePointer, &val, 8);
 	WritePointer += 8;
 };
 

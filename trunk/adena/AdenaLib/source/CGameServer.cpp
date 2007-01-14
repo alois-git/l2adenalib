@@ -58,7 +58,7 @@ void CGameServer::OnEvent(irr::net::NetEvent &e)
 			{
 				
 			}
-			delete ((CGameServerClient*)e.serverClient->UserData);
+			((CGameServerClient*)e.serverClient->UserData)->Running = false;
 			break;
 		case ::irr::net::ENET_RECVDATA:
 			((CGameServerClient*)e.serverClient->UserData)->HandlePacket();

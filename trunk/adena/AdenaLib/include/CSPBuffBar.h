@@ -38,7 +38,7 @@ namespace game_server
 		CSPBuffBar()
 		: CServerPacket()
 		{
-
+			Priority = EPP_LOW;
 		};
 
 		virtual ~CSPBuffBar() {};

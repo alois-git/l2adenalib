@@ -38,7 +38,13 @@ namespace game_server
 		CSPItemList(bool show_window)
 		: CServerPacket(), ShowWindow(show_window)
 		{
-
+			if (ShowWindow)
+			{
+				Priority = EPP_NORMAL;
+			}else
+			{
+				Priority = EPP_NOT_REQUIRED;
+			}
 		};
 
 		virtual ~CSPItemList() {};

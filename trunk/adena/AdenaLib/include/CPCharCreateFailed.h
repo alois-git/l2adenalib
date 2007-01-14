@@ -46,7 +46,7 @@ namespace game_server
 		CPCharCreateFailed(E_CharCreateFailedReason reason)
 		: CServerPacket(), Reason(reason)
 		{
-
+			Priority = EPP_NORMAL;
 		};
 
 		virtual ~CPCharCreateFailed()

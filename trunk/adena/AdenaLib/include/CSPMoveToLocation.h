@@ -37,27 +37,25 @@ namespace game_server
 	public:
 
 		CSPMoveToLocation(irr::u32 char_id, irr::core::vector3di target, irr::core::vector3di origin)
-		: CServerPacket(), CharId(char_id), Target(target), Origin(origin)
+		: CServerPacket(), CharId(char_id), Target(target), Origin(origin), writen(false)
 		{
-
+			Priority = EPP_URGENT;
 		};
 
 		virtual ~CSPMoveToLocation() {};
 
 		virtual bool writePacket()
 		{
-			static bool writen = false;
-
 			if(!writen)
 			{
 				w8(0x01);
-				
+
 				w32(CharId);
-				
+
 				w32(Target.X);
 				w32(Target.Y);
 				w32(Target.Z);
-				
+
 				w32(Origin.X);
 				w32(Origin.Y);
 				w32(Origin.Z);
@@ -85,6 +83,7 @@ namespace game_server
 		irr::core::stringc Message;
 		irr::core::vector3di Target;
 		irr::core::vector3di Origin;
+		bool writen;
 	};
 
 }

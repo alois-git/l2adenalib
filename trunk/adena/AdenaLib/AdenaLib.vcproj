@@ -384,6 +384,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\source\CPacketQueue.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\source\CPlayerCache.cpp"
 					>
 				</File>
@@ -526,11 +530,23 @@
 					>
 				</File>
 				<File
+					RelativePath=".\include\COActor.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\COObject.h"
+					>
+				</File>
+				<File
 					RelativePath=".\include\COPawn.h"
 					>
 				</File>
 				<File
 					RelativePath=".\include\COPlayer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\CPacketQueue.h"
 					>
 				</File>
 				<File

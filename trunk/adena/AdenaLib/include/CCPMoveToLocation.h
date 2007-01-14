@@ -70,31 +70,33 @@ namespace game_server
 			COPawn* item;
 			if(ittr.GetFirst(key, item))
 			{
-				CSPMoveToLocation mtl(Client->CharInfo->CharacterId, Target, Origin);
+				CSPMoveToLocation* mtl = new CSPMoveToLocation(Client->CharInfo->CharacterId, Target, Origin);
+				mtl->getRef();
 				while(true)
 				{
 					// Do stuff with item
 					COPlayer* p = (COPlayer*)item;
-					p->Client->sendPacket(&mtl);
+					p->Client->sendPacket(mtl);
 					if(!ittr.GetNext(key, item))
 						break;
 				}
+				mtl->drop(); // So that non of the clients delete the packet before all of them get a change to getRef()
 			}
 
-			irr::core::threads::sleep(1000);
+			/*irr::core::threads::sleep(1000);
 
 			if(ittr.GetFirst(key, item))
 			{
-				CSPStopMove sm(Client->CharInfo->CharacterId, Target, 0x00);
+				CSPStopMove* sm = new CSPStopMove(Client->CharInfo->CharacterId, Target, 0);
 				while(true)
 				{
 					// Do stuff with item
 					COPlayer* p = (COPlayer*)item;
-					p->Client->sendPacket(&sm);
+					p->Client->sendPacket(sm);
 					if(!ittr.GetNext(key, item))
 						break;
 				}
-			}
+			}*/
 
 			delete this;
 		};

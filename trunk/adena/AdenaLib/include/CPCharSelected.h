@@ -39,7 +39,7 @@ namespace game_server
 		CPCharSelected(SGameServerInterfaces* interfaces, irr::u32 char_id)
 		: CServerPacket(), Interfaces(interfaces), CharId(char_id)
 		{
-
+			Priority = EPP_URGENT;
 		};
 
 		virtual ~CPCharSelected()

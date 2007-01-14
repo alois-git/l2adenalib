@@ -81,15 +81,17 @@ namespace game_server
 			COPawn* item;
 			if(ittr.GetFirst(key, item))
 			{
-				CSPCreatureSay cs(Client->CharInfo->CharacterId, (irr::u32)Type, Client->CharInfo->Name, Message);
+				CSPCreatureSay* cs = new CSPCreatureSay(Client->CharInfo->CharacterId, (irr::u32)Type, Client->CharInfo->Name, Message);
+				cs->getRef();
 				while(true)
 				{
 					// Do stuff with item
 					COPlayer* p = (COPlayer*)item;
-					p->Client->sendPacket(&cs);
+					p->Client->sendPacket(cs);
 					if(!ittr.GetNext(key, item))
 						break;
 				}
+				cs->drop();
 			}
 			delete this;
 		};

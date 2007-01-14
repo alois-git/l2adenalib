@@ -39,7 +39,7 @@ namespace game_server
 		CSPStopMove(irr::u32 char_id, irr::core::vector3di loc, irr::s32 heading)
 		: CServerPacket(), CharId(char_id), Loc(loc), Heading(heading)
 		{
-
+			Priority = EPP_URGENT;
 		};
 
 		virtual ~CSPStopMove() {};

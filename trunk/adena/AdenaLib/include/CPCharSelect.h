@@ -25,6 +25,7 @@
 #define _ADENA_C_P_CHAR_SELECT_H_
 
 #include <CServerPacket.h>
+#include <COPlayer.h>
 
 namespace adena
 {
@@ -38,6 +39,7 @@ namespace game_server
 		CPCharSelect(IGameServerClient* client)
 		: CServerPacket()
 		{
+			Priority = EPP_NORMAL;
 			Client = client;
 		};
 
@@ -59,6 +61,7 @@ namespace game_server
 			for (int i = 0; i < Client->CharSelectIds.Chars; i++)
 			{
 				SCharInfo* ci = Client->Server->Interfaces.PlayerCache->loadChar(Client->CharSelectIds.CharIds[i]);
+				SClassTemplate* ct = Client->Server->Interfaces.CharTemplates->loadTemplate(ci->ClassId);
 
 				wStrW(ci->Name); // Char name
 				w32(ci->CharacterId); // Char id
@@ -74,12 +77,12 @@ namespace game_server
 
 				w32(0x01);
 
-				w32(0x00); // x
-				w32(0x00); // y
-				w32(0x00); // z
+				w32(ci->x); // x
+				w32(ci->y); // y
+				w32(ci->z); // z
 
 				wf(ci->hp); // Current hp
-				wf(ci->mp); // Current mp
+				wf(ci->hp); // Current mp
 				w32(0x00); // Current sp
 				w64(ci->xp); // Current xp
 				w32(ci->Level);  // Current level
@@ -135,7 +138,11 @@ namespace game_server
 				w32(ci->HairColor); // Hair color
 				w32(ci->FaceType); // Face type
 
-				wf(100); // Max hp
+				irr::f64 basehp = getBaseHpForClass(ci->ClassId, ci->Level);
+				irr::f64 conmod = getConMod(ct->CON);
+				irr::f64 maxhp = (basehp * conmod);
+
+				wf(maxhp); // Max hp
 				wf(100); // Max mp
 
 				w32(0x00); // Days before delete

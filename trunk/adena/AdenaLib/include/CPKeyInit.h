@@ -38,7 +38,8 @@ namespace game_server
 		CPKeyInit(irr::c8* Key)
 		: CServerPacket(), key(Key)
 		{
-
+			Priority = EPP_NORMAL;
+			Crypt = false;
 		};
 
 		virtual ~CPKeyInit() {};
