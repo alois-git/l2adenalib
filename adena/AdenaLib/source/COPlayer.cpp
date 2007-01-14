@@ -153,6 +153,15 @@ irr::f64 _fastcall getBaseHpForClass(irr::u32 class_id, irr::u32 level)
 			table[8][i] = quadEqu(0.1598791578, 28.6558902, -477.6100288, i + 1); // TH
 			table[9][i] = quadEqu(0.17, 30.43, -564.7, i + 1); // HE
 			table[10][i] = quadEqu(0.085, 15.215, 85.7, i + 1); // Human Mage
+			table[11][i] = quadEqu(0.125, 22.375, -73.5, i + 1); // Human Wizard
+			table[12][i] = quadEqu(0.175, 31.325, -511.5, i + 1); // Sorcerer
+			table[13][i] = quadEqu(0.175, 31.325, -511.5, i + 1); // Necro
+			table[14][i] = quadEqu(0.1889124205, 34.15301178, -647.4902592, i + 1); // Warlock
+			table[15][i] = quadEqu(0.155, 27.745, -192.9, i + 1); // Cleric
+
+			// Copy base class hp stats into higher class hp stats
+			for(irr::u32 c = 0; c < 10; c++)
+				memcpy(table[c], table[0], sizeof(irr::f64) * 19);
 		}
 	}
 

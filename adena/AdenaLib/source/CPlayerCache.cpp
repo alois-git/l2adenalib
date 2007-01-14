@@ -173,7 +173,28 @@ SCharInfo* CPlayerCache::loadChar(irr::u32 char_id)
 
 void CPlayerCache::saveChar(irr::u32 char_id)
 {
-	
+		SCharInfo* ci;
+		CharInfosMutex.getLock();
+		if(!CharInfos.Find(char_id, ci)))
+		{
+			CharInfosMutex.releaseLock();
+			return;
+		}
+		CharInfosMutex.releaseLock();
+
+		irr::db::Query save_char(irr::core::stringc("UPDATE characters SET class_id = $class, title = '$title', level = $lvl, xp = $xp, hp = $hp, mp = $mp, cp = $cp, x = $x, y = $y, z = $z WHERE id = $id"));
+		save_char.setVar(irr::core::stringc("$class"), irr::core::stringc((int)ci->ClassId));
+		save_char.setVar(irr::core::stringc("$title"), ci->Title);
+		save_char.setVar(irr::core::stringc("$lvl"), irr::core::stringc((int)ci->Level));
+		save_char.setVar(irr::core::stringc("$xp"), irr::core::stringc((int)ci->xp));
+		save_char.setVar(irr::core::stringc("$hp"), irr::core::stringc((int)ci->hp));
+		save_char.setVar(irr::core::stringc("$mp"), irr::core::stringc((int)ci->mp));
+		save_char.setVar(irr::core::stringc("$cp"), irr::core::stringc((int)ci->cp));
+		save_char.setVar(irr::core::stringc("$x"), irr::core::stringc(ci->x));
+		save_char.setVar(irr::core::stringc("$y"), irr::core::stringc(ci->y));
+		save_char.setVar(irr::core::stringc("$z"), irr::core::stringc(ci->z));
+		save_char.setVar(irr::core::stringc("$id"), irr::core::stringc((int)char_id));
+		interfaces->DataBase->query(save_char);
 };
 
 void CPlayerCache::garbageCollect(bool full_collect)

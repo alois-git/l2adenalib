@@ -56,7 +56,8 @@ void CGameServer::OnEvent(irr::net::NetEvent &e)
 		case irr::net::ENET_CLIENT_DISCONNECT:
 			if(((CGameServerClient*)e.serverClient->UserData)->AccountId != 0)
 			{
-				
+				if(((CGameServerClient*)e.serverClient->UserData)->Pawn != 0)
+					Interfaces.PlayerCache->saveChar(((CGameServerClient*)e.serverClient->UserData)->CharInfo->CharacterId);
 			}
 			((CGameServerClient*)e.serverClient->UserData)->Running = false;
 			break;

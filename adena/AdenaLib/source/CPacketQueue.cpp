@@ -35,7 +35,15 @@ CPacketQueue::CPacketQueue(irr::u32 backlog)
 
 CPacketQueue::~CPacketQueue()
 {
+	QueueMutex.getLock();
 
+	while(!Queue.empty())
+	{
+		(*Queue.begin())->drop();
+		Queue.erase(Queue.begin());
+	}
+
+	QueueMutex.releaseLock();
 };
 
 void CPacketQueue::addPacket(IPacket *packet)
