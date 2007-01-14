@@ -1,5 +1,5 @@
 /*
- * CSPDyes.h - Send the client their dye info.
+ * CPacketQueue.h - Packet queue ftw.
  * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
@@ -21,59 +21,41 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_DYES_H_
-#define _ADENA_C_S_P_DYES_H_
+#ifndef _ADENA_C_PACKET_QUEUE_H_
+#define _ADENA_C_PACKET_QUEUE_H_
 
-#include <CServerPacket.h>
+#include <AdenaConfig.h>
+#include <IPacket.h>
+#include <irrThread.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPDyes : public CServerPacket
+	class CPacketQueue
 	{
 	public:
 
-		CSPDyes()
-		: CServerPacket()
-		{
-			Priority = EPP_LOW;
-		};
+		/*
+		 * @param backlog: The max number of packets waiting to be sent before EPP_NOT_REQUIRED packets get bumped off.
+		 */
+		CPacketQueue(irr::u32 backlog);
 
-		virtual ~CSPDyes() {};
+		virtual ~CPacketQueue();
 
-		virtual bool writePacket()
-		{
-			w8(0xe4);
+		void addPacket(IPacket* packet);
 
-			w8(0x00); //equip INT
-			w8(0x00); // Equip STR
-			w8(0x00); // Equip CON
-			w8(0x00); // Equip MEM
-			w8(0x00); // Equip DEX
-			w8(0x00); // Equip WIT
+		/*
+		 * Grabs the next packet off the queue based on the packet priority
+		 */
+		IPacket* getNextPacket();
 
-			w32(0x03);
-			irr::u32 i;
-			for(i = 0; i < 3; i++)
-			{
-				w32(0x03);
-				w32(0x00); // Dye id
-			}
+	private:
 
-			return true;
-		};
-
-		virtual irr::c8* getData()
-		{
-			return Data;
-		};
-
-		virtual irr::u32 getLen()
-		{
-			return WritePointer;
-		};
+		irr::u32 BackLog;
+		irr::core::list<IPacket*> Queue;
+		irr::core::threads::Mutex QueueMutex;
 
 	};
 

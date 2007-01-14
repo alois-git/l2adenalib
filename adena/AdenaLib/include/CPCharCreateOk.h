@@ -38,8 +38,7 @@ namespace game_server
 		CPCharCreateOk()
 		: CServerPacket()
 		{
-			w8(0x19);
-			w32(0x01);
+			Priority = EPP_NORMAL;
 		};
 
 		virtual ~CPCharCreateOk()

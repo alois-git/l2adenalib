@@ -39,7 +39,7 @@ namespace game_server
 		CSPSystemMessage(irr::core::stringc msg)
 		: CServerPacket(), Message(msg)
 		{
-
+			Priority = EPP_LOW;
 		};
 
 		virtual ~CSPSystemMessage() {};

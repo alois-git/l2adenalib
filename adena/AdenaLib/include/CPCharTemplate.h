@@ -40,7 +40,7 @@ namespace game_server
 		CPCharTemplate()
 		: CServerPacket()
 		{
-
+			Priority = EPP_NORMAL;
 		};
 
 		virtual ~CPCharTemplate()

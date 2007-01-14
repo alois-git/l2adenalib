@@ -38,7 +38,7 @@ namespace game_server
 		CSPMacroList()
 		: CServerPacket()
 		{
-
+			Priority = EPP_NORMAL;
 		};
 
 		virtual ~CSPMacroList() {};

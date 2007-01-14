@@ -47,7 +47,7 @@ namespace game_server
 			Unknown2 = r32();
 			Unknown3 = r32();
 			Unknown4 = r32();
-			run(); // Because it's to freeking stupid to actualy work...
+			start(); // Because it's to freeking stupid to actualy work...
 		};
 
 		virtual ~CPPressStart()
@@ -58,15 +58,14 @@ namespace game_server
 		virtual void run()
 		{
 			Client->CharInfo = Client->Server->Interfaces.PlayerCache->loadChar(Client->CharSelectIds.CharIds[CharIndex]);
-			COPlayer* p = new COPlayer();
+			COPlayer* p = new COPlayer(Client);
 			Client->Pawn = p;
-			p->Client = (CGameServerClient*)Client;
 			p->CharInfo = Client->CharInfo;
 			Client->Server->PlayersMutex.getLock();
 			Client->Server->Players.Insert(Client->CharId, Client->Pawn);
 			Client->Server->PlayersMutex.releaseLock();
-			CPCharSelected cs(&Client->Server->Interfaces, Client->CharSelectIds.CharIds[CharIndex]);
-			Client->sendPacket(&cs);
+			Client->sendPacket(new CPCharSelected(&Client->Server->Interfaces, Client->CharSelectIds.CharIds[CharIndex]));
+			delete this;
 		};
 
 		virtual irr::c8* getData()

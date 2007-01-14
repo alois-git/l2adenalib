@@ -37,6 +37,8 @@ namespace game_server
 	{
 	public:
 
+		CServerPacket() : CPacket() {}
+
 		virtual ~CServerPacket() {}
 
 		/*

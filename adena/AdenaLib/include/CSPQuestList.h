@@ -38,7 +38,7 @@ namespace game_server
 		CSPQuestList()
 		: CServerPacket()
 		{
-
+			Priority = EPP_NORMAL;
 		};
 
 		virtual ~CSPQuestList() {};

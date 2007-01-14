@@ -34,18 +34,38 @@ namespace adena
 namespace game_server
 {
 
+	irr::f64 _inline getConMod(irr::u32 con);
+	irr::f64 _fastcall getBaseHpForClass(irr::u32 class_id, irr::u32 level);
+
 	class COPlayer : public COPawn
 	{
 	public:
 
-		COPlayer();
+		COPlayer(IGameServerClient* client);
 
 		virtual ~COPlayer() {}
 
-		SCharInfo* CharInfo;
-		CGameServerClient* Client;
+		virtual irr::u32 getLevel();
 
-	private:
+		virtual irr::u32 getStr();
+		virtual irr::u32 getCon();
+		virtual irr::u32 getDex();
+		virtual irr::u32 getInt();
+		virtual irr::u32 getWit();
+		virtual irr::u32 getMen();
+
+		virtual irr::u32 getHp();
+
+		virtual irr::u32 getMaxHp();
+
+		virtual irr::u32 getMp();
+
+		virtual irr::u32 getMaxMp();
+
+		SCharInfo* CharInfo;
+		IGameServerClient* Client;
+
+	protected:
 
 	};
 

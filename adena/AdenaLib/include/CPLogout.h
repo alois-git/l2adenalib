@@ -38,7 +38,7 @@ namespace game_server
 		CPLogout()
 		: CServerPacket()
 		{
-
+			Priority = EPP_URGENT;
 		};
 
 		virtual ~CPLogout() {};

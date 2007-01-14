@@ -37,26 +37,24 @@ namespace game_server
 	public:
 
 		CSPCreatureSay(irr::u32 char_id, irr::u32 message_type, irr::core::stringc &messenger, irr::core::stringc &msg)
-		: CServerPacket(), CharId(char_id), MessageType(message_type), Messenger(messenger), Message(msg)
+		: CServerPacket(), CharId(char_id), MessageType(message_type), Messenger(messenger), Message(msg), writen(false)
 		{
-
+			Priority = EPP_LOW;
 		};
 
 		virtual ~CSPCreatureSay() {};
 
 		virtual bool writePacket()
 		{
-			static bool writen = false;
-
 			if(!writen)
 			{
-			w8(0x4a);
+				w8(0x4a);
 
-			w32(CharId);
-			w32(MessageType);
-			wStrW(Messenger);
-			wStrW(Message);
-			writen = true;
+				w32(CharId);
+				w32(MessageType);
+				wStrW(Messenger);
+				wStrW(Message);
+				writen = true;
 			}
 			return true;
 		};
@@ -77,6 +75,7 @@ namespace game_server
 		irr::u32 MessageType;
 		irr::core::stringc Messenger;
 		irr::core::stringc Message;
+		bool writen;
 
 	};
 

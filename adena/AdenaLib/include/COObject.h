@@ -1,6 +1,6 @@
 /*
- * CSPDyes.h - Send the client their dye info.
- * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
+ * COObject.h - Base object for all objs in l2.
+ * Created January 13, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,59 +21,40 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_DYES_H_
-#define _ADENA_C_S_P_DYES_H_
+#ifndef _ADENA_C_O_OBJECT_H_
+#define _ADENA_C_O_OBJECT_H_
 
-#include <CServerPacket.h>
+#include <AdenaConfig.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPDyes : public CServerPacket
+	/*
+	 * COObject is the root of all objects in the game
+	 */
+	class COObject
 	{
 	public:
 
-		CSPDyes()
-		: CServerPacket()
+		virtual ~COObject() {}
+
+		virtual void destroy()
 		{
-			Priority = EPP_LOW;
-		};
+			delete this;
+		}
 
-		virtual ~CSPDyes() {};
+		virtual void tick() {}
 
-		virtual bool writePacket()
-		{
-			w8(0xe4);
+		/*
+		 * Gets the ID that is sent to the client
+		 */
+		irr::u32 getId() {return Id;}
 
-			w8(0x00); //equip INT
-			w8(0x00); // Equip STR
-			w8(0x00); // Equip CON
-			w8(0x00); // Equip MEM
-			w8(0x00); // Equip DEX
-			w8(0x00); // Equip WIT
+	protected:
 
-			w32(0x03);
-			irr::u32 i;
-			for(i = 0; i < 3; i++)
-			{
-				w32(0x03);
-				w32(0x00); // Dye id
-			}
-
-			return true;
-		};
-
-		virtual irr::c8* getData()
-		{
-			return Data;
-		};
-
-		virtual irr::u32 getLen()
-		{
-			return WritePointer;
-		};
+		irr::u32 Id;
 
 	};
 

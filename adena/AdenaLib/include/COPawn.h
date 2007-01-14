@@ -28,7 +28,7 @@
 #ifndef _ADENA_C_O_PAWN_H_
 #define _ADENA_C_O_PAWN_H_
 
-#include <AdenaConfig.h>
+#include <COActor.h>
 
 namespace adena
 {
@@ -42,6 +42,23 @@ namespace game_server
 		COPawn() {}
 
 		virtual ~COPawn() {}
+
+		virtual irr::u32 getLevel() = 0;
+
+		virtual irr::u32 getStr() = 0;
+		virtual irr::u32 getCon() = 0;
+		virtual irr::u32 getDex() = 0;
+		virtual irr::u32 getInt() = 0;
+		virtual irr::u32 getWit() = 0;
+		virtual irr::u32 getMen() = 0;
+
+		virtual irr::u32 getHp() = 0;
+
+		virtual irr::u32 getMaxHp() = 0;
+
+		virtual irr::u32 getMp() = 0;
+
+		virtual irr::u32 getMaxMp() = 0;
 
 	private:
 

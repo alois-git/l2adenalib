@@ -35,10 +35,10 @@ namespace game_server
 	{
 	public:
 
-		CPCharInfo(SGameServerInterfaces* interfaces, irr::u32 char_id)
-		: CServerPacket(), Interfaces(interfaces), CharId(char_id)
+		CPCharInfo(COPlayer* player)
+		: CServerPacket(), Player(player)
 		{
-
+			Priority = EPP_HIGH;
 		};
 
 		virtual ~CPCharInfo()
@@ -94,12 +94,11 @@ namespace game_server
 			w8(0);  // C2
 
 			return;*/
-			SCharInfo* ci = Interfaces->PlayerCache->loadChar(CharId);
-			if(ci == 0)
-				return false;
-			SClassTemplate* ct = Interfaces->CharTemplates->loadTemplate(ci->ClassId);
 
-			w8(0x03);		
+			SCharInfo* ci = Player->CharInfo;
+			SClassTemplate* ct = Player->Client->Server->Interfaces.CharTemplates->loadTemplate(Player->CharInfo->ClassId);
+
+			w8(0x03);
 			w32(ci->x); // x
 			w32(ci->y); // y
 			w32(ci->z); // z
@@ -145,11 +144,11 @@ namespace game_server
 			if(ci->Sex == 0)
 			{
 				wf(ct->M_COL_R); // Collision radius
-				wf(ct->M_COL_H * 10); // Collision height
+				wf(ct->M_COL_H); // Collision height
 			}else
 			{
 				wf(ct->F_COL_R); // Collision radius
-				wf(ct->F_COL_H * 10); // Collision height
+				wf(ct->F_COL_H); // Collision height
 			}
 
 			w32(ci->HairType); // Hair style
@@ -227,8 +226,7 @@ namespace game_server
 
 	private:
 
-		SGameServerInterfaces* Interfaces;
-		irr::u32 CharId;
+		COPlayer* Player;
 
 	};
 

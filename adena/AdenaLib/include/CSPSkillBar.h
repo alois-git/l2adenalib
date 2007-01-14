@@ -38,7 +38,7 @@ namespace game_server
 		CSPSkillBar()
 		: CServerPacket()
 		{
-
+			Priority = EPP_NORMAL;
 		};
 
 		virtual ~CSPSkillBar() {};
