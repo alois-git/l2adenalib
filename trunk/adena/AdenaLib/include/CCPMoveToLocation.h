@@ -54,6 +54,10 @@ namespace game_server
 			Origin.Z = r32();
 			MoveType = r32();
 
+			client->CharInfo->x = Target.X;
+			client->CharInfo->y = Target.Y;
+			client->CharInfo->z = Target.Z;
+
 			start();
 		};
 
