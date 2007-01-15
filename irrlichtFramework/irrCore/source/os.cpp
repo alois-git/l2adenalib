@@ -271,6 +271,18 @@ namespace os
 		StartRealTime = StaticTime;
 	}
 
+	#ifdef _IRR_WINDOWS_
+	void Sleep::sleep(irr::u32 milliseconds)
+	{
+		::Sleep(milliseconds);
+	}
+	#else
+	void Sleep::sleep(irr::u32 milliseconds)
+	{
+		sleep(milliseconds / 1000);
+	}
+	#endif
+
 } // end namespace os
 } // end namespace irr
 

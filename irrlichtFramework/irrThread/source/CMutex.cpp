@@ -21,38 +21,24 @@ namespace threads
 {
 
 Mutex::Mutex()
+: MutexHandle(PTHREAD_MUTEX_INITIALIZER)
 {
-	#ifdef _IRR_WINDOWS_
-	InitializeCriticalSection(&MutexHandle);
-	#else
-	MutexHandle = PTHREAD_MUTEX_INITIALIZER;
-	#endif
+
 };
 
 Mutex::~Mutex()
 {
-	#ifdef _IRR_WINDOWS_
-	DeleteCriticalSection(&MutexHandle);
-	#else
-	#endif
+	pthread_mutex_destroy(&MutexHandle);
 };
 
 void Mutex::getLock()
 {
-	#ifdef _IRR_WINDOWS_
-	EnterCriticalSection(&MutexHandle);
-	#else
 	pthread_mutex_lock(&MutexHandle);
-	#endif
 };
 
 void Mutex::releaseLock()
 {
-	#ifdef _IRR_WINDOWS_
-	LeaveCriticalSection(&MutexHandle);
-	#else
 	pthread_mutex_unlock(&MutexHandle);
-	#endif
 };
 
 }

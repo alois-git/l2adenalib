@@ -7,8 +7,3 @@
 #else
 #define IRRTHREAD_API 
 #endif // _IRR_WINDOWS_
-
-#ifdef _IRR_WINDOWS_
-#define _WINSOCKAPI_
-#include <windows.h>
-#endif
