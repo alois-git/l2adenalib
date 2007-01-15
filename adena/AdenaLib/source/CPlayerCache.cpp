@@ -1,6 +1,6 @@
 /*
  * CPlayerCache.cpp - Interface for getting player info from the SQL database.
- * Created January 10, 2006, by Michael 'Bigcheese' Spencer.
+ * Created January 10, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -39,7 +39,7 @@ CPlayerCache::CPlayerCache(void* interfaces)
 CPlayerCache::~CPlayerCache()
 {
 	// Go thru and delete them all
-	CharInfosMutex.getLock();
+	CharInfosLock.writeLock();
 	AVL<irr::u32, SCharInfo*>::Iterator<irr::u32, SCharInfo*> ittr(&CharInfos);
 	irr::u32 key;
 	SCharInfo* item;
@@ -52,7 +52,7 @@ CPlayerCache::~CPlayerCache()
 				break;
 		}
 	}
-	CharInfosMutex.releaseLock();
+	CharInfosLock.unlock();
 };
 
 bool CPlayerCache::createChar(SCharInfo &char_info)
@@ -122,15 +122,15 @@ SCharInfo* CPlayerCache::loadChar(irr::u32 char_id)
 {
 	SGameServerInterfaces* interfaces = (SGameServerInterfaces*)Interfaces;
 	SCharInfo* ci;
-	CharInfosMutex.getLock();
+	CharInfosLock.readLock();
 	if(CharInfos.Find(char_id, ci))
 	{
-		CharInfosMutex.releaseLock();
+		CharInfosLock.unlock();
 		return ci;
 	}else
 	{
 		// No need to hold the lock while we do a query
-		CharInfosMutex.releaseLock();
+		CharInfosLock.unlock();
 
 		// Load from database
 		irr::db::Query q(irr::core::stringc("SELECT * FROM characters WHERE id = $id"));
@@ -164,23 +164,24 @@ SCharInfo* CPlayerCache::loadChar(irr::u32 char_id)
 		ci->x = atoi(qr[0]["x"].c_str());
 		ci->y = atoi(qr[0]["y"].c_str());
 		ci->z = atoi(qr[0]["z"].c_str());
-		CharInfosMutex.getLock();
+		CharInfosLock.writeLock();
 		CharInfos.Insert(char_id, ci);
-		CharInfosMutex.releaseLock();
+		CharInfosLock.unlock();
 		return ci;
 	}
 };
 
 void CPlayerCache::saveChar(irr::u32 char_id)
 {
+		SGameServerInterfaces* interfaces = (SGameServerInterfaces*)Interfaces;
 		SCharInfo* ci;
-		CharInfosMutex.getLock();
-		if(!CharInfos.Find(char_id, ci)))
+		CharInfosLock.readLock();
+		if(!CharInfos.Find(char_id, ci))
 		{
-			CharInfosMutex.releaseLock();
+			CharInfosLock.unlock();
 			return;
 		}
-		CharInfosMutex.releaseLock();
+		CharInfosLock.unlock();
 
 		irr::db::Query save_char(irr::core::stringc("UPDATE characters SET class_id = $class, title = '$title', level = $lvl, xp = $xp, hp = $hp, mp = $mp, cp = $cp, x = $x, y = $y, z = $z WHERE id = $id"));
 		save_char.setVar(irr::core::stringc("$class"), irr::core::stringc((int)ci->ClassId));

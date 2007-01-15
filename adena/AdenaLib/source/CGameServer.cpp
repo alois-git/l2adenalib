@@ -1,6 +1,6 @@
 /*
  * CGameServer.cpp - Game server.
- * Created January 6, 2006, by Michael 'Bigcheese' Spencer.
+ * Created January 6, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  *
