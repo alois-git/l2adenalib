@@ -8,6 +8,7 @@
 
 #include <irrCore.h>
 #include <irrThreadCompile.h>
+#include <pthread.h>
 
 namespace irr
 {
@@ -51,7 +52,7 @@ namespace threads
 
 	private:
 
-		u32 ThreadHandle;
+		pthread_t ThreadHandle;
 	};
 
 }

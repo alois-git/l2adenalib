@@ -8,6 +8,7 @@
 
 #include <irrCore.h>
 #include <irrThreadCompile.h>
+#include <pthread.h>
 
 namespace irr
 {
@@ -30,11 +31,8 @@ namespace threads
 
 	private:
 
-		#ifdef _IRR_WINDOWS_
-		CRITICAL_SECTION MutexHandle;
-		#else
 		pthread_mutex_t MutexHandle;
-		#endif
+
 	};
 
 }

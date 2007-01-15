@@ -9,6 +9,7 @@
 #include <CThread.h>
 #include <CMutex.h>
 #include <CThreadPool.h>
+#include <CReadWriteLock.h>
 
 namespace irr
 {

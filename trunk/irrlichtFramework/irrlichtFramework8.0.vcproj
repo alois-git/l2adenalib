@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\irrCore\include;.\irrThread\include;.\irrNet\include;.\irrRng\include;.\irrBigNum\include;.\irrDb\include;.\irrCrypt\include;.\dependencies"
+				AdditionalIncludeDirectories=".\irrCore\include;.\irrThread\include;.\irrNet\include;.\irrRng\include;.\irrBigNum\include;.\irrDb\include;.\irrCrypt\include;.\dependencies;.\dependencies\pthread"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;IRRLICHTFRAMEWORK_EXPORTS;USE_SPASM;NO_TCL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,9 +61,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib"
+				AdditionalDependencies="Ws2_32.lib pthreadVSE1.lib"
 				OutputFile=".\bin\$(ProjectName)Debug.dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories=".\dependencies\pthread\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				ImportLibrary=".\lib\$(TargetName).lib"
@@ -119,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\irrCore\include;.\irrThread\include;.\irrNet\include;.\irrRng\include;.\irrBigNum\include;.\irrDb\include;.\irrCrypt\include;.\dependencies"
+				AdditionalIncludeDirectories=".\irrCore\include;.\irrThread\include;.\irrNet\include;.\irrRng\include;.\irrBigNum\include;.\irrDb\include;.\irrCrypt\include;.\dependencies;.\dependencies\pthread"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;IRRLICHTFRAMEWORK_EXPORTS;USE_SPASM;NO_TCL"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -138,9 +139,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib"
+				AdditionalDependencies="Ws2_32.lib pthreadVSE1.lib"
 				OutputFile=".\bin\$(ProjectName).dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories=".\dependencies\pthread\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -363,6 +365,10 @@
 				</File>
 				<File
 					RelativePath=".\irrThread\source\CMutex.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\irrThread\source\CReadWriteLock.cpp"
 					>
 				</File>
 				<File

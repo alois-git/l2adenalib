@@ -99,6 +99,12 @@ namespace os
 		static u32 StaticTime;
 	};
 
+	class IRRCORE_API Sleep
+	{
+	public:
+		static void sleep(irr::u32 milliseconds);
+	};
+
 } // end namespace os
 } // end namespace irr
 
