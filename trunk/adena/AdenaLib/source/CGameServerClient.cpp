@@ -45,6 +45,7 @@
 #include <CSPSkillBar.h>
 #include <CSPDyes.h>
 #include <CSPQuestList.h>
+#include <CCPRestartRequest.h>
 
 #define RECV_SIZE 65536 // Max size of a L2 packet.
 
@@ -80,6 +81,8 @@ CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServe
 	PacketFunctions[14] = &CGameServerClient::createCharButtion;
 	PacketFunctions[15] = &CGameServerClient::requestItemList;
 	PacketFunctions[56] = &CGameServerClient::clientSay;
+	PacketFunctions[70] = &CGameServerClient::restartRequest;
+	PacketFunctions[72] = &CGameServerClient::validatePosition;
 	PacketFunctions[157] = &CGameServerClient::requestSkillCoolTime;
 	PacketFunctions[208] = &CGameServerClient::extendedPacket;
 
@@ -307,6 +310,12 @@ void CGameServerClient::requestItemList(irr::c8* data)
 void CGameServerClient::clientSay(irr::c8* data)
 {
 	new CCPSay(data, this);
+};
+
+// 70
+void CGameServerClient::restartRequest(irr::c8* data)
+{
+	new CCPRestartRequest(data, (COPlayer*)Pawn);
 };
 
 // 72

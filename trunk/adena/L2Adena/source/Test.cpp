@@ -92,8 +92,8 @@ int main()
 		if(g->init("game.ini"))
 		{
 			g->start();
-			while(s->Running)
-				irr::core::threads::sleep(1000);
+			s->wait();
+			g->wait();
 		}
 		else
 		{

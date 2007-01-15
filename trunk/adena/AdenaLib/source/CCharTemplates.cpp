@@ -22,6 +22,7 @@
  */
 
 #include <CCharTemplates.h>
+#include <stdlib.h>
 
 namespace adena
 {

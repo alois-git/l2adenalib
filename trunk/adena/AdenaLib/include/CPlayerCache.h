@@ -89,7 +89,7 @@ namespace game_server
 		void* Interfaces;
 
 		AVL<irr::u32, SCharInfo*> CharInfos;
-		irr::core::threads::Mutex CharInfosMutex;
+		irr::core::threads::ReadWriteLock CharInfosLock;
 
 	};
 
