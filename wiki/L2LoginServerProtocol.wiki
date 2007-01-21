@@ -66,8 +66,30 @@ char packet[18] = {0x12, 0x00, 0x0b, 0x0b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0
 }}}
   # And your packet is ready to be sent (after getting 3.6x as large... and even better is it's not secure AT ALL...)
 
+  # Now we encrypt the packet (NOT including the length) with blowfish using the key {{{"_;5.]94-31==-%xT!^[$\000"}}}. I'm to lazy to go encrypt it, so lets pretend it came out like so.
+{{{
+char packet[18] = {0x12, 0x00, 0xf5, 0x45, 0xfa, 0x4b, 0x00, 0xa9, 0x56, 0x73, 0xb7, 0xde, 0xad, 0xbe, 0xef, 0x13, 0x37, 0x00};
+}}}
+  It is now ready to be sent. Which brings us to the next part.
 
+= Receiving a packet =
 
+Let's take that packet we just sent and receive it.
 
+  # Take the first two bytes off and use them as the length of the packet (little endian).
+  # Decrypt the packet using the key {{{"_;5.]94-31==-%xT!^[$\000"}}}.
+  # The first byte is the packet type, the rest of the data is packet dependent data.
 
+= An example login process =
 
+  # Client connects via TCP on port 2106.
+  # Server sends the init packet containing the scrambled RSA public modulus.
+  # (Optional) Client sends a gameguard authentication request.
+  # (Optional) Server sends a gameguard authentication response.
+  # Client sends encrypted username and password.
+  # Server either says the login was right, or sends the proper rejection response.
+  # Client requests the server list.
+  # Server sends the server list.
+  # Client requests to play on a game server.
+  # Server asks the game server if the client can play, then tells the client what the server said.
+  # Client either connects to the game server, or disconnects from the login server.
