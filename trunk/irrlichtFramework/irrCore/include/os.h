@@ -24,7 +24,7 @@ namespace os
 		static f32 byteswap(f32 num);
 	};
 
-	class Printer
+	class IRRCORE_API Printer
 	{
 	public:
 		// prints out a string to the console out stdout or debug log or whatever
@@ -54,7 +54,7 @@ namespace os
 
 
 
-	class Timer
+	class IRRCORE_API Timer
 	{
 	public:
 
@@ -103,6 +103,14 @@ namespace os
 	{
 	public:
 		static void sleep(irr::u32 milliseconds);
+	};
+
+	class IRRCORE_API Library
+	{
+	public:
+		static void* LoadLib(const char* lib_name);
+		static void* LoadFunc(void* lib_handle, const char* func_name);
+		static void  CloseLib(void* lib_handle);
 	};
 
 } // end namespace os
