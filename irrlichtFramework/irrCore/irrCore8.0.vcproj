@@ -43,13 +43,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\include;..\dependencies"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;IRRCORE_EXPORTS"
+				AdditionalIncludeDirectories=".\include;..\dependencies;..\dependencies\gc\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;IRRCORE_EXPORTS;GC_BUILD;GC_DLL;DTHREAD_LOCAL_ALLOC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="0"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
@@ -200,11 +200,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\include;..\dependencies"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;IRRCORE_EXPORTS"
+				AdditionalIncludeDirectories=".\include;..\dependencies;..\dependencies\gc\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;IRRCORE_EXPORTS;GC_BUILD;GC_DLL;DTHREAD_LOCAL_ALLOC"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="0"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
@@ -351,6 +351,10 @@
 			</File>
 			<File
 				RelativePath=".\source\CFileSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\CGc.cpp"
 				>
 			</File>
 			<File
@@ -509,6 +513,102 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="gc"
+				>
+				<File
+					RelativePath="..\dependencies\gc\allchblk.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\alloc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\blacklst.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\checksums.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\dbg_mlc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\dyn_load.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\finalize.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\gc_cpp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\headers.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\mach_dep.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\malloc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\mallocx.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\mark.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\mark_rts.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\misc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\new_hblk.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\obj_map.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\os_dep.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\ptr_chck.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\reclaim.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\stubborn.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\typd_mlc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\dependencies\gc\win32_threads.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -525,6 +625,10 @@
 			</File>
 			<File
 				RelativePath=".\include\CFileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\CGc.h"
 				>
 			</File>
 			<File

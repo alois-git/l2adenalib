@@ -66,6 +66,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "irrDbTest", "irrDb\irrDbTes
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "irrThreadTest", "irrThread\irrThreadTest8.0.vcproj", "{93F2606C-DFF5-4564-89E5-3CB0C4F8CF21}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "irrCoreTest", "irrCore\irrCoreTest8.0.vcproj", "{8E668B04-0611-41D1-85D8-BD1E26A33172}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -174,6 +176,12 @@ Global
 		{93F2606C-DFF5-4564-89E5-3CB0C4F8CF21}.Release|Win32.ActiveCfg = Release|Win32
 		{93F2606C-DFF5-4564-89E5-3CB0C4F8CF21}.Release|Win32.Build.0 = Release|Win32
 		{93F2606C-DFF5-4564-89E5-3CB0C4F8CF21}.Release|x64.ActiveCfg = Release|Win32
+		{8E668B04-0611-41D1-85D8-BD1E26A33172}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8E668B04-0611-41D1-85D8-BD1E26A33172}.Debug|Win32.Build.0 = Debug|Win32
+		{8E668B04-0611-41D1-85D8-BD1E26A33172}.Debug|x64.ActiveCfg = Debug|Win32
+		{8E668B04-0611-41D1-85D8-BD1E26A33172}.Release|Win32.ActiveCfg = Release|Win32
+		{8E668B04-0611-41D1-85D8-BD1E26A33172}.Release|Win32.Build.0 = Release|Win32
+		{8E668B04-0611-41D1-85D8-BD1E26A33172}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

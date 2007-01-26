@@ -33,7 +33,7 @@ Thread::Thread()
 
 void Thread::start()
 {
-	pthread_create((pthread_t*)&ThreadHandle, NULL, startThread, this);
+	pthread_create(&ThreadHandle, NULL, startThread, this);
 	Running = true;
 };
 

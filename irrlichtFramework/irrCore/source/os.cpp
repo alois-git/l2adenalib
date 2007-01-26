@@ -283,6 +283,42 @@ namespace os
 	}
 	#endif
 
+	#ifdef _IRR_WINDOWS_
+	void* Library::LoadLib(const char* lib_name)
+	{
+		return ::LoadLibrary(lib_name);
+	};
+	#else
+	void* Library::LoadLib(const char* lib_name)
+	{
+		return dlopen(lib_name, RTLD_LAZY);
+	};
+	#endif
+
+	#ifdef _IRR_WINDOWS_
+	void* Library::LoadFunc(void *lib_handle, const char *func_name)
+	{
+		return ::GetProcAddress((HINSTANCE)lib_handle, func_name);
+	};
+	#else
+	void* Library::LoadFunc(void *lib_handle, const char *func_name)
+	{
+		return dlsym(libhandle, funcName);
+	};
+	#endif
+
+	#ifdef _IRR_WINDOWS_
+	void Library::CloseLib(void* lib_handle)
+	{
+		::FreeLibrary((HINSTANCE)lib_handle);
+	};
+	#else
+	void Library::CloseLib(void* lib_handle)
+	{
+		dlclose(lib_handle);
+	};
+	#endif
+
 } // end namespace os
 } // end namespace irr
 
