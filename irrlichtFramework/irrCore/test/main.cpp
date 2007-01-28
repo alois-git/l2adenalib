@@ -1,5 +1,4 @@
 #include <irrCore.h>
-#include <CGc.h>
 #include <iostream>
 
 using namespace std;
@@ -7,30 +6,15 @@ using namespace std;
 using namespace irr;
 using namespace core;
 
-class c : public gc
-{
-public:
-	c()
-	{
-
-	}
-
-	virtual ~c()
-	{
-
-	}
-
-	irr::u32 Var;
-};
-
 int main()
 {
-	c* hi = NULL;
-	for(int i = 0; i < 20; i++)
-		hi = new c();
-	cout << hi->Var << "\n";
-	gc::garbageCollect();
-	delete hi;
+	vector3df loc(11, 10, 0);
+	vector3df target(19, 10, 0);
+	line3df line(loc, target);
+	vector3df heading = line.getVector();
+	heading.setLength(133.0); // Speed.
+	loc += heading;
+
 	system("PAUSE");
 	return 0;
 }
