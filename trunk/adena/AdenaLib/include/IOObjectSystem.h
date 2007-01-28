@@ -1,6 +1,6 @@
 /*
- * SGameServerInterfaces.h - Game server interfaces.
- * Created January 9, 2007, by Michael 'Bigcheese' Spencer.
+ * IOObjectSystem.h - Interface for object manager.
+ * Created January 13, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,33 +21,31 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_GAME_SERVER_INTERFACES_H_
-#define _ADENA_S_GAME_SERVER_INTERFACES_H_
+#ifndef _ADENA_I_O_OBJECT_SYSTEM_H_
+#define _ADENA_I_O_OBJECT_SYSTEM_H_
 
 #include <AdenaConfig.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <ILogger.h>
-#include <BCini.h>
-#include <CPlayerCache.h>
-#include <CCharTemplates.h>
-#include <COObjectSystem.h>
+#include <irrString.h>
+#include <IOObject.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SGameServerInterfaces
+	class IOObjectSystem
 	{
-		irr::ILogger* Logger;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		BCini* ConfigFile;
-		CPlayerCache* PlayerCache;
-		CCharTemplates* CharTemplates;
-		COObjectSystem* ObjectSystem;
-		COObject* GameManager;
+	public:
+
+		virtual ~IOObjectSystem() {}
+
+		// Loads an obj and adds it to the system.
+		virtual IOObject* loadObj(irr::core::stringc &obj) = 0;
+
+		virtual IOObject* getObj(irr::u32 id) = 0;
+
+		virtual void removeObj(irr::u32 id) = 0;
+
 	};
 
 }

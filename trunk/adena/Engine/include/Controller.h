@@ -1,9 +1,9 @@
 /*
- * SGameServerInterfaces.h - Game server interfaces.
- * Created January 9, 2007, by Michael 'Bigcheese' Spencer.
+ * Controller.h - Controls pawns.
+ * Created January 26, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,33 +21,41 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_GAME_SERVER_INTERFACES_H_
-#define _ADENA_S_GAME_SERVER_INTERFACES_H_
+#ifndef _ADENA_O_CONTROLLER_H_
+#define _ADENA_O_CONTROLLER_H_
 
-#include <AdenaConfig.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <ILogger.h>
-#include <BCini.h>
-#include <CPlayerCache.h>
-#include <CCharTemplates.h>
-#include <COObjectSystem.h>
+#include <COObject.h>
+#include <Player.h>
+#include <IGameServerClient.h>
+#include <vector3d.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SGameServerInterfaces
+	class Controller : public COObject
 	{
-		irr::ILogger* Logger;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		BCini* ConfigFile;
-		CPlayerCache* PlayerCache;
-		CCharTemplates* CharTemplates;
-		COObjectSystem* ObjectSystem;
-		COObject* GameManager;
+	public:
+
+		Controller(IOObjectSystem* obj_sys);
+
+		virtual ~Controller();
+
+		virtual void posses(Pawn* pawn);
+
+		// Called when the user sends a moveToLocation packet.
+		virtual void clickGround(irr::core::vector3df origin, irr::core::vector3df target, bool mouse_click);
+
+		// Called when the user sends a Action packet.
+		virtual void clickObject(Actor* obj, bool shift_click);
+
+		virtual void sendText(irr::core::stringc &msg);
+
+		IGameServerClient* Owner;
+
+		Pawn* OwnedPawn;
+
 	};
 
 }

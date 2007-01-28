@@ -25,12 +25,11 @@
 #include <CFileSystem.h>
 #include <CInProcessLoginServerLink.h>
 #include <CInProcessGameServerLink.h>
+#include <CMemoryManager.h>
+#include <COObjectSystem.h>
 
 using namespace std;
 using namespace irr;
-
-irr::f64 _inline getConMod(irr::u32 con);
-irr::f64 _fastcall getBaseHpForClass(irr::u32 class_id, irr::u32 level);
 
 /*static const irr::c8 key[8] = {0x94, 0x35, 0x00, 0x00, 0xa1, 0x6c,	0x54, 0x87};
 
@@ -76,10 +75,6 @@ int main()
 
 int main()
 {
-	irr::f64 basehp = getBaseHpForClass(0, 19);
-	irr::f64 conmod = getConMod(43);
-	cout << "Hp = " << (irr::u32)(basehp * conmod) << "\n";
-
 	adena::login_server::CLoginServer* s = new adena::login_server::CLoginServer();
 	adena::game_server::CGameServer* g = new adena::game_server::CGameServer();
 	adena::login_server::CInProcessGameServerLink GameLink = adena::login_server::CInProcessGameServerLink(s);
@@ -108,51 +103,4 @@ int main()
 	delete g;
 	irr::net::Cleanup();
 	return 0;
-}
-
-irr::f64 _inline quadEqu(irr::f64 a, irr::f64 b, irr::f64 c, irr::f64 x)
-{
-	return ((a * (x * x)) + (b * x) + c);
-}
-
-irr::f64 _inline cubicEqu(irr::f64 a, irr::f64 b, irr::f64 c, irr::f64 d, irr::f64 x)
-{
-	return ((a * (x * x * x)) + (b * (x * x)) + (c * x) + d);
-}
-
-irr::f64 _inline getConMod(irr::u32 con)
-{
-	return cubicEqu(0.0000048694242, 0.0000608003, 0.0148674192, 0.4381339809, con);
-}
-
-irr::f64 _fastcall getBaseHpForClass(irr::u32 class_id, irr::u32 level)
-{
-	static irr::f64 table[119][80];
-	static bool gened = false;
-
-	if( !((class_id < 119) && (level < 81) && (level > 0)) )
-		return 0;
-
-	if(!gened)
-	{
-		gened = true;
-		// Generate table
-		irr::u32 i;
-		for(i = 0; i < 80; i++)
-		{
-			table[0][i] = quadEqu(0.064990671, 11.63594781, 68.27948918, i + 1); // Human fighter
-			table[1][i] = quadEqu(0.15, 26.85, -270, i + 1); // Warrior
-			table[2][i] = quadEqu(0.19, 34.01, -620.4, i + 1); // Gladiator
-			table[3][i] = quadEqu(0.21, 37.59, -795.6, i + 1); // Warlord
-			table[4][i] = quadEqu(0.135, 25.165, -210.3, i + 1); // Human Knight
-			table[5][i] = quadEqu(0.18, 32.22, -604.5, i + 1); // Paladin
-			table[6][i] = quadEqu(0.18, 32.22, -604.5, i + 1); // DA
-			table[7][i] = quadEqu(0.125, 22.375, -170.5, i + 1); // Rogue
-			table[8][i] = quadEqu(0.1598791578, 28.6558902, -477.6100288, i + 1); // TH
-			table[9][i] = quadEqu(0.17, 30.43, -564.7, i + 1); // HE
-			table[10][i] = quadEqu(0.085, 15.215, 85.7, i + 1); // Human Mage
-		}
-	}
-
-	return table[class_id][level - 1];
 }

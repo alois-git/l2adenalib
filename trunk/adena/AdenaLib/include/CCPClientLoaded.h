@@ -1,6 +1,6 @@
 /*
- * CSPMoveToLocation.h - Tell ppl about the movement.
- * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
+ * CCPClientLoaded.h - Client loaded level.
+ * Created January 24, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,68 +21,54 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_MOVE_TO_LOCATION_H_
-#define _ADENA_C_S_P_MOVE_TO_LOCATION_H_
+#ifndef _ADENA_C_C_P_CLIENT_LOADED_H_
+#define _ADENA_C_C_P_CLIENT_LOADED_H_
 
-#include <CServerPacket.h>
-#include <vector3d.h>
+#include <GameManager.h>
+#include <CClientPacket.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPMoveToLocation : public CServerPacket
+	class CCPClientLoaded : public CClientPacket
 	{
 	public:
 
-		CSPMoveToLocation(irr::u32 char_id, irr::core::vector3df target, irr::core::vector3df origin)
-		: CServerPacket(), CharId(char_id), Target(target), Origin(origin)
+		CCPClientLoaded(irr::c8* in_data, IGameServerClient* client)
+		: CClientPacket()
 		{
-			Priority = EPP_URGENT;
+			Client = client;
+			Data = in_data;
+			ReadPointer++;
+
+			GameManager* gm = dynamic_cast<GameManager*>(Client->Server->Interfaces.GameManager);
+			if(gm)
+			{
+				gm->playerEnterWorld(Client->CharInfo, Client);
+			}
 		};
 
-		virtual ~CSPMoveToLocation() {};
-
-		virtual bool writePacket()
+		virtual ~CCPClientLoaded()
 		{
-			if(!Writen)
-			{
-				w8(0x01);
+			Data = 0;
+		};
 
-				w32(CharId);
+		virtual void run()
+		{
 
-				w32(Target.X);
-				w32(Target.Y);
-				w32(Target.Z);
-
-				w32(Origin.X);
-				w32(Origin.Y);
-				w32(Origin.Z);
-
-				Writen = true;
-			}
-			return true;
 		};
 
 		virtual irr::c8* getData()
 		{
-			return Data;
+			return NULL;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return WritePointer;
+			return 0;
 		};
-
-	private:
-
-		irr::u32 CharId;
-		irr::u32 MessageType;
-		irr::core::stringc Messenger;
-		irr::core::stringc Message;
-		irr::core::vector3df Target;
-		irr::core::vector3df Origin;
 	};
 
 }

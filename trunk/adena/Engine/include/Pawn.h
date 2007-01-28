@@ -1,9 +1,9 @@
 /*
- * SGameServerInterfaces.h - Game server interfaces.
- * Created January 9, 2007, by Michael 'Bigcheese' Spencer.
+ * Pawn.h - Base class for any moving object in the game.
+ * Created January 26, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,33 +21,50 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_GAME_SERVER_INTERFACES_H_
-#define _ADENA_S_GAME_SERVER_INTERFACES_H_
+#ifndef _ADENA_O_PAWN_H_
+#define _ADENA_O_PAWN_H_
 
-#include <AdenaConfig.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <ILogger.h>
-#include <BCini.h>
-#include <CPlayerCache.h>
-#include <CCharTemplates.h>
-#include <COObjectSystem.h>
+#include <Actor.h>
+#include <IGameServerClient.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SGameServerInterfaces
+	enum E_MoveState
 	{
-		irr::ILogger* Logger;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		BCini* ConfigFile;
-		CPlayerCache* PlayerCache;
-		CCharTemplates* CharTemplates;
-		COObjectSystem* ObjectSystem;
-		COObject* GameManager;
+		EMS_Still = 0,
+		EMS_Moving,
+		EMS_RequestMove
+	};
+
+	class Pawn : public Actor
+	{
+	public:
+
+		Pawn(IOObjectSystem* obj_sys);
+
+		virtual ~Pawn();
+
+		virtual void tick(irr::f32 delta_time);
+
+		virtual irr::u32 getSpeed();
+
+		virtual void moveToLocation(irr::core::vector3df Target);
+
+		//virtual void teleportToLocation(irr::core::vector3di Target);
+
+		// Event called when MoveTarget reached.
+		virtual void onStopMove();
+
+		virtual void onClick(COObject* event_instagator, bool shift_click);
+
+		irr::core::vector3df MoveTarget;
+		E_MoveState MoveState;
+
+		IGameServerClient* Owner;
+
 	};
 
 }

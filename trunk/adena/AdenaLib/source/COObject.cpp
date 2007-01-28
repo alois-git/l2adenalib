@@ -1,6 +1,6 @@
 /*
- * SGameServerInterfaces.h - Game server interfaces.
- * Created January 9, 2007, by Michael 'Bigcheese' Spencer.
+ * COObject.cpp - Base object for all objs in l2.
+ * Created January 13, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,36 +21,44 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_GAME_SERVER_INTERFACES_H_
-#define _ADENA_S_GAME_SERVER_INTERFACES_H_
-
-#include <AdenaConfig.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <ILogger.h>
-#include <BCini.h>
-#include <CPlayerCache.h>
-#include <CCharTemplates.h>
-#include <COObjectSystem.h>
+#include <COObject.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SGameServerInterfaces
-	{
-		irr::ILogger* Logger;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		BCini* ConfigFile;
-		CPlayerCache* PlayerCache;
-		CCharTemplates* CharTemplates;
-		COObjectSystem* ObjectSystem;
-		COObject* GameManager;
-	};
+void* COObject::operator new ( size_t size )
+{
+	return MemoryManager.allocate(size);
+};
+
+void COObject::operator delete( void* obj )
+{
+	MemoryManager.deallocate(obj);
+};
+
+COObject::COObject(IOObjectSystem* obj_sys)
+: ObjectSystem(obj_sys)
+{
+	ObjName = "Object";
+};
+
+COObject::~COObject()
+{
+
+};
+
+void COObject::destroy()
+{
+	ObjectSystem->removeObj(Id);
+	delete this;
+};
+
+COObject* COObject::spawn(irr::core::stringc obj)
+{
+	return (COObject*)ObjectSystem->loadObj(obj);
+};
 
 }
 }
-
-#endif

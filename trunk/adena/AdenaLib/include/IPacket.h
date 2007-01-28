@@ -57,9 +57,9 @@ namespace adena
 		 */
 		virtual irr::u32 getLen() = 0;
 
-		void getRef() {RefCount++;}
+		inline void getRef() {RefCount++;}
 
-		void drop() {RefCount--; if(RefCount <= 0) delete this;}
+		inline void drop() {RefCount--; if(RefCount <= 0) delete this;}
 
 		E_Packet_Priority Priority;
 

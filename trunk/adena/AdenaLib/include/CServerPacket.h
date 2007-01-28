@@ -27,17 +27,30 @@
 #include <CPacket.h>
 #include <irrThread.h>
 #include <IGameServerClient.h>
+#include <CMemoryManager.h>
 
 namespace adena
 {
 namespace game_server
 {
 
+	static CMemoryManager ServerPacketMemoryManager(65536);
+
 	class CServerPacket : public CPacket
 	{
 	public:
 
-		CServerPacket() : CPacket() {}
+		inline void* operator new ( size_t size )
+		{
+			return ServerPacketMemoryManager.allocate(size);
+		};
+
+		inline void operator delete( void* obj )
+		{
+			ServerPacketMemoryManager.deallocate(obj);
+		};
+
+		CServerPacket() : CPacket(), Writen(false) {}
 
 		virtual ~CServerPacket() {}
 
@@ -51,6 +64,7 @@ namespace game_server
 	protected:
 
 		IGameServerClient* Client;
+		bool Writen;
 
 	};
 

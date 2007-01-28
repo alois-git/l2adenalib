@@ -35,8 +35,8 @@ namespace game_server
 	{
 	public:
 
-		CPCharInfo(COPlayer* player)
-		: CServerPacket(), Player(player)
+		CPCharInfo(Player* player)
+		: CServerPacket(), P(player)
 		{
 			Priority = EPP_HIGH;
 		};
@@ -95,15 +95,15 @@ namespace game_server
 
 			return;*/
 
-			SCharInfo* ci = Player->CharInfo;
-			SClassTemplate* ct = Player->Client->Server->Interfaces.CharTemplates->loadTemplate(Player->CharInfo->ClassId);
+			SCharInfo* ci = P->CharInfo;
+			SClassTemplate* ct = P->Owner->Server->Interfaces.CharTemplates->loadTemplate(P->CharInfo->ClassId);
 
 			w8(0x03);
-			w32(ci->x); // x
-			w32(ci->y); // y
-			w32(ci->z); // z
+			w32(P->Location.X); // x
+			w32(P->Location.Y); // y
+			w32(P->Location.Z); // z
 			w32(0x00); // Heading
-			w32(ci->CharacterId); // Char object id
+			w32(P->Id); // Char object id
 			wStrW(ci->Name); // Char name
 			w32(ci->RaceId); // Race
 			w32(ci->Sex); // Sex
@@ -226,7 +226,7 @@ namespace game_server
 
 	private:
 
-		COPlayer* Player;
+		Player* P;
 
 	};
 

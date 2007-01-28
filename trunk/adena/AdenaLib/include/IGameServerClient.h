@@ -25,12 +25,14 @@
 #define _ADENA_I_GAME_SERVER_CLIENT_H_
 
 #include <AdenaConfig.h>
+#include <COObject.h>
 #include <IPacket.h>
 #include <irrNet.h>
 #include <CGameServer.h>
 #include <CCrypt.h>
 #include <COPawn.h>
 #include <SCharInfo.h>
+#include <CMemoryManager.h>
 
 namespace adena
 {
@@ -52,9 +54,11 @@ namespace game_server
 		irr::core::stringc AccountName;
 		irr::u32 AccountId;
 		COPawn* Pawn;
+		COObject* PController;
 		SCharInfo* CharInfo;
 		SCharSelectIds CharSelectIds;
 		irr::u32 CharId;
+		CMemoryManager MemoryManager;
 	};
 
 }

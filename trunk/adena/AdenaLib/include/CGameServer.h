@@ -62,7 +62,7 @@ namespace game_server
 
 		SGameServerInterfaces Interfaces;
 		irr::net::IServer* Server;
-		irr::core::list<SClassTemplate> ClassTemplateList;
+		//irr::core::list<SClassTemplate> ClassTemplateList;
 		irr::core::threads::Mutex CreateCharMutex;
 		ILoginServerLink* LoginServerLink;
 
@@ -84,8 +84,8 @@ namespace game_server
 		irr::core::threads::Mutex AccountUsersMutex;
 
 		// Maps char ids to players
-		AVL<irr::u32, COPawn*> Players;
-		irr::core::threads::Mutex PlayersMutex;
+		//AVL<irr::u32, COPawn*> Players;
+		//irr::core::threads::Mutex PlayersMutex;
 
 		// Maps account names to char ids
 		AVL<irr::core::stringc, irr::u32> Accounts;

@@ -1,6 +1,6 @@
 /*
- * SGameServerInterfaces.h - Game server interfaces.
- * Created January 9, 2007, by Michael 'Bigcheese' Spencer.
+ * Actor.h - Base object for all objects with a location.
+ * Created January 25, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,33 +21,36 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_GAME_SERVER_INTERFACES_H_
-#define _ADENA_S_GAME_SERVER_INTERFACES_H_
+#ifndef _ADENA_C_O_ACTOR_H_
+#define _ADENA_C_O_ACTOR_H_
 
-#include <AdenaConfig.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <ILogger.h>
-#include <BCini.h>
-#include <CPlayerCache.h>
-#include <CCharTemplates.h>
-#include <COObjectSystem.h>
+#include <COObject.h>
+#include <vector3d.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SGameServerInterfaces
+	class Actor : public COObject
 	{
-		irr::ILogger* Logger;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		BCini* ConfigFile;
-		CPlayerCache* PlayerCache;
-		CCharTemplates* CharTemplates;
-		COObjectSystem* ObjectSystem;
-		COObject* GameManager;
+	public:
+
+		Actor(IOObjectSystem* obj_sys);
+
+		virtual ~Actor();
+
+		Actor* spawn(irr::core::stringc obj, irr::core::vector3df location, irr::s32 heading);
+
+		virtual void setLocation(irr::core::vector3df &location);
+
+		// Events
+
+		virtual void onClick(COObject* event_instagator, bool shift_click);
+
+		irr::core::vector3df Location;
+		irr::s32 Heading;
+
 	};
 
 }

@@ -1,6 +1,6 @@
 /*
- * SGameServerInterfaces.h - Game server interfaces.
- * Created January 9, 2007, by Michael 'Bigcheese' Spencer.
+ * COObjectSystem.h - Object manager.
+ * Created January 25, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,33 +21,45 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_GAME_SERVER_INTERFACES_H_
-#define _ADENA_S_GAME_SERVER_INTERFACES_H_
+#ifndef _ADENA_C_O_OBJECT_SYSTEM_H_
+#define _ADENA_C_O_OBJECT_SYSTEM_H_
 
-#include <AdenaConfig.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <ILogger.h>
-#include <BCini.h>
-#include <CPlayerCache.h>
-#include <CCharTemplates.h>
-#include <COObjectSystem.h>
+#include <IOObjectSystem.h>
+#include <irrThread.h>
+#include <AVL.h>
+#include <irrString.h>
+#include <COObject.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SGameServerInterfaces
+	typedef COObject* (*load_Obj)(IOObjectSystem*);
+
+	class ADENALIB_API COObjectSystem : public irr::core::threads::Thread
 	{
-		irr::ILogger* Logger;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		BCini* ConfigFile;
-		CPlayerCache* PlayerCache;
-		CCharTemplates* CharTemplates;
-		COObjectSystem* ObjectSystem;
-		COObject* GameManager;
+	public:
+
+		COObjectSystem();
+
+		virtual ~COObjectSystem();
+
+		virtual void run();
+
+		// Loads an obj and adds it to the system.
+		virtual IOObject* loadObj(irr::core::stringc &obj);
+
+		virtual IOObject* getObj(irr::u32 id);
+
+		virtual void removeObj(irr::u32 id);
+
+	private:
+
+		AVL<irr::core::stringc, void*> Librarys;
+		AVL<irr::u32, IOObject*> Objects;
+		irr::u32 Ids;
+
 	};
 
 }
