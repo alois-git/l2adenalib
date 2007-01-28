@@ -78,7 +78,8 @@ void CPacket::w8(irr::s32 val)
 	if((WritePointer + 1) > DataLen)
 		resize(WritePointer + GROW_SIZE);
 
-	Data[WritePointer++] = (val & 0xff);
+	memcpy(Data + WritePointer, &val, 1);
+	WritePointer += 1;
 };
 
 //--------------------------------
@@ -88,8 +89,8 @@ void CPacket::w16(irr::s32 val)
 	if((WritePointer + 2) > DataLen)
 		resize(WritePointer + GROW_SIZE);
 
-	Data[WritePointer++] = (val & 0xff);
-	Data[WritePointer++] = ((val >> 8) & 0xff);
+	memcpy(Data + WritePointer, &val, 2);
+	WritePointer += 2;
 };
 
 //--------------------------------
@@ -99,10 +100,8 @@ void CPacket::w32(irr::s32 val)
 	if((WritePointer + 4) > DataLen)
 		resize(WritePointer + GROW_SIZE);
 
-	Data[WritePointer++] = (val & 0xff);
-	Data[WritePointer++] = ((val >> 8) & 0xff);
-	Data[WritePointer++] = ((val >> 16) & 0xff);
-	Data[WritePointer++] = ((val >> 24) & 0xff);
+	memcpy(Data + WritePointer, &val, 4);
+	WritePointer += 4;
 };
 
 //--------------------------------
@@ -112,14 +111,8 @@ void CPacket::w64(irr::s64 val)
 	if((WritePointer + 8) > DataLen)
 		resize(WritePointer + GROW_SIZE);
 
-	Data[WritePointer++] = (val & 0xff);
-	Data[WritePointer++] = ((val >> 8) & 0xff);
-	Data[WritePointer++] = ((val >> 16) & 0xff);
-	Data[WritePointer++] = ((val >> 24) & 0xff);
-	Data[WritePointer++] = ((val >> 30) & 0xff);
-	Data[WritePointer++] = ((val >> 38) & 0xff);
-	Data[WritePointer++] = ((val >> 46) & 0xff);
-	Data[WritePointer++] = ((val >> 52) & 0xff);
+	memcpy(Data + WritePointer, &val, 8);
+	WritePointer += 8;
 };
 
 //--------------------------------
@@ -132,8 +125,6 @@ void CPacket::wf(irr::f64 val)
 	memcpy(Data + WritePointer, &val, 8);
 	WritePointer += 8;
 };
-
-
 
 //--------------------------------
 
@@ -174,7 +165,9 @@ void CPacket::wArray(irr::c8* in_data, irr::u32 data_len)
 
 irr::s32 CPacket::r8()
 {
-	int result = Data[ReadPointer++] &0xff;
+	int result = 0;
+	memcpy(&result, Data + ReadPointer, 1);
+	ReadPointer += 1;
 	return result;
 };
 
@@ -182,8 +175,9 @@ irr::s32 CPacket::r8()
 
 irr::s32 CPacket::r16()
 {
-	int result = Data[ReadPointer++] &0xff;
-	result |= ((Data[ReadPointer++] << 8) & 0xff00);
+	int result = 0;
+	memcpy(&result, Data + ReadPointer, 2);
+	ReadPointer += 2;
 	return result;
 };
 
@@ -191,10 +185,9 @@ irr::s32 CPacket::r16()
 
 irr::s32 CPacket::r32()
 {
-	int result = Data[ReadPointer++] &0xff;
-	result |= ((Data[ReadPointer++] << 8) & 0xff00);
-	result |= ((Data[ReadPointer++] << 16) & 0xff0000);
-	result |= ((Data[ReadPointer++] << 24) & 0xff000000);
+	int result = 0;
+	memcpy(&result, Data + ReadPointer, 4);
+	ReadPointer += 4;
 	return result;
 };
 

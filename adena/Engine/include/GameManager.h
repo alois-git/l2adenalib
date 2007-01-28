@@ -1,6 +1,6 @@
 /*
- * CCharTemplates.h - Caches the default char templates.
- * Created January 11, 2006, by Michael 'Bigcheese' Spencer.
+ * GameManager.h - Basicly manages the game play of the server.
+ * Created January 25, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,37 +21,44 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_CHAR_TEMPLATES_H_
-#define _ADENA_C_CHAR_TEMPLATES_H_
+#ifndef _ADENA_C_O_GAME_MANAGER_H_
+#define _ADENA_C_O_GAME_MANAGER_H_
 
-#include <AdenaConfig.h>
-#include <irrThread.h>
-#include <irrDb.h>
-#include <AVL.h>
-#include <SClassTemplate.h>
+#include <COObject.h>
+#include <Player.h>
+#include <IGameServerClient.h>
+#include <SCharInfo.h>
+#include <irrList.h>
+#include <IPacket.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class ADENALIB_API CCharTemplates
+	class GameManager : public COObject
 	{
 	public:
 
-		CCharTemplates(irr::db::IDatabase* database);
+		GameManager(IOObjectSystem* obj_sys);
 
-		virtual ~CCharTemplates();
+		virtual ~GameManager();
 
-		SClassTemplate* loadTemplate(irr::u32 class_id);
+		virtual void tick(irr::f32 delta_time);
 
-	private:
+		virtual void broadcastPacket(IPacket* packet);
 
-		void loadTemplates();
+		virtual Player* playerEnterWorld(SCharInfo* char_info, IGameServerClient* owner);
 
-		irr::db::IDatabase* DataBase;
+		virtual void playerLeaveWorld(Player* player);
 
-		AVL<irr::u32, SClassTemplate*> Templates;
+		irr::core::list<Player*> PlayerList;
+
+		irr::core::stringc ControllerClass;
+		// A subclass of Player (ex. Engine.L2Player).
+		irr::core::stringc PlayerClass;
+		// Default NPC class to use. (ex. Engine.L2NPC).
+		irr::core::stringc NpcClass;
 
 	};
 

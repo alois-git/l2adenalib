@@ -1,9 +1,9 @@
 /*
- * CPPressStart.h - Enter teh world of l2.
- * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
+ * CCPClickObj.h - Client clicked on something targetable.
+ * Created January 26, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,45 +21,56 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_P_PRESS_START_H_
-#define _ADENA_C_P_PRESS_START_H_
+#ifndef _ADENA_C_C_P_CLICK_OBJ_H_
+#define _ADENA_C_C_P_CLICK_OBJ_H_
 
+#include <GameManager.h>
 #include <CClientPacket.h>
-#include <CPCharSelected.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CPPressStart : public CClientPacket
+	class CCPClickObj : public CClientPacket
 	{
 	public:
 
-		CPPressStart(irr::c8* in_data, IGameServerClient* client)
+		CCPClickObj(irr::c8* in_data, IGameServerClient* client)
 		: CClientPacket()
 		{
 			Client = client;
 			Data = in_data;
 			ReadPointer++;
-			CharIndex = r32();
-			Unknown1 = r16();
-			Unknown2 = r32();
-			Unknown3 = r32();
-			Unknown4 = r32();
-			start();
+
+			Controller* c = dynamic_cast<Controller*>(Client->PController);
+			if(c)
+			{
+				ObjId = r32();
+				Origin.X = r32();
+				Origin.Y = r32();
+				Origin.Z = r32();
+				ShiftClick = r8(); // true = shift, false = no shift.
+
+				Actor* a = dynamic_cast<Actor*>(Client->Server->Interfaces.ObjectSystem->getObj(ObjId));
+				if(a)
+				{
+					c->clickObject(a, ShiftClick);
+				}else
+				{
+					Client->Server->Interfaces.Logger->log("Client tried to click on an object that is not in the world.", irr::ELL_WARNING);
+				}
+			}
 		};
 
-		virtual ~CPPressStart()
+		virtual ~CCPClickObj()
 		{
 			Data = 0;
 		};
 
 		virtual void run()
 		{
-			Client->CharInfo = Client->Server->Interfaces.PlayerCache->loadChar(Client->CharSelectIds.CharIds[CharIndex]);
-			Client->sendPacket(new CPCharSelected(&Client->Server->Interfaces, Client->CharSelectIds.CharIds[CharIndex]));
-			delete this;
+
 		};
 
 		virtual irr::c8* getData()
@@ -72,15 +83,9 @@ namespace game_server
 			return 0;
 		};
 
-		irr::u32 CharIndex;
-		irr::u32 Unknown1;
-		irr::u32 Unknown2;
-		irr::u32 Unknown3;
-		irr::u32 Unknown4;
-
-	private:
-
-
+		irr::u32 ObjId;
+		irr::core::vector3df Origin;
+		bool ShiftClick;
 
 	};
 

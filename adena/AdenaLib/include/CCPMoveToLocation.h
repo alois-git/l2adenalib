@@ -22,8 +22,9 @@
  */
 
 #ifndef _ADENA_C_C_P_MOVE_TO_LOCATION_H_
-#define _ADENA_C_C_P_SAY_H_
+#define _ADENA_C_C_P_MOVE_TO_LOCATION_H_
 
+#include <Controller.h>
 #include <CClientPacket.h>
 #include <irrString.h>
 #include <CSPMoveToLocation.h>
@@ -46,19 +47,19 @@ namespace game_server
 			Data = in_data;
 			ReadPointer++;
 
-			Target.X = r32();
-			Target.Y = r32();
-			Target.Z = r32();
-			Origin.X = r32();
-			Origin.Y = r32();
-			Origin.Z = r32();
-			MoveType = r32();
+			Controller* c = dynamic_cast<Controller*>(Client->PController);
+			if(c)
+			{
+				Target.X = r32();
+				Target.Y = r32();
+				Target.Z = r32();
+				Origin.X = r32();
+				Origin.Y = r32();
+				Origin.Z = r32();
+				MoveType = r32(); // 0 = keys, 1 = mouse
 
-			client->CharInfo->x = Target.X;
-			client->CharInfo->y = Target.Y;
-			client->CharInfo->z = Target.Z;
-
-			start();
+				c->clickGround(Origin, Target, MoveType);
+			}
 		};
 
 		virtual ~CCPMoveToLocation()
@@ -68,41 +69,7 @@ namespace game_server
 
 		virtual void run()
 		{
-			//Client->s
-			AVL<irr::u32, COPawn*>::Iterator<irr::u32, COPawn*> ittr(&Client->Server->Players);
-			irr::u32 key;
-			COPawn* item;
-			if(ittr.GetFirst(key, item))
-			{
-				CSPMoveToLocation* mtl = new CSPMoveToLocation(Client->CharInfo->CharacterId, Target, Origin);
-				mtl->getRef();
-				while(true)
-				{
-					// Do stuff with item
-					COPlayer* p = (COPlayer*)item;
-					p->Client->sendPacket(mtl);
-					if(!ittr.GetNext(key, item))
-						break;
-				}
-				mtl->drop(); // So that non of the clients delete the packet before all of them get a change to getRef()
-			}
 
-			/*irr::core::threads::sleep(1000);
-
-			if(ittr.GetFirst(key, item))
-			{
-				CSPStopMove* sm = new CSPStopMove(Client->CharInfo->CharacterId, Target, 0);
-				while(true)
-				{
-					// Do stuff with item
-					COPlayer* p = (COPlayer*)item;
-					p->Client->sendPacket(sm);
-					if(!ittr.GetNext(key, item))
-						break;
-				}
-			}*/
-
-			delete this;
 		};
 
 		virtual irr::c8* getData()
@@ -115,8 +82,8 @@ namespace game_server
 			return 0;
 		};
 
-		irr::core::vector3di Target;
-		irr::core::vector3di Origin;
+		irr::core::vector3df Target;
+		irr::core::vector3df Origin;
 		irr::u32 MoveType;
 	};
 

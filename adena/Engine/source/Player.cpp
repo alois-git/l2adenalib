@@ -1,9 +1,9 @@
 /*
- * SGameServerInterfaces.h - Game server interfaces.
- * Created January 9, 2007, by Michael 'Bigcheese' Spencer.
+ * Player.cpp - Base class for a player.
+ * Created January 26, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,36 +21,36 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_GAME_SERVER_INTERFACES_H_
-#define _ADENA_S_GAME_SERVER_INTERFACES_H_
-
-#include <AdenaConfig.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <ILogger.h>
-#include <BCini.h>
-#include <CPlayerCache.h>
-#include <CCharTemplates.h>
-#include <COObjectSystem.h>
+#include <Player.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SGameServerInterfaces
-	{
-		irr::ILogger* Logger;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		BCini* ConfigFile;
-		CPlayerCache* PlayerCache;
-		CCharTemplates* CharTemplates;
-		COObjectSystem* ObjectSystem;
-		COObject* GameManager;
-	};
-
+extern "C"{
+REG_EXPORT COObject* load_Player(IOObjectSystem* obj_sys)
+{
+	return (COObject*)new Player(obj_sys);
 }
 }
 
-#endif
+Player::Player(IOObjectSystem* obj_sys)
+: Pawn(obj_sys)
+{
+
+};
+
+Player::~Player()
+{
+
+};
+
+irr::u32 Player::getSpeed()
+{
+	SClassTemplate* ct = Owner->Server->Interfaces.CharTemplates->loadTemplate(CharInfo->ClassId);
+	return ct->RUN_SPEED;
+};
+
+}
+}

@@ -24,10 +24,10 @@
 #ifndef _ADENA_C_P_USER_INFO_H_
 #define _ADENA_C_P_USER_INFO_H_
 
+#include <Player.h>
 #include <CServerPacket.h>
 #include <irrString.h>
 #include <SGameServerInterfaces.h>
-#include <COPlayer.h>
 
 namespace adena
 {
@@ -38,8 +38,8 @@ namespace game_server
 	{
 	public:
 
-		CPUserInfo(COPlayer* player)
-		: CServerPacket(), Player(player)
+		CPUserInfo(Player* player)
+		: CServerPacket(), P(player)
 		{
 			Priority = EPP_HIGH;
 		};
@@ -48,18 +48,18 @@ namespace game_server
 
 		virtual bool writePacket()
 		{
-			SCharInfo* ci = Player->CharInfo;
-			SClassTemplate* ct = Player->Client->Server->Interfaces.CharTemplates->loadTemplate(Player->CharInfo->ClassId);
+			SCharInfo* ci = P->CharInfo;
+			SClassTemplate* ct = P->Owner->Server->Interfaces.CharTemplates->loadTemplate(P->CharInfo->ClassId);
 
 			resize(500);
 
 			w8(0x04); // Packet type
 
-			w32(ci->x); // x
-			w32(ci->y); // y
-			w32(ci->z); // z
+			w32(P->Location.X); // x
+			w32(P->Location.Y); // y
+			w32(P->Location.Z); // z
 			w32(0x00); // Heading
-			w32(ci->CharacterId); // Char obj id
+			w32(P->Id); // Char obj id
 			wStrW(ci->Name); // Char name
 			w32(ci->RaceId); // Race
 			w32(ci->Sex); // Sex
@@ -67,16 +67,16 @@ namespace game_server
 
 			w32(ci->Level); // Level
 			w64(ci->xp); // XP
-			w32(Player->getStr()); // STR
-			w32(Player->getDex()); // DEX
-			w32(Player->getCon()); // CON
-			w32(Player->getInt()); // INT
-			w32(Player->getWit()); // WIT
-			w32(Player->getMen()); // MEN
-			w32(Player->getMaxHp()); // Max hp
-			w32(Player->getHp()); // Current hp
-			w32(Player->getMaxMp()); // Max mp
-			w32(Player->getMp()); // Current mp
+			w32(0x00); // STR
+			w32(0x00); // DEX
+			w32(0x00); // CON
+			w32(0x00); // INT
+			w32(0x00); // WIT
+			w32(0x00); // MEN
+			w32(0x00); // Max hp
+			w32(0x00); // Current hp
+			w32(0x00); // Max mp
+			w32(0x00); // Current mp
 			w32(0x00); // Sp
 			w32(0x00); // Weight
 			w32(ct->MAX_WEIGHT); // Max weight
@@ -236,7 +236,7 @@ namespace game_server
 
 	private:
 
-		COPlayer* Player;
+		Player* P;
 
 	};
 

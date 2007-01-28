@@ -1,6 +1,6 @@
 /*
- * SGameServerInterfaces.h - Game server interfaces.
- * Created January 9, 2007, by Michael 'Bigcheese' Spencer.
+ * Actor.cpp - Base object for all objects with a location.
+ * Created January 25, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,36 +21,52 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_GAME_SERVER_INTERFACES_H_
-#define _ADENA_S_GAME_SERVER_INTERFACES_H_
-
-#include <AdenaConfig.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <ILogger.h>
-#include <BCini.h>
-#include <CPlayerCache.h>
-#include <CCharTemplates.h>
-#include <COObjectSystem.h>
+#include <Actor.h>
+#include <os.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SGameServerInterfaces
+extern "C"{
+REG_EXPORT COObject* load_Actor(IOObjectSystem* obj_sys)
+{
+	return (COObject*)new Actor(obj_sys);
+}
+}
+
+Actor::Actor(IOObjectSystem* obj_sys)
+: COObject(obj_sys)
+{
+
+};
+
+Actor::~Actor()
+{
+
+};
+
+Actor* Actor::spawn(irr::core::stringc obj, irr::core::vector3df location, irr::s32 heading)
+{
+	Actor* a = dynamic_cast<Actor*>(COObject::spawn(obj));
+	if(a)
 	{
-		irr::ILogger* Logger;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		BCini* ConfigFile;
-		CPlayerCache* PlayerCache;
-		CCharTemplates* CharTemplates;
-		COObjectSystem* ObjectSystem;
-		COObject* GameManager;
-	};
+		a->Location = location;
+		a->Heading = heading;
+	}
+	return a;
+};
+
+void Actor::setLocation(irr::core::vector3df &location)
+{
+	Location = location;
+};
+
+void Actor::onClick(COObject *event_instagator, bool shift_click)
+{
+
+};
 
 }
 }
-
-#endif

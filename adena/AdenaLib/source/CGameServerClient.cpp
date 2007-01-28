@@ -21,6 +21,7 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
+#include <CCPClientLoaded.h>
 #include <CGameServerClient.h>
 #include <CPProtocolVersion.h>
 #include <CPKeyInit.h>
@@ -46,6 +47,7 @@
 #include <CSPDyes.h>
 #include <CSPQuestList.h>
 #include <CCPRestartRequest.h>
+#include <CCPClickObj.h>
 
 #define RECV_SIZE 65536 // Max size of a L2 packet.
 
@@ -63,6 +65,10 @@ CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServe
 	SessionId = 0;
 	Server = server;
 	Client = client;
+
+	InBuff = new irr::c8[RECV_SIZE];
+	OutBuff = new irr::c8[RECV_SIZE];
+
 	OutputCipher = new CCrypt((irr::c8*)key);
 	InputCipher = new CCrypt((irr::c8*)key);
 	PacketQueue = new CPacketQueue(20);
@@ -74,6 +80,7 @@ CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServe
 	PacketFunctions[0] = &CGameServerClient::protocolVersion;
 	PacketFunctions[1] = &CGameServerClient::moveToLocation;
 	PacketFunctions[3] = &CGameServerClient::clientLoaded;
+	PacketFunctions[4] = &CGameServerClient::clickObj;
 	PacketFunctions[8] = &CGameServerClient::authLogin;
 	PacketFunctions[9] = &CGameServerClient::logout;
 	PacketFunctions[11] = &CGameServerClient::createChar;
@@ -91,13 +98,21 @@ CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServe
 
 CGameServerClient::~CGameServerClient()
 {
-	if(Pawn != 0)
+	GameManager* gm = dynamic_cast<GameManager*>(Server->Interfaces.GameManager);
+	Controller* c = dynamic_cast<Controller*>(PController);
+	if(gm && c)
 	{
-		Server->PlayersMutex.getLock();
-		Server->Players.Remove( ((COPlayer*)Pawn)->CharInfo->CharacterId );
-		Server->PlayersMutex.releaseLock();
-		delete Pawn;
+		Player* p = dynamic_cast<Player*>(c->OwnedPawn);
+		if(p)
+			gm->playerLeaveWorld(p);
 	}
+	if(PController)
+		PController->destroy();
+	delete[] InBuff;
+	delete[] OutBuff;
+	delete PacketQueue;
+	delete OutputCipher;
+	delete InputCipher;
 };
 
 void CGameServerClient::run()
@@ -109,37 +124,33 @@ void CGameServerClient::run()
 			irr::core::threads::sleep(0);
 		else
 		{
-			if(((CServerPacket*)packet)->writePacket())
+			if(((CServerPacket*)packet)->writePacket()) 
 			{
-				irr::c8 buff[RECV_SIZE];
 				irr::c8* data = packet->getData();
 				irr::u32 len = packet->getLen();
-				buff[0] = ((len + 2) & 0xff);
-				buff[1] = (((len + 2) >> 8) & 0xff);
-				memcpy(buff + 2, data, len);
+				OutBuff[0] = ((len + 2) & 0xff);
+				OutBuff[1] = (((len + 2) >> 8) & 0xff);
+				memcpy(OutBuff + 2, data, len);
 				if(packet->Crypt)
-					OutputCipher->encrypt(buff + 2, len);
-				Client->send(buff, len + 2);
+					OutputCipher->encrypt(OutBuff + 2, len);
+				Client->send(OutBuff, len + 2);
 			}
 			packet->drop();
 		}
 	}
-	delete PacketQueue;
 	delete this;
 };
 
 void CGameServerClient::HandlePacket()
 {
-	irr::c8 buff[RECV_SIZE];
-
 	// Take the first 2 bytes to get the packet size
-	Client->recv(buff, 2);
+	Client->recv(InBuff, 2);
 	int size = 0;
-	size += (unsigned char)buff[0];
-	size += ((unsigned char)(buff[1]) * 256);
+	size += (unsigned char)InBuff[0];
+	size += ((unsigned char)(InBuff[1]) * 256);
 
 	// Get the rest of the packet
-	int recv_len = Client->recv(buff, size - 2);
+	int recv_len = Client->recv(InBuff, size - 2);
 
 	if(recv_len != (size - 2))
 	{
@@ -150,14 +161,14 @@ void CGameServerClient::HandlePacket()
 	if(ProtocolRevision != 0)
 	{
 		// Decrypt the data using L2s usless xor cipher
-		InputCipher->decrypt(buff, size - 2);
+		InputCipher->decrypt(InBuff, size - 2);
 	}
 
-	if((buff[0] & 0xff) != 0 && ProtocolRevision == 0)
+	if((InBuff[0] & 0xff) != 0 && ProtocolRevision == 0)
 		return; // Ya, bad dogy
 
 	// Function pointers FTW
-	(this->*PacketFunctions[buff[0] & 0xff])(buff);
+	(this->*PacketFunctions[InBuff[0] & 0xff])(InBuff);
 };
 
 void CGameServerClient::sendPacket(IPacket* packet)
@@ -184,34 +195,19 @@ void CGameServerClient::protocolVersion(irr::c8* data)
 // 1
 void CGameServerClient::moveToLocation(irr::c8 *data)
 {
-	new CCPMoveToLocation(data, this);
+	CCPMoveToLocation(data, this);
 };
 
 // 3
 void CGameServerClient::clientLoaded(irr::c8* data)
 {
-	// Client loaded, eat some adena.
-	IPacket* p;
-	p = new CPUserInfo((COPlayer*)Pawn);
-	sendPacket(p);
-	p = new CPCharInfo((COPlayer*)Pawn);
-	sendPacket(p);
-	/*p = new CSPBuffBar();
-	sendPacket(p);
-	p = new CSPMacroList();
-	sendPacket(p);
-	p = new CSPItemList(false);
-	sendPacket(p);
-	p = new CSPSkillBar();
-	sendPacket(p);
-	p = new CSPDyes();
-	sendPacket(p);
-	p = new CSPQuestList();
-	sendPacket(p);*/
+	CCPClientLoaded(data, this);
+};
 
-	//irr::core::stringc msg("Welcome to L2Adena version $ver, have a nice day");
-	//msg.replaceStr(irr::core::stringc("$ver"), irr::core::stringc(ADENA_VERSION));
-	//sendPacket(new CSPSystemMessage(msg));
+// 4
+void CGameServerClient::clickObj(irr::c8* data)
+{
+	CCPClickObj(data, this);
 };
 
 // 8
@@ -266,7 +262,7 @@ void CGameServerClient::createChar(irr::c8* data)
 	ci.Name = cc.Name;
 	ci.Title = "";
 	ci.RaceId = cc.Race;
-	ci.ClassId = cc.ClassId; // TODO: Trusting the client to much
+	ci.ClassId = cc.ClassId; // TODO: Trusting the client too much
 	ci.Sex = cc.Sex;
 	ci.HairType = cc.HairStyle;
 	ci.HairColor = cc.HairColor;

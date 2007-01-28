@@ -1,9 +1,9 @@
 /*
- * SGameServerInterfaces.h - Game server interfaces.
- * Created January 9, 2007, by Michael 'Bigcheese' Spencer.
+ * Player.h - Base class for a player.
+ * Created January 26, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,33 +21,29 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_GAME_SERVER_INTERFACES_H_
-#define _ADENA_S_GAME_SERVER_INTERFACES_H_
+#ifndef _ADENA_O_PLAYER_H_
+#define _ADENA_O_PLAYER_H_
 
-#include <AdenaConfig.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <ILogger.h>
-#include <BCini.h>
-#include <CPlayerCache.h>
-#include <CCharTemplates.h>
-#include <COObjectSystem.h>
+#include <Pawn.h>
+#include <SCharInfo.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SGameServerInterfaces
+	class Player : public Pawn
 	{
-		irr::ILogger* Logger;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		BCini* ConfigFile;
-		CPlayerCache* PlayerCache;
-		CCharTemplates* CharTemplates;
-		COObjectSystem* ObjectSystem;
-		COObject* GameManager;
+	public:
+
+		Player(IOObjectSystem* obj_sys);
+
+		virtual ~Player();
+
+		virtual irr::u32 getSpeed();
+
+		SCharInfo* CharInfo;
+
 	};
 
 }

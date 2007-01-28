@@ -24,37 +24,59 @@
 #ifndef _ADENA_C_O_OBJECT_H_
 #define _ADENA_C_O_OBJECT_H_
 
-#include <AdenaConfig.h>
+#include <IOObject.h>
+#include <irrString.h>
+#include <IOObjectSystem.h>
+#include <CMemoryManager.h>
+#include <os.h>
+
+#ifdef _IRR_WINDOWS_
+#define REG_EXPORT _declspec(dllexport)
+#else
+#define REG_EXPORT
+#endif
 
 namespace adena
 {
 namespace game_server
 {
 
+	static CMemoryManager MemoryManager(65536);
+
 	/*
 	 * COObject is the root of all objects in the game
 	 */
-	class COObject
+	class ADENALIB_API COObject : public IOObject
 	{
 	public:
 
-		virtual ~COObject() {}
+		inline void* operator new ( size_t size );
 
-		virtual void destroy()
-		{
-			delete this;
-		}
+		inline void operator delete ( void* obj );
 
-		virtual void tick() {}
+		COObject(IOObjectSystem* obj_sys);
+
+		virtual ~COObject();
+
+		virtual void destroy();
 
 		/*
-		 * Gets the ID that is sent to the client
+		 * @param : obj - string with the obj to load (ex "Core.Adena").
 		 */
-		irr::u32 getId() {return Id;}
+		COObject* spawn(irr::core::stringc obj);
+
+		virtual void tick(irr::f32 delta_time) {}
+
+		// Last time in miliseconds that the object was ticked.
+		irr::u32 LastTickTime;
 
 	protected:
 
-		irr::u32 Id;
+		irr::core::stringc ObjName;
+
+	private:
+
+		IOObjectSystem* ObjectSystem;
 
 	};
 

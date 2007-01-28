@@ -1,6 +1,6 @@
 /*
- * CSPStopMove.h - Notifies that a obj stoped moving.
- * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
+ * CMemoryManager.h - Manages memory :P (new/delete overloads).
+ * Created January 23, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,60 +21,63 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_STOP_MOVE_H_
-#define _ADENA_C_S_P_STOP_MOVE_H_
+#ifndef _ADENA_C_MEMORY_MANAGER_H_
+#define _ADENA_C_MEMORY_MANAGER_H_
 
-#include <CServerPacket.h>
-#include <vector3d.h>
+#include <AdenaConfig.h>
+#include <irrList.h>
+//#include <CReadWriteLock.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPStopMove : public CServerPacket
+	class ADENALIB_API CMemoryManager
 	{
 	public:
 
-		CSPStopMove(irr::u32 char_id, irr::core::vector3df loc, irr::s32 heading)
-		: CServerPacket(), CharId(char_id), Loc(loc), Heading(heading)
-		{
-			Priority = EPP_URGENT;
-		};
+		CMemoryManager(irr::u32 mem_grow_size = 65536);
 
-		virtual ~CSPStopMove() {};
+		~CMemoryManager();
 
-		virtual bool writePacket()
-		{
-			if(!Writen)
-			{
-				w8(0x47);
-				w32(CharId);
-				w32(Loc.X);
-				w32(Loc.Y);
-				w32(Loc.Z);
-				w32(Heading);
+		inline void* allocate(irr::u32 size);
 
-				Writen = true;
-			}
-			return true;
-		};
+		inline void* reallocate(void* memory, irr::u32 size);
 
-		virtual irr::c8* getData()
-		{
-			return Data;
-		};
-
-		virtual irr::u32 getLen()
-		{
-			return WritePointer;
-		};
+		inline void deallocate(void* memory);
 
 	private:
 
-		irr::u32 CharId;
-		irr::core::vector3df Loc;
-		irr::s32 Heading;
+		enum EMemState
+		{
+			EMS_USED = 0,
+			EMS_FREE,
+			EMS_LARGE
+		};
+
+		struct SMem
+		{
+			irr::u8* Mem;
+			irr::u32 MemSize;
+			EMemState State;
+		};
+
+		struct SMemList
+		{
+			irr::u8* Mem;
+			irr::u32 MemLoc;
+		};
+
+		inline void addToMemList(SMem &mem);
+
+		irr::u32 MemGrowSize;
+
+		irr::core::list<SMemList> Memory;
+
+		SMem* MemList;
+		irr::u32 MemListSize;
+		irr::u32 MemListUsed;
 
 	};
 

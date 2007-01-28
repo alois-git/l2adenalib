@@ -140,6 +140,11 @@ bool CGameServer::init(const char* config_file)
 	// Register with login server
 	LoginServerLink->registerWithLoginServer();
 
+	// Create obj system
+	Interfaces.ObjectSystem = new COObjectSystem();
+	Interfaces.GameManager = (COObject*)Interfaces.ObjectSystem->loadObj(irr::core::stringc("Engine.GameManager"));
+	Interfaces.ObjectSystem->start();
+
 	// Create caches
 	Interfaces.PlayerCache = new CPlayerCache(&Interfaces);
 	Interfaces.CharTemplates = new CCharTemplates(Interfaces.DataBase);
@@ -152,8 +157,7 @@ void CGameServer::run()
 {
 	Server->start();
 	Interfaces.Logger->log("Game Server up and running");
-	while(Server->Running)
-		irr::core::threads::sleep(1000);
+	Server->wait();
 };
 
 }

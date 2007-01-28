@@ -158,11 +158,10 @@ irr::f64 _fastcall getBaseHpForClass(irr::u32 class_id, irr::u32 level)
 			table[13][i] = quadEqu(0.175, 31.325, -511.5, i + 1); // Necro
 			table[14][i] = quadEqu(0.1889124205, 34.15301178, -647.4902592, i + 1); // Warlock
 			table[15][i] = quadEqu(0.155, 27.745, -192.9, i + 1); // Cleric
-
-			// Copy base class hp stats into higher class hp stats
-			for(irr::u32 c = 0; c < 10; c++)
-				memcpy(table[c], table[0], sizeof(irr::f64) * 19);
 		}
+		// Copy base class hp stats into higher class hp stats
+		for(irr::u32 c = 0; c < 10; c++)
+			memcpy(table[c], table[0], sizeof(irr::f64) * 19);
 	}
 
 	return table[class_id][level - 1];

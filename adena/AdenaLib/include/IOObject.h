@@ -1,6 +1,6 @@
 /*
- * SGameServerInterfaces.h - Game server interfaces.
- * Created January 9, 2007, by Michael 'Bigcheese' Spencer.
+ * IOObject.h - Base object for all objs in l2.
+ * Created January 25, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,33 +21,24 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_GAME_SERVER_INTERFACES_H_
-#define _ADENA_S_GAME_SERVER_INTERFACES_H_
+#ifndef _ADENA_I_O_OBJECT_H_
+#define _ADENA_I_O_OBJECT_H_
 
 #include <AdenaConfig.h>
-#include <irrDb.h>
-#include <irrRng.h>
-#include <ILogger.h>
-#include <BCini.h>
-#include <CPlayerCache.h>
-#include <CCharTemplates.h>
-#include <COObjectSystem.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SGameServerInterfaces
+	class IOObject
 	{
-		irr::ILogger* Logger;
-		irr::db::IDatabase* DataBase;
-		irr::IRng* Rng;
-		BCini* ConfigFile;
-		CPlayerCache* PlayerCache;
-		CCharTemplates* CharTemplates;
-		COObjectSystem* ObjectSystem;
-		COObject* GameManager;
+	public:
+
+		virtual ~IOObject() {}
+
+		irr::u32 Id;
+
 	};
 
 }

@@ -1,6 +1,6 @@
 /*
- * CSPMoveToLocation.h - Tell ppl about the movement.
- * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
+ * CSPTargetSelected.h - Notifies client that they selected a target.
+ * Created January 27, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,8 +21,8 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_MOVE_TO_LOCATION_H_
-#define _ADENA_C_S_P_MOVE_TO_LOCATION_H_
+#ifndef _ADENA_C_S_P_TARGET_SELECTED_H_
+#define _ADENA_C_S_P_TARGET_SELECTED_H_
 
 #include <CServerPacket.h>
 #include <vector3d.h>
@@ -32,33 +32,28 @@ namespace adena
 namespace game_server
 {
 
-	class CSPMoveToLocation : public CServerPacket
+	class CSPTargetSelected : public CServerPacket
 	{
 	public:
 
-		CSPMoveToLocation(irr::u32 char_id, irr::core::vector3df target, irr::core::vector3df origin)
-		: CServerPacket(), CharId(char_id), Target(target), Origin(origin)
+		CSPTargetSelected(irr::u32 targeter_id, irr::u32 targetie_id, irr::core::vector3df target_loc)
+		: CServerPacket(), TargeterId(targeter_id), TargeteiId(targetie_id), TargetLoc(target_loc)
 		{
-			Priority = EPP_URGENT;
+			Priority = EPP_HIGH;
 		};
 
-		virtual ~CSPMoveToLocation() {};
+		virtual ~CSPTargetSelected() {};
 
 		virtual bool writePacket()
 		{
 			if(!Writen)
 			{
-				w8(0x01);
-
-				w32(CharId);
-
-				w32(Target.X);
-				w32(Target.Y);
-				w32(Target.Z);
-
-				w32(Origin.X);
-				w32(Origin.Y);
-				w32(Origin.Z);
+				w8(0x29);
+				w32(TargeterId);
+				w32(TargeteiId);
+				w32(TargetLoc.X);
+				w32(TargetLoc.Y);
+				w32(TargetLoc.Z);
 
 				Writen = true;
 			}
@@ -77,12 +72,10 @@ namespace game_server
 
 	private:
 
-		irr::u32 CharId;
-		irr::u32 MessageType;
-		irr::core::stringc Messenger;
-		irr::core::stringc Message;
-		irr::core::vector3df Target;
-		irr::core::vector3df Origin;
+		irr::u32 TargeterId;
+		irr::u32 TargeteiId;
+		irr::core::vector3df TargetLoc;
+
 	};
 
 }

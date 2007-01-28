@@ -53,6 +53,9 @@ namespace game_server
 
 	protected:
 
+		irr::c8* InBuff;
+		irr::c8* OutBuff;
+
 		CCrypt* OutputCipher;
 		CCrypt* InputCipher;
 		packetFunc PacketFunctions[256];
@@ -65,6 +68,7 @@ namespace game_server
 		void protocolVersion(irr::c8* data);		// 000 - 0x00
 		void moveToLocation(irr::c8* data);			// 001 - 0x01
 		void clientLoaded(irr::c8* data);			// 003 - 0x03
+		void clickObj(irr::c8* data);				// 004 - 0x04
 		void authLogin(irr::c8* data);				// 008 - 0x08
 		void logout(irr::c8* data);					// 009 - 0x09
 		void createChar(irr::c8* data);				// 011 - 0x0b

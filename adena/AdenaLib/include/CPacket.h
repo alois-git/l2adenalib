@@ -33,7 +33,7 @@
 namespace adena
 {
 
-	class CPacket : public irr::core::threads::Thread, public IPacket
+	class ADENALIB_API CPacket : public irr::core::threads::Thread, public IPacket
 	{
 	public:
 
@@ -54,14 +54,14 @@ namespace adena
 		 * Writes one byte to data. (Little endian)
 		 * byte[0] = val[0]
 		 */
-		virtual void w8(irr::s32 val);
+		void w8(irr::s32 val);
 
 		/*
 		 * Writes two bytes to data. (Little endian)
 		 * byte[0] = val[0]
 		 * byte[1] = val[1]
 		 */
-		virtual void w16(irr::s32 val);
+		void w16(irr::s32 val);
 
 		/*
 		 * Writes four bytes to data. (Little endian)
@@ -70,68 +70,68 @@ namespace adena
  		 * byte[2] = val[2]
 		 * byte[3] = val[3]
 		 */
-		virtual void w32(irr::s32 val);
+		void w32(irr::s32 val);
 
-		virtual void w64(irr::s64 val);
+		void w64(irr::s64 val);
 
-		virtual void wf(irr::f64 val);
+		void wf(irr::f64 val);
 
 		/*
 		 * Writes a ASCII null terminated string to data.
 		 */
-		virtual void wStr(irr::core::stringc &str);
+		void wStr(irr::core::stringc &str);
 
 		/*
 		 * Writes a unicode (two byte) null termininated string to data.
 		 */
-		virtual void wStrW(irr::core::stringc &str);
+		void wStrW(irr::core::stringc &str);
 
 		/*
 		 * Copys from in_data to data size data_len.
 		 */
-		virtual void wArray(irr::c8* in_data, irr::u32 data_len);
+		void wArray(irr::c8* in_data, irr::u32 data_len);
 
 		/*
 		 * Reads one byte from data. (Little endian)
 		 */
-		virtual irr::s32 r8();
+		irr::s32 r8();
 
 		/*
 		 * Reads two byte from data. (Little endian)
 		 */
-		virtual irr::s32 r16();
+		irr::s32 r16();
 
 		/*
 		 * Reads four byte from data. (Little endian)
 		 */
-		virtual irr::s32 r32();
+		irr::s32 r32();
 
 		/*
 		 * Reads a ASCII null terminated string to str.
 		 */
-		virtual void rStr(irr::core::stringc &str);
+		void rStr(irr::core::stringc &str);
 
 		/*
 		 * Reads a unicode (two byte) null termininated string to str.
 		 */
-		virtual void rStrW(irr::core::stringc &str);
+		void rStrW(irr::core::stringc &str);
 
 		/*
 		 * Copys from data to out_data size data_len.
 		 */
-		virtual void rArray(irr::c8* out_data, irr::u32 data_len);
+		void rArray(irr::c8* out_data, irr::u32 data_len);
 
 	protected:
 
 		/*
 		 * Resizes data to new_size.
 		 */
-		virtual void resize(irr::u32 new_size);
+		void resize(irr::u32 new_size);
 
 		/*
 		 * Adds 4 bytes for a check sum and then pads the packet to a multiple of 8 bytes.
 		 */
-		virtual void blowfishPad();
+		void blowfishPad();
 
 		irr::c8* Data;
 		irr::u32 DataLen;
