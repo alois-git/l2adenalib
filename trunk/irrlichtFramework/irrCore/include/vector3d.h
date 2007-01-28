@@ -64,7 +64,7 @@ namespace core
 		void set(const vector3d<T>& p) { X=p.X; Y=p.Y; Z=p.Z;}
 
 		//! Returns length of the vector.
-		f64 getLength() const { return sqrt(X*X + Y*Y + Z*Z); }
+		f64 getLength() const { return sqrt((irr::f64)(X*X + Y*Y + Z*Z)); }
 
 		//! Returns squared length of the vector.
 		/** This is useful because it is much faster then
@@ -245,6 +245,8 @@ namespace core
 
 	//! Typedef for a f32 3d vector.
 	typedef vector3d<f32> vector3df;
+	//! Typedef for a f64 3d vector.
+	typedef vector3d<f64> vector3dd;
 	//! Typedef for an integer 3d vector.
 	typedef vector3d<s32> vector3di;
 

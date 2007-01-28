@@ -200,10 +200,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\irrCore\source\CGc.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\irrCore\source\CLimitReadFile.cpp"
 					>
 				</File>
@@ -356,102 +352,6 @@
 					</File>
 					<File
 						RelativePath=".\dependencies\zlib\zutil.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="gc"
-					>
-					<File
-						RelativePath=".\dependencies\gc\allchblk.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\alloc.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\blacklst.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\checksums.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\dbg_mlc.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\dyn_load.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\finalize.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\gc_cpp.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\headers.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\mach_dep.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\malloc.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\mallocx.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\mark.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\mark_rts.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\misc.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\new_hblk.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\obj_map.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\os_dep.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\ptr_chck.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\reclaim.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\stubborn.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\typd_mlc.c"
-						>
-					</File>
-					<File
-						RelativePath=".\dependencies\gc\win32_threads.c"
 						>
 					</File>
 				</Filter>
