@@ -40,7 +40,11 @@ namespace game_server
 
 		virtual ~Player();
 
+		virtual void destroy();
+
 		virtual irr::u32 getSpeed();
+
+		virtual void saveToDatabase();
 
 		SCharInfo* CharInfo;
 

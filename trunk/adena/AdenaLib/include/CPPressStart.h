@@ -47,7 +47,17 @@ namespace game_server
 			Unknown2 = r32();
 			Unknown3 = r32();
 			Unknown4 = r32();
-			start();
+
+			Client->CharInfo = Client->Server->Interfaces.PlayerCache->loadChar(Client->CharSelectIds.CharIds[CharIndex]);
+			if(Client->CharInfo->InUse != true || !(Client->CharSelectIds.Chars < CharIndex))
+			{
+				Client->CharId = Client->CharSelectIds.CharIds[CharIndex];
+				Client->sendPacket(new CPCharSelected(&Client->Server->Interfaces, Client->CharSelectIds.CharIds[CharIndex]));
+			}else
+			{
+				Client->CharId = 0;
+			}
+			delete this;
 		};
 
 		virtual ~CPPressStart()
@@ -57,9 +67,7 @@ namespace game_server
 
 		virtual void run()
 		{
-			Client->CharInfo = Client->Server->Interfaces.PlayerCache->loadChar(Client->CharSelectIds.CharIds[CharIndex]);
-			Client->sendPacket(new CPCharSelected(&Client->Server->Interfaces, Client->CharSelectIds.CharIds[CharIndex]));
-			delete this;
+			
 		};
 
 		virtual irr::c8* getData()

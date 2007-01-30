@@ -46,10 +46,25 @@ Player::~Player()
 
 };
 
+void Player::destroy()
+{
+	saveToDatabase();
+	CharInfo->InUse = false;
+	Pawn::destroy();
+};
+
 irr::u32 Player::getSpeed()
 {
 	SClassTemplate* ct = Owner->Server->Interfaces.CharTemplates->loadTemplate(CharInfo->ClassId);
 	return ct->RUN_SPEED;
+};
+
+void Player::saveToDatabase()
+{
+	CharInfo->x = Location.X;
+	CharInfo->y = Location.Y;
+	CharInfo->z = Location.Z;
+	Owner->Server->Interfaces.PlayerCache->saveChar(CharInfo->CharacterId);
 };
 
 }

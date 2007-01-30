@@ -78,15 +78,22 @@ void COObjectSystem::run()
 		{
 			while(true)
 			{
-				irr::u32 time = irr::os::Timer::getRealTime();
-				irr::u32 tdif = time - ((COObject*)item)->LastTickTime;
-				((COObject*)item)->LastTickTime = time;
-				((COObject*)item)->tick( (irr::f32)tdif / (irr::f32)1000 );
+				if(((COObject*)item)->Delete)
+				{
+					removeObj(((COObject*)item)->Id);
+					delete item;
+				}else
+				{
+					irr::u32 time = irr::os::Timer::getRealTime();
+					irr::u32 tdif = time - ((COObject*)item)->LastTickTime;
+					((COObject*)item)->tick( (irr::f32)tdif / (irr::f32)1000 );
+					((COObject*)item)->LastTickTime = time;
+					irr::os::Sleep::sleep(0);
+				}
 				if(!ittr.GetNext(key, item))
 					break;
 			}
 		}
-		irr::core::threads::sleep(0);
 	}
 };
 
@@ -142,9 +149,8 @@ IOObject* COObjectSystem::getObj(irr::u32 id)
 
 void COObjectSystem::removeObj(irr::u32 id)
 {
-	irr::u32 key;
 	IOObject* item;
-	if(Objects.Find(key, item))
+	if(Objects.Find(id, item))
 	{
 		Objects.Remove(id);
 	}

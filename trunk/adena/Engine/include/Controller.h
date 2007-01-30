@@ -56,6 +56,8 @@ namespace game_server
 
 		Pawn* OwnedPawn;
 
+		COObject* Target;
+
 	};
 
 }

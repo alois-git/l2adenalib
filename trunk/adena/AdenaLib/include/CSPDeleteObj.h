@@ -1,6 +1,6 @@
 /*
- * CServerPacket.h - L2 GameServer Server Packet, threads FTW.
- * Created January 11, 2007, by Michael 'Bigcheese' Spencer.
+ * CSPDeleteObj.h - Notifies client that an obj got pwned.
+ * Created January 27, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,50 +21,55 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_SERVER_PACKET_H_
-#define _ADENA_C_SERVER_PACKET_H_
+#ifndef _ADENA_C_S_P_DELETE_OBJ_H_
+#define _ADENA_C_S_P_DELETE_OBJ_H_
 
-#include <CPacket.h>
-#include <irrThread.h>
-#include <IGameServerClient.h>
-#include <CMemoryManager.h>
+#include <CServerPacket.h>
+#include <vector3d.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	extern ADENALIB_API CMemoryManager ServerPacketMemoryManager;
-
-	class CServerPacket : public CPacket
+	class CSPDeleteObj : public CServerPacket
 	{
 	public:
 
-		inline void* operator new ( size_t size )
+		CSPDeleteObj(irr::u32 obj_id)
+		: CServerPacket(), ObjId(obj_id)
 		{
-			return ServerPacketMemoryManager.allocate(size);
+			Priority = EPP_LOW;
 		};
 
-		inline void operator delete( void* obj )
+		virtual ~CSPDeleteObj() {};
+
+		virtual bool writePacket()
 		{
-			ServerPacketMemoryManager.deallocate(obj);
+			if(!Writen)
+			{
+				w8(0x12);
+				w32(ObjId);
+				w32(0x00);
+
+				Writen = true;
+			}
+			return true;
 		};
 
-		CServerPacket() : CPacket(), Writen(false) {}
+		virtual irr::c8* getData()
+		{
+			return Data;
+		};
 
-		virtual ~CServerPacket() {}
+		virtual irr::u32 getLen()
+		{
+			return WritePointer;
+		};
 
-		/*
-		 * Any long tasks the the packet needs to do. Like sending other packets.
-		 */
-		virtual void run() {}
+	private:
 
-		virtual bool writePacket() = 0;
-
-	protected:
-
-		IGameServerClient* Client;
-		bool Writen;
+		irr::u32 ObjId;
 
 	};
 

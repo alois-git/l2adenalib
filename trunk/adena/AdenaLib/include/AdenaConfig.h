@@ -39,4 +39,9 @@
 #endif // ADENALIB_EXPORTS
 #endif
 
+#define MAP_MIN_X -131072
+#define MAP_MAX_X 228608
+#define MAP_MIN_Y -262144
+#define MAP_MAX_Y 262144
+
 #endif

@@ -140,6 +140,10 @@ bool CGameServer::init(const char* config_file)
 	// Register with login server
 	LoginServerLink->registerWithLoginServer();
 
+	// Create GeoData.
+	Interfaces.GeoData = new CGeoData();
+	Interfaces.GeoData->initGeoData("./geodata/geo_index.txt");
+
 	// Create obj system
 	Interfaces.ObjectSystem = new COObjectSystem();
 	Interfaces.GameManager = (COObject*)Interfaces.ObjectSystem->loadObj(irr::core::stringc("Engine.GameManager"));

@@ -376,6 +376,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\source\CGeoData.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\source\CInProcessLoginServerLink.cpp"
 					>
 				</File>
@@ -538,6 +542,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\include\CGeoData.h"
+					>
+				</File>
+				<File
 					RelativePath=".\include\CInProcessLoginServerLink.h"
 					>
 				</File>
@@ -694,6 +702,10 @@
 					</File>
 					<File
 						RelativePath=".\include\CSPCreatureSay.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPDeleteObj.h"
 						>
 					</File>
 					<File

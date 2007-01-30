@@ -48,6 +48,7 @@ namespace game_server
 	 */
 	class ADENALIB_API COObject : public IOObject
 	{
+	friend class COObjectSystem;
 	public:
 
 		inline void* operator new ( size_t size );
@@ -77,6 +78,7 @@ namespace game_server
 	private:
 
 		IOObjectSystem* ObjectSystem;
+		bool Delete;
 
 	};
 

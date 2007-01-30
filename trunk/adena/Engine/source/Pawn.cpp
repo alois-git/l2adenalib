@@ -24,6 +24,8 @@
 #include <Pawn.h>
 #include <CSPStopMove.h>
 #include <CSPTargetSelected.h>
+#include <CSPDeleteObj.h>
+#include <CSPMoveToLocation.h>
 #include <GameManager.h>
 #include <Controller.h>
 
@@ -50,6 +52,16 @@ Pawn::~Pawn()
 
 };
 
+void Pawn::destroy()
+{
+	GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
+	if(gm)
+	{
+		gm->broadcastPacket(new CSPDeleteObj(Id));
+	}
+	Actor::destroy();
+};
+
 void Pawn::tick(irr::f32 delta_time)
 {
 	Actor::tick(delta_time);
@@ -66,9 +78,17 @@ void Pawn::tick(irr::f32 delta_time)
 			MoveState = EMS_Still;
 			Location = MoveTarget;
 			onStopMove();
+			LastZCheck = 0; // Force z check on stop
 		}else
 		{
 			Location = newloc;
+		}
+
+		irr::u32 time = irr::os::Timer::getRealTime();
+		if((time - LastZCheck) >= 1000) // Check every second
+		{
+			Location.Z = Owner->Server->Interfaces.GeoData->getHeight(Location);
+			LastZCheck = time;
 		}
 	}
 };
@@ -80,8 +100,13 @@ irr::u32 Pawn::getSpeed()
 
 void Pawn::moveToLocation(irr::core::vector3df Target)
 {
-	MoveTarget = Target;
-	MoveState = EMS_RequestMove;
+	MoveTarget = Owner->Server->Interfaces.GeoData->moveCheck(Location, Target);
+	GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
+	if(gm)
+	{
+		gm->broadcastPacket(new CSPMoveToLocation(Id, MoveTarget, Location));
+	}
+	MoveState = EMS_Moving;
 };
 
 void Pawn::onStopMove()
@@ -102,6 +127,7 @@ void Pawn::onClick(COObject* event_instagator, bool shift_click)
 		Controller* c = dynamic_cast<Controller*>(event_instagator);
 		if(c)
 		{
+			c->Target = this;
 			gm->broadcastPacket(new CSPTargetSelected(c->OwnedPawn->Id, Id, Location));
 		}
 	}

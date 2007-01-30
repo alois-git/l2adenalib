@@ -95,7 +95,7 @@ namespace game_server
 			w32(0x00);
             w32(0x00);
             w32(0x00);
-            w32(0x00); // Time
+            w32(0xffff); // Time
             w32(0x00);
             w32(0x00);
             w32(0x00);

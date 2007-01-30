@@ -47,6 +47,8 @@ namespace game_server
 
 		virtual ~Pawn();
 
+		virtual void destroy();
+
 		virtual void tick(irr::f32 delta_time);
 
 		virtual irr::u32 getSpeed();
@@ -62,6 +64,8 @@ namespace game_server
 
 		irr::core::vector3df MoveTarget;
 		E_MoveState MoveState;
+		// We don't need to check our height EVERY tick...
+		irr::u32 LastZCheck;
 
 		IGameServerClient* Owner;
 
