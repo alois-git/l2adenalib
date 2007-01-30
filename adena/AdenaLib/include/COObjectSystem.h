@@ -37,7 +37,7 @@ namespace game_server
 
 	typedef COObject* (*load_Obj)(IOObjectSystem*);
 
-	class ADENALIB_API COObjectSystem : public irr::core::threads::Thread
+	class ADENALIB_API COObjectSystem : public IOObjectSystem, public irr::core::threads::Thread
 	{
 	public:
 

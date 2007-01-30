@@ -58,6 +58,8 @@ namespace adena
 namespace game_server
 {
 
+ADENALIB_API CMemoryManager ServerPacketMemoryManager(65536);
+
 CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServer* server)
 : ProtocolRevision(0)
 {
@@ -286,7 +288,6 @@ void CGameServerClient::createChar(irr::c8* data)
 void CGameServerClient::pressStart(irr::c8 *data)
 {
 	CPPressStart* ps = new CPPressStart(data, this);
-	CharId = CharSelectIds.CharIds[ps->CharIndex];
 };
 
 // 14

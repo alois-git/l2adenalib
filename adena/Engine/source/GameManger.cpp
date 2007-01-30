@@ -24,7 +24,6 @@
 #include <GameManager.h>
 #include <Controller.h>
 #include <CPCharInfo.h>
-#include <CSPMoveToLocation.h>
 
 namespace adena
 {
@@ -52,15 +51,7 @@ GameManager::~GameManager()
 
 void GameManager::tick(irr::f32 delta_time)
 {
-	irr::core::list<Player*>::Iterator ittr(PlayerList.begin());
-	for(; ittr != PlayerList.end(); ittr++)
-	{
-		if((*ittr)->MoveState == EMS_RequestMove)
-		{
-			broadcastPacket(new CSPMoveToLocation((*ittr)->Id, (*ittr)->MoveTarget, (*ittr)->Location));
-			(*ittr)->MoveState = EMS_Moving;
-		}
-	}
+
 };
 
 void GameManager::broadcastPacket(IPacket* packet)
@@ -78,14 +69,17 @@ Player* GameManager::playerEnterWorld(SCharInfo* char_info, IGameServerClient* o
 {
 	Controller* c = (Controller*)spawn(ControllerClass);
 	owner->PController = c;
+	c->Owner = owner;
 	Player* p = (Player*)spawn(PlayerClass);
 	p->Owner = owner;
 	p->CharInfo = owner->CharInfo;
 	p->Location.X = p->CharInfo->x;
 	p->Location.Y = p->CharInfo->y;
 	p->Location.Z = p->CharInfo->z;
+	p->Location.Z = owner->Server->Interfaces.GeoData->getHeight(p->Location);
 	PlayerList.push_back(p);
 	c->posses(p);
+	char_info->InUse = true;
 
 	CPCharInfo* ci = new CPCharInfo(p);
 	ci->getRef();

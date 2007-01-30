@@ -39,7 +39,7 @@ void COObject::operator delete( void* obj )
 };
 
 COObject::COObject(IOObjectSystem* obj_sys)
-: ObjectSystem(obj_sys)
+: ObjectSystem(obj_sys), Delete(false)
 {
 	ObjName = "Object";
 };
@@ -51,8 +51,7 @@ COObject::~COObject()
 
 void COObject::destroy()
 {
-	ObjectSystem->removeObj(Id);
-	delete this;
+	Delete = true;
 };
 
 COObject* COObject::spawn(irr::core::stringc obj)
