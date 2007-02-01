@@ -117,7 +117,7 @@ namespace game_server
 			w32(0x00); // Gloves
 			w32(0x00); // Chest
 			w32(0x00); // Leggings
-			w32(0x00); // Boots
+			w32(600); // Boots
 			w32(0x00); // Back
 			w32(0x00); // Gloves
 			w32(0x00); // Hair
@@ -179,7 +179,7 @@ namespace game_server
 
 			w32(0x00); // Abnormal effect (bit map)
 
-			w8(0x00); // Recs left
+			w8(6); // Recs left
 			w16(0x00); // Recs have
 			w32(ci->ClassId); // Class id
 

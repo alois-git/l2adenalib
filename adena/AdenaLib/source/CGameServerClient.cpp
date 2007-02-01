@@ -21,6 +21,7 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
+#include <Controller.h>
 #include <CCPClientLoaded.h>
 #include <CGameServerClient.h>
 #include <CPProtocolVersion.h>
@@ -37,7 +38,6 @@
 #include <CPUserInfo.h>
 #include <CPLogout.h>
 #include <SCharInfo.h>
-#include <COPlayer.h>
 #include <CCPMoveToLocation.h>
 #include <CSPSystemMessage.h>
 #include <CSPBuffBar.h>
@@ -46,8 +46,11 @@
 #include <CSPSkillBar.h>
 #include <CSPDyes.h>
 #include <CSPQuestList.h>
+#include <CSPShowMiniMap.h>
 #include <CCPRestartRequest.h>
 #include <CCPClickObj.h>
+#include <CCPRequestSocial.h>
+#include <CCPRequestAttack.h>
 
 #define RECV_SIZE 65536 // Max size of a L2 packet.
 
@@ -63,7 +66,6 @@ ADENALIB_API CMemoryManager ServerPacketMemoryManager(65536);
 CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServer* server)
 : ProtocolRevision(0)
 {
-	Pawn = 0;
 	SessionId = 0;
 	Server = server;
 	Client = client;
@@ -85,14 +87,17 @@ CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServe
 	PacketFunctions[4] = &CGameServerClient::clickObj;
 	PacketFunctions[8] = &CGameServerClient::authLogin;
 	PacketFunctions[9] = &CGameServerClient::logout;
+	PacketFunctions[10] = &CGameServerClient::attack;
 	PacketFunctions[11] = &CGameServerClient::createChar;
 	PacketFunctions[13] = &CGameServerClient::pressStart;
 	PacketFunctions[14] = &CGameServerClient::createCharButtion;
 	PacketFunctions[15] = &CGameServerClient::requestItemList;
+	PacketFunctions[27] = &CGameServerClient::requestSocial;
 	PacketFunctions[56] = &CGameServerClient::clientSay;
 	PacketFunctions[70] = &CGameServerClient::restartRequest;
 	PacketFunctions[72] = &CGameServerClient::validatePosition;
 	PacketFunctions[157] = &CGameServerClient::requestSkillCoolTime;
+	PacketFunctions[205] = &CGameServerClient::requestMiniMap;
 	PacketFunctions[208] = &CGameServerClient::extendedPacket;
 
 	start();
@@ -123,7 +128,7 @@ void CGameServerClient::run()
 	{
 		IPacket* packet = PacketQueue->getNextPacket();
 		if(packet == NULL)
-			irr::core::threads::sleep(0);
+			irr::core::threads::sleep(1);
 		else
 		{
 			if(((CServerPacket*)packet)->writePacket()) 
@@ -253,6 +258,12 @@ void CGameServerClient::logout(irr::c8* data)
 	sendPacket(new CPLogout());
 };
 
+// 10
+void CGameServerClient::attack(irr::c8* data)
+{
+	CCPRequestAttack(data, this);
+};
+
 // 11
 void CGameServerClient::createChar(irr::c8* data)
 {
@@ -303,16 +314,23 @@ void CGameServerClient::requestItemList(irr::c8* data)
 	sendPacket(new CSPItemList(true));
 };
 
+// 27
+void CGameServerClient::requestSocial(irr::c8* data)
+{
+	CCPRequestSocial(data, this);
+};
+
 // 56
 void CGameServerClient::clientSay(irr::c8* data)
 {
-	new CCPSay(data, this);
+	CCPSay(data, this);
 };
 
 // 70
 void CGameServerClient::restartRequest(irr::c8* data)
 {
-	new CCPRestartRequest(data, (COPlayer*)Pawn);
+	// TODO:
+	CCPRestartRequest(data, (Controller*)PController);
 };
 
 // 72
@@ -327,11 +345,17 @@ void CGameServerClient::requestSkillCoolTime(irr::c8* data)
 	// Ignore
 };
 
+// 205
+void CGameServerClient::requestMiniMap(irr::c8* data)
+{
+	sendPacket(new CSPShowMiniMap());
+};
+
 // 208
 void CGameServerClient::extendedPacket(irr::c8* data)
 {
 	printf("Recived unknown extended packet of type %d\n", (irr::u8)(data[1] & 0xff));
-}
+};
 
 }
 }

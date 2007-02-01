@@ -72,7 +72,8 @@ int main()
 	{
 		loc += addPack(&fs, buff + loc, (irr::c8*)(irr::core::stringc("sp0") + i).c_str());
 	}
-	parseBuff(buff, loc);*/
+	parseBuff(buff, loc);
+	system("PAUSE");*/
 
 int main()
 {

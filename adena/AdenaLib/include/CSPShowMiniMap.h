@@ -1,6 +1,6 @@
 /*
- * COActor.h - Base for all objects in l2 with a location.
- * Created January 13, 2007, by Michael 'Bigcheese' Spencer.
+ * CSPShowMiniMap.h - Tells client to show the map.
+ * Created January 30, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,10 +21,10 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_O_ACTOR_H_
-#define _ADENA_C_O_ACTOR_H_
+#ifndef _ADENA_C_S_P_SHOW_MINI_MAP_H_
+#define _ADENA_C_S_P_SHOW_MINI_MAP_H_
 
-#include <COObject.h>
+#include <CServerPacket.h>
 #include <vector3d.h>
 
 namespace adena
@@ -32,29 +32,41 @@ namespace adena
 namespace game_server
 {
 
-	/*
-	 * COActor is for all moveable objects
-	 */
-	class COActor
+	class CSPShowMiniMap : public CServerPacket
 	{
 	public:
 
-		virtual ~COActor() {}
-
-		virtual irr::core::vector3di getLocation()
+		CSPShowMiniMap()
+		: CServerPacket()
 		{
-			return Location;
-		}
+			Priority = EPP_LOW;
+		};
 
-		virtual irr::u32 getHeading()
+		virtual ~CSPShowMiniMap() {};
+
+		virtual bool writePacket()
 		{
-			return Heading;
-		}
+			if(!Writen)
+			{
+				w8(0x9d);
+				w32(1665);
 
-	protected:
+				Writen = true;
+			}
+			return true;
+		};
 
-		irr::core::vector3di Location;
-		irr::u32 Heading;
+		virtual irr::c8* getData()
+		{
+			return Data;
+		};
+
+		virtual irr::u32 getLen()
+		{
+			return WritePointer;
+		};
+
+	private:
 
 	};
 

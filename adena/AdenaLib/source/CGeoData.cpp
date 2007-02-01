@@ -30,6 +30,35 @@ namespace adena
 namespace game_server
 {
 
+	class GeoLoadThread : public irr::core::threads::Thread
+	{
+	public:
+
+		GeoLoadThread(CGeoData* geo, irr::core::stringc filename, irr::u32 x, irr::u32 y)
+		: Thread(), Geo(geo), Filename(filename), X(x), Y(y)
+		{
+
+		};
+
+		~GeoLoadThread()
+		{
+
+		};
+
+		virtual void run()
+		{
+			Geo->loadRegion(Filename, X, Y);
+		};
+
+	private:
+
+		CGeoData* Geo;
+		irr::core::stringc Filename;
+		irr::u32 X;
+		irr::u32 Y;
+
+	};
+
 CGeoData::CGeoData()
 {
 
@@ -42,9 +71,10 @@ CGeoData::~CGeoData()
 
 void CGeoData::initGeoData(const char* geo_index_file)
 {
-	irr::os::Printer::log("Building geodata...");
+	puts("Building geodata...");
 	std::fstream file(geo_index_file, std::ios::in);
 	irr::c8 buff[256];
+	irr::core::array<GeoLoadThread*> LoaderThreads;
 	while(file >> buff)
 	{
 		irr::core::stringc fname(buff);
@@ -53,9 +83,17 @@ void CGeoData::initGeoData(const char* geo_index_file)
 		irr::core::stringc second = fname.subString(place + 1, fname.size());
 		irr::u32 x = atoi(first.c_str());
 		irr::u32 y = atoi(second.c_str());
-		loadRegion(fname + ".l2j", x, y);
+		//loadRegion(fname + ".l2j", x, y);
+		GeoLoadThread* glt = new GeoLoadThread(this, fname + ".l2j", x, y);
+		glt->start();
+		LoaderThreads.push_back(glt);
 	}
-	irr::os::Printer::log("Done building geodata.");
+	for(irr::u32 i = 0; i < LoaderThreads.size(); i++)
+	{
+		LoaderThreads[i]->wait();
+		delete LoaderThreads[i];
+	}
+	puts("Done building geodata.");
 };
 
 irr::s32 CGeoData::getHeight(irr::core::vector3df &loc)
@@ -65,8 +103,14 @@ irr::s32 CGeoData::getHeight(irr::core::vector3df &loc)
 
 irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core::vector3df &target)
 {
-	irr::s32 dx = (target.X - origin.X);
-	irr::s32 dy = (target.Y - origin.Y);
+	// Yes, i do know this is almost ezactly the l2j code...
+	irr::s32 x = ((irr::s32)origin.X - MAP_MIN_X) >> 4;
+	irr::s32 y = ((irr::s32)origin.Y - MAP_MIN_Y) >> 4;
+	irr::s32 tx = ((irr::s32)target.X - MAP_MIN_X) >> 4;
+	irr::s32 ty = ((irr::s32)target.Y - MAP_MIN_Y) >> 4;
+
+	irr::s32 dx = (tx - x);
+	irr::s32 dy = (ty - y);
 	irr::s32 dz = (target.Z - origin.Z);
 	irr::s32 distance = abs(dx + dy);
 
@@ -80,9 +124,8 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
 	dx = abs(dx);
 	dy = abs(dy);
 
-	int next_x = origin.X;
-	int next_y = origin.Y;
-	irr::s32 x, y;
+	int next_x = x;
+	int next_y = y;
 	irr::f64 z = origin.Z;
 
 	if (dx >= dy)// dy/dx <= 1
@@ -90,7 +133,7 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
 		irr::s32 delta_A = 2 * dy;
 		irr::s32 d = delta_A - dx;
 		irr::s32 delta_B = delta_A - 2 * dx;
-	    
+
 		for (irr::u32 i = 0; i <= dx; i++)
 		{
     		x = next_x;
@@ -102,12 +145,12 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
     			next_x += inc_x;
     			if(!canMoveNext(x, y, z, next_x, next_y, target.Z))
 				{
-					return irr::core::vector3df(x, y, z);
+					return irr::core::vector3df((x << 4) + MAP_MIN_X, (y << 4) + MAP_MIN_Y, z);
 				}
     			next_y += inc_y;
     			if(!canMoveNext(x, y, z, next_x, next_y, target.Z))
 				{
-    				return irr::core::vector3df(x, y, z);
+					return irr::core::vector3df((x << 4) + MAP_MIN_X, (y << 4) + MAP_MIN_Y, z);
 				}
     		}
     		else
@@ -117,7 +160,7 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
     			next_x += inc_x;
     			if(!canMoveNext(x, y, z, next_x, next_y, target.Z))
 				{
-    				return irr::core::vector3df(x, y, z);
+    				return irr::core::vector3df((x << 4) + MAP_MIN_X, (y << 4) + MAP_MIN_Y, z);
 				}
     		}
 		}
@@ -138,12 +181,12 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
     			next_y += inc_x;
     			if(!canMoveNext(x, y, z, next_x, next_y, target.Z))
 				{
-					return irr::core::vector3df(x, y, z);
+					return irr::core::vector3df((x << 4) + MAP_MIN_X, (y << 4) + MAP_MIN_Y, z);
 				}
     			next_x += inc_y;
     			if(!canMoveNext(x, y, z, next_x, next_y, target.Z))
 				{
-					return irr::core::vector3df(x, y, z);
+					return irr::core::vector3df((x << 4) + MAP_MIN_X, (y << 4) + MAP_MIN_Y, z);
 				}
     		}
     		else
@@ -153,7 +196,7 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
     			next_x += inc_y;
     			if(!canMoveNext(x, y, z, next_x, next_y, target.Z))
 				{
-					return irr::core::vector3df(x, y, z);
+					return irr::core::vector3df((x << 4) + MAP_MIN_X, (y << 4) + MAP_MIN_Y, z);
 				}
     		}
 		}
@@ -198,9 +241,13 @@ void CGeoData::loadRegion(irr::core::stringc &filename, irr::u32 x, irr::u32 y)
 				}
 			}
 		}
+		GeoIndexM.getLock();
 		GeoIndex.Insert(region, indexs);
+		GeoIndexM.releaseLock();
 	}
+	GeoDataM.getLock();
 	GeoData.Insert(region, geo);
+	GeoDataM.releaseLock();
 };
 
 irr::u16 CGeoData::getRegion(irr::s32 geo_x, irr::s32 geo_y)
@@ -277,7 +324,7 @@ irr::s32 CGeoData::pvtGetHeight(irr::s32 x, irr::s32 y, irr::s32 z)
 				// Invailid layer count			
 				return z;
 			}
-			irr::s16 temph = 0xffff;
+			irr::s16 temph = 0x8000;
 			while(layers > 0)
 			{
 				irr::s16* th = (irr::s16*)(geo + index);
@@ -296,10 +343,6 @@ irr::s32 CGeoData::pvtGetHeight(irr::s32 x, irr::s32 y, irr::s32 z)
 
 bool CGeoData::canMoveNext(irr::s32 x, irr::s32 y, irr::s32 z, irr::s32 tx, irr::s32 ty, irr::s32 tz)
 {
-	x = ((irr::s32)x - MAP_MIN_X) >> 4;
-	y = ((irr::s32)y - MAP_MIN_Y) >> 4;
-	tx = ((irr::s32)tx - MAP_MIN_X) >> 4;
-	ty = ((irr::s32)ty - MAP_MIN_Y) >> 4;
 	irr::u16 region = getRegion(x, y);
 	irr::s32 blockX = getBlock(x);
 	irr::s32 blockY = getBlock(y);

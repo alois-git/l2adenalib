@@ -26,6 +26,7 @@
 
 #include <CClientPacket.h>
 #include <CPCharSelect.h>
+#include <Controller.h>
 
 namespace adena
 {
@@ -36,12 +37,11 @@ namespace game_server
 	{
 	public:
 
-		CCPRestartRequest(irr::c8* in_data, COPlayer* player)
-		: CClientPacket(), Player(player)
+		CCPRestartRequest(irr::c8* in_data, Controller* c)
+		: CClientPacket()
 		{
 			Data = in_data;
 			ReadPointer++;
-			start();
 		};
 
 		virtual ~CCPRestartRequest()
@@ -51,8 +51,7 @@ namespace game_server
 
 		virtual void run()
 		{
-			Player->Client->sendPacket(new CPCharSelect(Player->Client));
-			delete this;
+
 		};
 
 		virtual irr::c8* getData()
@@ -64,8 +63,6 @@ namespace game_server
 		{
 			return 0;
 		};
-
-		COPlayer* Player;
 
 	};
 

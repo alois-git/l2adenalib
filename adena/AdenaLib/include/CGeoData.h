@@ -25,6 +25,7 @@
 #define _ADENA_C_GEO_DATA_H_
 
 #include <AdenaConfig.h>
+#include <irrThread.h>
 #include <vector3d.h>
 #include <CReadFile.h>
 #include <AVL.h>
@@ -38,6 +39,7 @@ namespace game_server
 
 	class ADENALIB_API CGeoData
 	{
+	friend class GeoLoadThread;
 	public:
 
 		CGeoData();
@@ -88,7 +90,9 @@ namespace game_server
 
 		inline irr::s32 sign(irr::s32 a);
 
+		irr::core::threads::Mutex GeoIndexM;
 		AVL<irr::u16, irr::core::array<irr::u32> > GeoIndex;
+		irr::core::threads::Mutex GeoDataM;
 		AVL<irr::u16, irr::c8*> GeoData;
 
 	};

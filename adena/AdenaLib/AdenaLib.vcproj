@@ -396,10 +396,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\COPlayer.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\source\CPacketQueue.cpp"
 					>
 				</File>
@@ -554,23 +550,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\include\COActor.h"
-					>
-				</File>
-				<File
 					RelativePath=".\include\COObject.h"
 					>
 				</File>
 				<File
 					RelativePath=".\include\COObjectSystem.h"
-					>
-				</File>
-				<File
-					RelativePath=".\include\COPawn.h"
-					>
-				</File>
-				<File
-					RelativePath=".\include\COPlayer.h"
 					>
 				</File>
 				<File
@@ -626,6 +610,14 @@
 					</File>
 					<File
 						RelativePath=".\include\CCPMoveToLocation.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CCPRequestAttack.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CCPRequestSocial.h"
 						>
 					</File>
 					<File
@@ -697,6 +689,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\include\CSPAttack.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CSPBuffBar.h"
 						>
 					</File>
@@ -729,7 +725,15 @@
 						>
 					</File>
 					<File
+						RelativePath=".\include\CSPShowMiniMap.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CSPSkillBar.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPSocial.h"
 						>
 					</File>
 					<File

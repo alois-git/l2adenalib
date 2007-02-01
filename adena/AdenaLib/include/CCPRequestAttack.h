@@ -1,6 +1,6 @@
 /*
- * CSPSystemMessage.h - The lil text that you never read...
- * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
+ * CCPRequestAttack.h - Client wants to pwn some nubs.
+ * Created January 30, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  *
@@ -21,63 +21,63 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_SYSTEM_MESSAGE_H_
-#define _ADENA_C_S_P_SYSTEM_MESSAGE_H_
+#ifndef _ADENA_C_C_P_REQUEST_ATTACK_H_
+#define _ADENA_C_C_P_REQUEST_ATTACK_H_
 
-#include <CServerPacket.h>
-#include <irrString.h>
+#include <GameManager.h>
+#include <Controller.h>
+#include <CClientPacket.h>
+#include <CSPSocial.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPSystemMessage : public CServerPacket
+	class CCPRequestAttack : public CClientPacket
 	{
 	public:
 
-		CSPSystemMessage(irr::core::stringc msg)
-		: CServerPacket(), Message(msg)
+		CCPRequestAttack(irr::c8* in_data, IGameServerClient* client)
+		: CClientPacket()
 		{
-			Priority = EPP_LOW;
+			Client = client;
+			Data = in_data;
+			ReadPointer++;
+
+			irr::u32 targetId = r32();
+			irr::s32 x = r32();
+			irr::s32 y = r32();
+			irr::s32 z = r32();
+			bool shiftClick = r8();
+
+			Controller* c = (Controller*)Client->PController;
+			Actor* target = (Actor*)Client->Server->Interfaces.ObjectSystem->getObj(targetId);
+			if(target == 0)
+				puts("Client tried to atk an obj thats not in the server...");
+			else
+				c->requestAttack(target, shiftClick);
 		};
 
-		virtual ~CSPSystemMessage() {};
-
-		virtual bool writePacket()
+		virtual ~CCPRequestAttack()
 		{
-			if(!Writen)
-			{
-				w8(0x64);
+			Data = 0;
+		};
 
-				w32(614); // Message id
-				w32(0x01); // Types
+		virtual void run()
+		{
 
-				// For loop
-				w32(0x00); // Type id
-				wStrW(Message);
-
-				Writen = true;
-			}
-			return true;
 		};
 
 		virtual irr::c8* getData()
 		{
-			return Data;
+			return NULL;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return WritePointer;
+			return 0;
 		};
-
-	private:
-
-		irr::u32 CharId;
-		irr::u32 MessageType;
-		irr::core::stringc Messenger;
-		irr::core::stringc Message;
 
 	};
 

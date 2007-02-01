@@ -65,20 +65,20 @@ namespace game_server
 			w32(ci->Sex); // Sex
 			w32(ci->ClassId); // Class
 
-			w32(ci->Level); // Level
+			w32(P->getLevel()); // Level
 			w64(ci->xp); // XP
-			w32(0x00); // STR
-			w32(0x00); // DEX
-			w32(0x00); // CON
-			w32(0x00); // INT
-			w32(0x00); // WIT
-			w32(0x00); // MEN
-			w32(0x00); // Max hp
-			w32(0x00); // Current hp
-			w32(0x00); // Max mp
-			w32(0x00); // Current mp
-			w32(0x00); // Sp
-			w32(0x00); // Weight
+			w32(P->getSTR()); // STR
+			w32(P->getDEX()); // DEX
+			w32(P->getCON()); // CON
+			w32(P->getINT()); // INT
+			w32(P->getWIT()); // WIT
+			w32(P->getMEN()); // MEN
+			w32(P->getMaxHp()); // Max hp
+			w32(P->getHp()); // Current hp
+			w32(P->getMaxMp()); // Max mp
+			w32(P->getMp()); // Current mp
+			w32(1); // Sp
+			w32(1); // Weight
 			w32(ct->MAX_WEIGHT); // Max weight
 
 			w32(0x28); // Unknown
@@ -114,7 +114,7 @@ namespace game_server
 			w32(0x00); // Gloves
 			w32(0x00); // Main armor
 			w32(0x00); // Leggings
-			w32(0x00); // Boots
+			w32(600); // Boots
 			w32(0x00); // Back
 			w32(0x00); // Left right hand
 			w32(0x00); // Hair
@@ -133,14 +133,14 @@ namespace game_server
 			w32(0x00); // Pvp state (0 = white, 1 = purple)
 			w32(0x00); // Karma
 
-			w32(ct->RUN_SPEED); // Run speed
-			w32(100); // Walk speed
-			w32(ct->RUN_SPEED); // Swim run speed
-			w32(100); // Swim walk speed
-			w32(ct->RUN_SPEED); // _flRunSpd
-			w32(0x00); // _flWalkSpd
-			w32(ct->RUN_SPEED); // Fly run speed
-			w32(100); // Fly walk speed
+			w32(P->getSpeed()); // Run speed
+			w32(P->getSpeed()); // Walk speed
+			w32(P->getSpeed()); // Swim run speed
+			w32(P->getSpeed()); // Swim walk speed
+			w32(P->getSpeed()); // _flRunSpd
+			w32(P->getSpeed()); // _flWalkSpd
+			w32(P->getSpeed()); // Fly run speed
+			w32(P->getSpeed()); // Fly walk speed
 			wf(1); // Move x
 			wf(1); // Atk speed x
 
@@ -157,7 +157,7 @@ namespace game_server
 			w32(ci->HairType); // Hair style
 			w32(ci->HairColor); // Hair color
 			w32(ci->FaceType); // Face
-			w32(0x00); // Builder lvl
+			w32(1); // Builder lvl
 
 			wStrW(ci->Title); // Title
 

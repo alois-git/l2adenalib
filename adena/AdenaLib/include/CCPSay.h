@@ -27,6 +27,7 @@
 #include <CClientPacket.h>
 #include <irrString.h>
 #include <CSPCreatureSay.h>
+#include <Controller.h>
 
 namespace adena
 {
@@ -65,7 +66,9 @@ namespace game_server
 			Type = (E_SAY_TYPE)r32();
 			if(Type == EST_TELL)
 				rStrW(Target);
-			start();
+
+			Controller* c = (Controller*)Client->PController;
+			c->sendText(Type, Message, Target);
 		};
 
 		virtual ~CCPSay()
@@ -75,7 +78,7 @@ namespace game_server
 
 		virtual void run()
 		{
-			delete this;
+
 		};
 
 		virtual irr::c8* getData()

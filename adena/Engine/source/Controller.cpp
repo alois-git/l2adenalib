@@ -23,6 +23,8 @@
 
 #include <Controller.h>
 #include <CPUserInfo.h>
+#include <CSPCreatureSay.h>
+#include <GameManager.h>
 
 namespace adena
 {
@@ -60,10 +62,7 @@ void Controller::posses(Pawn* pawn)
 
 void Controller::clickGround(irr::core::vector3df origin, irr::core::vector3df target, bool mouse_click)
 {
-	if(mouse_click)
-	{
-		OwnedPawn->moveToLocation(target);
-	}
+	OwnedPawn->moveToLocation(target);
 };
 
 void Controller::clickObject(Actor* obj, bool shift_click)
@@ -71,9 +70,18 @@ void Controller::clickObject(Actor* obj, bool shift_click)
 	obj->onClick(this, shift_click);
 };
 
-void Controller::sendText(irr::core::stringc &msg)
+void Controller::requestAttack(Actor* target, bool shift_click)
 {
-	
+	OwnedPawn->attack(target, shift_click);
+};
+
+void Controller::sendText(irr::u32 say_type, irr::core::stringc &msg, irr::core::stringc &target)
+{
+	GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
+	if(gm)
+	{
+		gm->broadcastPacket(new CSPCreatureSay(OwnedPawn->Id, say_type, ((Player*)OwnedPawn)->CharInfo->Name, msg));
+	}
 };
 
 }

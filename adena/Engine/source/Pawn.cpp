@@ -28,6 +28,7 @@
 #include <CSPMoveToLocation.h>
 #include <GameManager.h>
 #include <Controller.h>
+#include <CSPAttack.h>
 
 namespace adena
 {
@@ -98,6 +99,71 @@ irr::u32 Pawn::getSpeed()
 	return 0;
 };
 
+irr::u32 Pawn::getLevel()
+{
+	return 0;
+};
+
+irr::u32 Pawn::getMaxHp()
+{
+	return 0;	
+};
+
+irr::u32 Pawn::getHp()
+{
+	return 0;
+};
+
+irr::u32 Pawn::getMaxMp()
+{
+	return 0;
+};
+
+irr::u32 Pawn::getMp()
+{
+	return 0;	
+};
+
+irr::u32 Pawn::getMaxCp()
+{
+	return 0;
+};
+
+irr::u32 Pawn::getCp()
+{
+	return 0;
+};
+
+irr::u32 Pawn::getSTR()
+{
+	return 0;
+};
+
+irr::u32 Pawn::getCON()
+{
+	return 0;
+};
+
+irr::u32 Pawn::getDEX()
+{
+	return 0;
+};
+
+irr::u32 Pawn::getINT()
+{
+	return 0;
+};
+
+irr::u32 Pawn::getWIT()
+{
+	return 0;
+};
+
+irr::u32 Pawn::getMEN()
+{
+	return 0;
+};
+
 void Pawn::moveToLocation(irr::core::vector3df Target)
 {
 	MoveTarget = Owner->Server->Interfaces.GeoData->moveCheck(Location, Target);
@@ -107,6 +173,18 @@ void Pawn::moveToLocation(irr::core::vector3df Target)
 		gm->broadcastPacket(new CSPMoveToLocation(Id, MoveTarget, Location));
 	}
 	MoveState = EMS_Moving;
+};
+
+void Pawn::attack(Actor* target, bool shift_click)
+{
+	CSPAttack* a = new CSPAttack(this);
+	a->addHit(target, 1, false, false, false);
+
+	GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
+	if(gm)
+	{
+		gm->broadcastPacket(a);
+	}
 };
 
 void Pawn::onStopMove()

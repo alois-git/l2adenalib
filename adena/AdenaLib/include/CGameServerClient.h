@@ -71,14 +71,17 @@ namespace game_server
 		void clickObj(irr::c8* data);				// 004 - 0x04
 		void authLogin(irr::c8* data);				// 008 - 0x08
 		void logout(irr::c8* data);					// 009 - 0x09
+		void attack(irr::c8* data);					// 010 - 0x0a
 		void createChar(irr::c8* data);				// 011 - 0x0b
 		void pressStart(irr::c8* data);				// 013 - 0x0d
 		void createCharButtion(irr::c8* data);		// 014 - 0x0e
 		void requestItemList(irr::c8* data);		// 015 - 0x0f
+		void requestSocial(irr::c8* data);			// 027 - 0x1b
 		void clientSay(irr::c8* data);				// 056 - 0x38
 		void restartRequest(irr::c8* data);			// 070 - 0x46
 		void validatePosition(irr::c8* data);		// 072 - 0x48
 		void requestSkillCoolTime(irr::c8* data);	// 157 - 0x9d
+		void requestMiniMap(irr::c8* data);			// 205 - 0xcd
 		void extendedPacket(irr::c8* data);			// 208 - 0xd0
 	};
 

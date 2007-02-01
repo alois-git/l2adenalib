@@ -30,7 +30,6 @@
 #include <irrNet.h>
 #include <CGameServer.h>
 #include <CCrypt.h>
-#include <COPawn.h>
 #include <SCharInfo.h>
 #include <CMemoryManager.h>
 
@@ -53,7 +52,6 @@ namespace game_server
 		irr::s32 SessionId;
 		irr::core::stringc AccountName;
 		irr::u32 AccountId;
-		COPawn* Pawn;
 		COObject* PController;
 		SCharInfo* CharInfo;
 		SCharSelectIds CharSelectIds;

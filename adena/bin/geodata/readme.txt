@@ -1,0 +1,1 @@
+Put all the xx_xx.l2j geodata files in here.
