@@ -82,18 +82,19 @@ void COObjectSystem::run()
 				{
 					removeObj(((COObject*)item)->Id);
 					delete item;
+					break;
 				}else
 				{
 					irr::u32 time = irr::os::Timer::getRealTime();
 					irr::u32 tdif = time - ((COObject*)item)->LastTickTime;
 					((COObject*)item)->tick( (irr::f32)tdif / (irr::f32)1000 );
 					((COObject*)item)->LastTickTime = time;
-					irr::os::Sleep::sleep(0);
 				}
 				if(!ittr.GetNext(key, item))
 					break;
 			}
 		}
+		irr::core::threads::sleep(1);
 	}
 };
 

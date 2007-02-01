@@ -50,7 +50,9 @@ namespace game_server
 		// Called when the user sends a Action packet.
 		virtual void clickObject(Actor* obj, bool shift_click);
 
-		virtual void sendText(irr::core::stringc &msg);
+		virtual void requestAttack(Actor* target, bool shift_click);
+
+		virtual void sendText(irr::u32 say_type, irr::core::stringc &msg, irr::core::stringc &target);
 
 		IGameServerClient* Owner;
 

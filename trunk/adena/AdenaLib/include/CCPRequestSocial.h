@@ -1,6 +1,6 @@
 /*
- * CSPSystemMessage.h - The lil text that you never read...
- * Created January 12, 2007, by Michael 'Bigcheese' Spencer.
+ * CCPRequestSocial.h - Client clicked on something targetable.
+ * Created January 30, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  *
@@ -21,63 +21,54 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_S_P_SYSTEM_MESSAGE_H_
-#define _ADENA_C_S_P_SYSTEM_MESSAGE_H_
+#ifndef _ADENA_C_C_P_REQUEST_SOCIAL_H_
+#define _ADENA_C_C_P_REQUEST_SOCIAL_H_
 
-#include <CServerPacket.h>
-#include <irrString.h>
+#include <GameManager.h>
+#include <Controller.h>
+#include <CClientPacket.h>
+#include <CSPSocial.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CSPSystemMessage : public CServerPacket
+	class CCPRequestSocial : public CClientPacket
 	{
 	public:
 
-		CSPSystemMessage(irr::core::stringc msg)
-		: CServerPacket(), Message(msg)
+		CCPRequestSocial(irr::c8* in_data, IGameServerClient* client)
+		: CClientPacket()
 		{
-			Priority = EPP_LOW;
+			Client = client;
+			Data = in_data;
+			ReadPointer++;
+
+			irr::u32 actionId = r32();
+			GameManager* gm = (GameManager*)Client->Server->Interfaces.GameManager;
+			gm->broadcastPacket(new CSPSocial(((Controller*)Client->PController)->OwnedPawn->Id, actionId));
 		};
 
-		virtual ~CSPSystemMessage() {};
-
-		virtual bool writePacket()
+		virtual ~CCPRequestSocial()
 		{
-			if(!Writen)
-			{
-				w8(0x64);
+			Data = 0;
+		};
 
-				w32(614); // Message id
-				w32(0x01); // Types
+		virtual void run()
+		{
 
-				// For loop
-				w32(0x00); // Type id
-				wStrW(Message);
-
-				Writen = true;
-			}
-			return true;
 		};
 
 		virtual irr::c8* getData()
 		{
-			return Data;
+			return NULL;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return WritePointer;
+			return 0;
 		};
-
-	private:
-
-		irr::u32 CharId;
-		irr::u32 MessageType;
-		irr::core::stringc Messenger;
-		irr::core::stringc Message;
 
 	};
 

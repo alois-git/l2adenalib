@@ -41,7 +41,7 @@ namespace adena
 namespace game_server
 {
 
-	static CMemoryManager MemoryManager(65536);
+	extern CMemoryManager MemoryManager;
 
 	/*
 	 * COObject is the root of all objects in the game

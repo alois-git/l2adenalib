@@ -24,6 +24,7 @@
 #include <GameManager.h>
 #include <Controller.h>
 #include <CPCharInfo.h>
+#include <CSPSystemMessage.h>
 
 namespace adena
 {
@@ -80,14 +81,19 @@ Player* GameManager::playerEnterWorld(SCharInfo* char_info, IGameServerClient* o
 	PlayerList.push_back(p);
 	c->posses(p);
 	char_info->InUse = true;
+	CSPSystemMessage* sm = new CSPSystemMessage(irr::core::stringc("Welcome to l2adena - v") + ADENA_VERSION);
+	owner->sendPacket(sm);
 
 	CPCharInfo* ci = new CPCharInfo(p);
 	ci->getRef();
 	irr::core::list<Player*>::Iterator ittr(PlayerList.begin());
 	for(; ittr != PlayerList.end(); ittr++)
 	{
-		(*ittr)->Owner->sendPacket(ci);
-		owner->sendPacket(new CPCharInfo((*ittr)));
+		if((*ittr) != p)
+		{
+			(*ittr)->Owner->sendPacket(ci);
+			owner->sendPacket(new CPCharInfo((*ittr)));
+		}
 	}
 	ci->drop();
 

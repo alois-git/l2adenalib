@@ -29,7 +29,8 @@
 #include <irrMath.h>
 #include <memory.h>
 
-#define ADENA_VERSION "0.0.1"
+// Version number is Major.Release.Revision
+#define ADENA_VERSION "0.0.53"
 
 #ifdef _IRR_WINDOWS_
 #ifdef ADENALIB_EXPORTS

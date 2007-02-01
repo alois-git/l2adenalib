@@ -28,6 +28,8 @@ namespace adena
 namespace game_server
 {
 
+CMemoryManager MemoryManager(65536);
+
 void* COObject::operator new ( size_t size )
 {
 	return MemoryManager.allocate(size);

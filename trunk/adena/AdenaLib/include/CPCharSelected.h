@@ -25,7 +25,6 @@
 #define _ADENA_C_P_CHAR_SELECTED_H_
 
 #include <CServerPacket.h>
-#include <COPlayer.h>
 
 namespace adena
 {
@@ -95,7 +94,7 @@ namespace game_server
 			w32(0x00);
             w32(0x00);
             w32(0x00);
-            w32(0xffff); // Time
+            w32(0x7501); // Time
             w32(0x00);
             w32(0x00);
             w32(0x00);

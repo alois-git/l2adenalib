@@ -1,6 +1,6 @@
 /*
- * COPawn.h - A base pawn.
- * Created January 7, 2007, by Michael 'Bigcheese' Spencer.
+ * CSPSocial.h - DANCE!.
+ * Created January 30, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,46 +21,55 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-/*
- * A pawn can be anything from an player to a NPC (ELPY FTW!!!)
- */
+#ifndef _ADENA_C_S_P_SOCIAL_H_
+#define _ADENA_C_S_P_SOCIAL_H_
 
-#ifndef _ADENA_C_O_PAWN_H_
-#define _ADENA_C_O_PAWN_H_
-
-#include <COActor.h>
+#include <CServerPacket.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class COPawn
+	class CSPSocial : public CServerPacket
 	{
 	public:
 
-		COPawn() {}
+		CSPSocial(irr::u32 char_id, irr::u32 action_id)
+		: CServerPacket(), CharId(char_id), ActionId(action_id)
+		{
+			Priority = EPP_LOW;
+		};
 
-		virtual ~COPawn() {}
+		virtual ~CSPSocial() {};
 
-		virtual irr::u32 getLevel() = 0;
+		virtual bool writePacket()
+		{
+			if(!Writen)
+			{
+				w8(0x2d);
+				w32(CharId);
+				w32(ActionId);
 
-		virtual irr::u32 getStr() = 0;
-		virtual irr::u32 getCon() = 0;
-		virtual irr::u32 getDex() = 0;
-		virtual irr::u32 getInt() = 0;
-		virtual irr::u32 getWit() = 0;
-		virtual irr::u32 getMen() = 0;
+				Writen = true;
+			}
+			return true;
+		};
 
-		virtual irr::u32 getHp() = 0;
+		virtual irr::c8* getData()
+		{
+			return Data;
+		};
 
-		virtual irr::u32 getMaxHp() = 0;
-
-		virtual irr::u32 getMp() = 0;
-
-		virtual irr::u32 getMaxMp() = 0;
+		virtual irr::u32 getLen()
+		{
+			return WritePointer;
+		};
 
 	private:
+
+		irr::u32 CharId;
+		irr::u32 ActionId;
 
 	};
 

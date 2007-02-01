@@ -33,7 +33,6 @@
 #include <SClassTemplate.h>
 #include <ILoginServerLink.h>
 #include <AVL.h>
-#include <COPawn.h>
 
 namespace adena
 {

@@ -53,9 +53,27 @@ namespace game_server
 
 		virtual irr::u32 getSpeed();
 
+		virtual irr::u32 getLevel();
+
+		virtual irr::u32 getMaxHp();
+		virtual irr::u32 getHp();
+		virtual irr::u32 getMaxMp();
+		virtual irr::u32 getMp();
+		virtual irr::u32 getMaxCp();
+		virtual irr::u32 getCp();
+
+		virtual irr::u32 getSTR();
+		virtual irr::u32 getCON();
+		virtual irr::u32 getDEX();
+		virtual irr::u32 getINT();
+		virtual irr::u32 getWIT();
+		virtual irr::u32 getMEN();
+
 		virtual void moveToLocation(irr::core::vector3df Target);
 
 		//virtual void teleportToLocation(irr::core::vector3di Target);
+
+		virtual void attack(Actor* target, bool shift_click);
 
 		// Event called when MoveTarget reached.
 		virtual void onStopMove();

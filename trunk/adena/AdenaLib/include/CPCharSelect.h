@@ -25,7 +25,6 @@
 #define _ADENA_C_P_CHAR_SELECT_H_
 
 #include <CServerPacket.h>
-#include <COPlayer.h>
 
 namespace adena
 {
@@ -82,7 +81,7 @@ namespace game_server
 				w32(ci->z); // z
 
 				wf(ci->hp); // Current hp
-				wf(ci->hp); // Current mp
+				wf(ci->mp); // Current mp
 				w32(0x00); // Current sp
 				w64(ci->xp); // Current xp
 				w32(ci->Level);  // Current level
@@ -138,12 +137,8 @@ namespace game_server
 				w32(ci->HairColor); // Hair color
 				w32(ci->FaceType); // Face type
 
-				irr::f64 basehp = getBaseHpForClass(ci->ClassId, ci->Level);
-				irr::f64 conmod = getConMod(ct->CON);
-				irr::f64 maxhp = (basehp * conmod);
-
-				wf(maxhp); // Max hp
-				wf(100); // Max mp
+				wf(1337); // Max hp
+				wf(1337); // Max mp
 
 				w32(0x00); // Days before delete
 
