@@ -8,6 +8,7 @@
 
 #include <IDatabase.h>
 #include <CSQLLite.h>
+#include <CMySQL.h>
 #include <irrQuery.h>
 #include <CQueryResult.h>
 

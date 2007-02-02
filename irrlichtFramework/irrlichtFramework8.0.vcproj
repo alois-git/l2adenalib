@@ -61,10 +61,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib pthreadVSE1.lib"
+				AdditionalDependencies="Ws2_32.lib pthreadVSE1.lib libmysql.lib mysqlclient.lib"
 				OutputFile=".\bin\$(ProjectName)Debug.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories=".\dependencies\pthread\lib"
+				AdditionalLibraryDirectories=".\dependencies\mysql\lib\opt;.\dependencies\pthread\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				ImportLibrary=".\lib\$(TargetName).lib"
@@ -139,10 +139,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib pthreadVSE1.lib"
+				AdditionalDependencies="Ws2_32.lib pthreadVSE1.lib libmysql.lib mysqlclient.lib"
 				OutputFile=".\bin\$(ProjectName).dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories=".\dependencies\pthread\lib"
+				AdditionalLibraryDirectories=".\dependencies\mysql\lib\opt;.\dependencies\pthread\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -475,6 +475,10 @@
 			<Filter
 				Name="irrDb"
 				>
+				<File
+					RelativePath=".\irrDb\source\CMySQL.cpp"
+					>
+				</File>
 				<File
 					RelativePath=".\irrDb\source\CQueryResult.cpp"
 					>
