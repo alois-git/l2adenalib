@@ -1,5 +1,5 @@
 /*
- * CSQLLite.h - SQL lite data base interface.
+ * CSQLLite.h - SQL lite database interface.
  * Created January 5, 2007, by Michael 'Bigcheese' Spencer.
  */
 

@@ -100,7 +100,6 @@ namespace core
 		return (s32) ( x + 0.5f );
 	}
 
-
 } // end namespace core
 }// end namespace irr
 
