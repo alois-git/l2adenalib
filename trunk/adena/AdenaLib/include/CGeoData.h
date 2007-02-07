@@ -19,6 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Michael Spencer - bigcheesegs@gmail.com
+ *
+ * The algorithms used in this class are based off of the L2j Geodata implementation.
  */
 
 #ifndef _ADENA_C_GEO_DATA_H_
@@ -67,7 +69,7 @@ namespace game_server
 		 * @param y: Geo y
 		 * returns: The region that it's in.
 		 */
-		inline irr::u16 getRegion(irr::s32 geo_x, irr::s32 geo_y);
+		inline irr::s16 getRegion(irr::s32 geo_x, irr::s32 geo_y);
 
 		inline irr::s32 getBlock(irr::s32 pos);
 

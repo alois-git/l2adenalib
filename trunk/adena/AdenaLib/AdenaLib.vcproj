@@ -388,6 +388,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\source\CNPCCache.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\source\COObject.cpp"
 					>
 				</File>
@@ -401,6 +405,10 @@
 				</File>
 				<File
 					RelativePath=".\source\CPlayerCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\CSkillInfoCache.cpp"
 					>
 				</File>
 			</Filter>
@@ -550,6 +558,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\include\CNPCCache.h"
+					>
+				</File>
+				<File
 					RelativePath=".\include\COObject.h"
 					>
 				</File>
@@ -563,6 +575,10 @@
 				</File>
 				<File
 					RelativePath=".\include\CPlayerCache.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\CSkillInfoCache.h"
 					>
 				</File>
 				<File
@@ -617,7 +633,15 @@
 						>
 					</File>
 					<File
+						RelativePath=".\include\CCPRequestSkillList.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CCPRequestSocial.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CCPRequestUseSkill.h"
 						>
 					</File>
 					<File
@@ -721,6 +745,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\include\CSPNpcInfo.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CSPQuestList.h"
 						>
 					</File>
@@ -730,6 +758,14 @@
 					</File>
 					<File
 						RelativePath=".\include\CSPSkillBar.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPSkillList.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPSkillUsed.h"
 						>
 					</File>
 					<File

@@ -26,11 +26,19 @@
 
 #include <AdenaConfig.h>
 #include <irrString.h>
+#include <irrArray.h>
 
 namespace adena
 {
 namespace game_server
 {
+
+	struct SSkill
+	{
+		irr::u32 Id;
+		irr::u32 Level;
+		irr::u32 Enchant;
+	};
 
 	struct SCharInfo
 	{
@@ -54,6 +62,8 @@ namespace game_server
 		irr::s32 x;
 		irr::s32 y;
 		irr::s32 z;
+
+		irr::core::array<SSkill> Skills;
 	};
 
 }

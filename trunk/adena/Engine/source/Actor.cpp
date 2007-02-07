@@ -23,6 +23,7 @@
 
 #include <Actor.h>
 #include <os.h>
+#include <Player.h>
 
 namespace adena
 {
@@ -61,6 +62,24 @@ Actor* Actor::spawn(irr::core::stringc obj, irr::core::vector3df location, irr::
 void Actor::setLocation(irr::core::vector3df &location)
 {
 	Location = location;
+};
+
+void Actor::broadcastPacket(IPacket* pack)
+{
+	pack->getRef();
+	if(((CServerPacket*)pack)->writePacket())
+	{
+		irr::core::list<Actor*>::Iterator ittr(KnownList.begin());
+		for(; ittr != KnownList.end(); ittr++)
+		{
+			Player* p = dynamic_cast<Player*>((*ittr));
+			if(p)
+			{
+				p->Owner->sendPacket(pack);
+			}
+		}
+	}
+	pack->drop();
 };
 
 void Actor::onClick(COObject *event_instagator, bool shift_click)

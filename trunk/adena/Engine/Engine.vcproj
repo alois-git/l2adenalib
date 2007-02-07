@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\NPC.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\Pawn.cpp"
 				>
 			</File>
@@ -224,6 +228,10 @@
 			</File>
 			<File
 				RelativePath=".\include\GameManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\NPC.h"
 				>
 			</File>
 			<File

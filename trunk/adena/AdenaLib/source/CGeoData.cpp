@@ -111,14 +111,14 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
 
 	irr::s32 dx = (tx - x);
 	irr::s32 dy = (ty - y);
-	irr::s32 dz = (target.Z - origin.Z);
+	irr::f64 dz = (target.Z - origin.Z);
 	irr::s32 distance = abs(dx + dy);
 
 	if (distance == 0)
 		return target;
 	irr::s32 inc_x = sign(dx);
 	irr::s32 inc_y = sign(dy);
-	irr::f64 inc_z = (irr::f64)dz / distance;
+	irr::f64 inc_z = dz / distance;
 	irr::f64 dbl_inc_z = inc_z * 2;
 
 	dx = abs(dx);
@@ -134,11 +134,11 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
 		irr::s32 d = delta_A - dx;
 		irr::s32 delta_B = delta_A - 2 * dx;
 
-		for (irr::u32 i = 0; i <= dx; i++)
+		for(irr::s32 i = 0; i <= dx; i++)
 		{
     		x = next_x;
     		y = next_y;
-    		if (d > 0)
+    		if(d > 0)
     		{
     			z += dbl_inc_z;
     			d += delta_B;
@@ -170,20 +170,20 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
 		int delta_A = 2 * dx;
 		int d = delta_A - dy;
 		int delta_B = delta_A - 2 * dy;
-		for (irr::u32 i = 0; i <= dy; i++)
+		for(irr::s32 i = 0; i <= dy; i++)
 		{
     		x = next_x;
     		y = next_y;
-    		if (d > 0)
+    		if(d > 0)
     		{
     			z += dbl_inc_z;
     			d += delta_B;
-    			next_y += inc_x;
+    			next_y += inc_y;
     			if(!canMoveNext(x, y, z, next_x, next_y, target.Z))
 				{
 					return irr::core::vector3df((x << 4) + MAP_MIN_X, (y << 4) + MAP_MIN_Y, z);
 				}
-    			next_x += inc_y;
+    			next_x += inc_x;
     			if(!canMoveNext(x, y, z, next_x, next_y, target.Z))
 				{
 					return irr::core::vector3df((x << 4) + MAP_MIN_X, (y << 4) + MAP_MIN_Y, z);
@@ -193,7 +193,7 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
     		{
     			z += inc_z;
     			d += delta_A;
-    			next_x += inc_y;
+    			next_y += inc_y;
     			if(!canMoveNext(x, y, z, next_x, next_y, target.Z))
 				{
 					return irr::core::vector3df((x << 4) + MAP_MIN_X, (y << 4) + MAP_MIN_Y, z);
@@ -208,7 +208,7 @@ irr::core::vector3df CGeoData::moveCheck(irr::core::vector3df &origin, irr::core
 
 void CGeoData::loadRegion(irr::core::stringc &filename, irr::u32 x, irr::u32 y)
 {
-	printf("Geodata - x: %d y: %d - loading...\n", x, y);
+	//printf("Geodata - x: %d y: %d - loading...\n", x, y);
 	irr::core::stringc fn("./geodata/");
 	fn += filename;
 	irr::io::CReadFile r(fn.c_str());
@@ -250,7 +250,7 @@ void CGeoData::loadRegion(irr::core::stringc &filename, irr::u32 x, irr::u32 y)
 	GeoDataM.releaseLock();
 };
 
-irr::u16 CGeoData::getRegion(irr::s32 geo_x, irr::s32 geo_y)
+irr::s16 CGeoData::getRegion(irr::s32 geo_x, irr::s32 geo_y)
 {
 	irr::s32 x = geo_x >> 11; // =/(256 * 8)
 	irr::s32 y = geo_y >> 11;
@@ -343,11 +343,11 @@ irr::s32 CGeoData::pvtGetHeight(irr::s32 x, irr::s32 y, irr::s32 z)
 
 bool CGeoData::canMoveNext(irr::s32 x, irr::s32 y, irr::s32 z, irr::s32 tx, irr::s32 ty, irr::s32 tz)
 {
-	irr::u16 region = getRegion(x, y);
+	irr::s16 region = getRegion(x, y);
 	irr::s32 blockX = getBlock(x);
 	irr::s32 blockY = getBlock(y);
 	irr::s32 cellX, cellY, index;
-	irr::s16 NSEW = 15;
+	irr::s16 NSEW = 0;
 	irr::core::array<irr::u32> indexs;
 	if(GeoIndex.Find(region, indexs))
 	{
@@ -392,7 +392,7 @@ bool CGeoData::canMoveNext(irr::s32 x, irr::s32 y, irr::s32 z, irr::s32 tx, irr:
 			index++;
 			if(layers <= 0 || layers > 125)
 			{
-				// Invailid layer count			
+				// Invailid layer count
 				return false;
 			}
 			irr::s16 tempz = 0x8000;
@@ -431,22 +431,22 @@ bool CGeoData::checkNSEW(irr::s16 NSEW, irr::s32 x, irr::s32 y, irr::s32 tx, irr
 	       return true;
 	    if(tx > x) // East
 	    {
-	    	if ((NSEW & 1) == 0)
+	    	if((NSEW & 1) == 0)
 	            return false;
 	    }
-	    else if (tx < x) // West
+	    else if(tx < x) // West
 	    {
-	    	if ((NSEW & 2) == 0)
+	    	if((NSEW & 2) == 0)
 	            return false;
 	    }
-	    if (ty > y) // South
+	    if(ty > y) // South
 	    {
-	    	if ((NSEW & 4) == 0)
+	    	if((NSEW & 4) == 0)
 	            return false;
 	    }
-	    else if (ty < y) // North
+	    else if(ty < y) // North
 	    {
-	    	if ((NSEW & 8) == 0)
+	    	if((NSEW & 8) == 0)
 	            return false;
 	    }
 	    return true;

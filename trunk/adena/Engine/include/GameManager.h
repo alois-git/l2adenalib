@@ -26,6 +26,7 @@
 
 #include <COObject.h>
 #include <Player.h>
+#include <World.h>
 #include <IGameServerClient.h>
 #include <SCharInfo.h>
 #include <irrList.h>
@@ -44,6 +45,8 @@ namespace game_server
 
 		virtual ~GameManager();
 
+		virtual void init(SGameServerInterfaces* interfaces);
+
 		virtual void tick(irr::f32 delta_time);
 
 		virtual void broadcastPacket(IPacket* packet);
@@ -59,6 +62,9 @@ namespace game_server
 		irr::core::stringc PlayerClass;
 		// Default NPC class to use. (ex. Engine.L2NPC).
 		irr::core::stringc NpcClass;
+
+		World* L2World;
+		SGameServerInterfaces* Interfaces;
 
 	};
 

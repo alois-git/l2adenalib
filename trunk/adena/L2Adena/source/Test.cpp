@@ -25,9 +25,7 @@
 #include <CFileSystem.h>
 #include <CInProcessLoginServerLink.h>
 #include <CInProcessGameServerLink.h>
-#include <CMemoryManager.h>
-#include <COObjectSystem.h>
-#include <CGeoData.h>
+#include <CSkillInfoCache.h>
 
 using namespace std;
 using namespace irr;
@@ -77,14 +75,6 @@ int main()
 
 int main()
 {
-/*	adena::game_server::CGeoData gd = adena::game_server::CGeoData();
-	gd.initGeoData("./geodata/geo_index.txt");
-	irr::core::vector3df h(15507, 142681, -2704);
-	irr::core::vector3df t(15671, 142798, -2704);
-	irr::core::vector3df loc = gd.moveCheck(h, t);
-
-	system("PAUSE");*/
-
 	adena::login_server::CLoginServer* s = new adena::login_server::CLoginServer();
 	adena::game_server::CGameServer* g = new adena::game_server::CGameServer();
 	adena::login_server::CInProcessGameServerLink GameLink = adena::login_server::CInProcessGameServerLink(s);
@@ -108,9 +98,9 @@ int main()
 	{
 		cout << "Failed to init login server\n";
 	}
-	system("PAUSE");
 	delete s;
 	delete g;
 	irr::net::Cleanup();
+	system("PAUSE");
 	return 0;
 }

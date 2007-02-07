@@ -41,7 +41,7 @@ namespace adena
 namespace game_server
 {
 
-	extern CMemoryManager MemoryManager;
+	//extern CMemoryManager MemoryManager;
 
 	/*
 	 * COObject is the root of all objects in the game
@@ -51,9 +51,9 @@ namespace game_server
 	friend class COObjectSystem;
 	public:
 
-		inline void* operator new ( size_t size );
+		//inline void* operator new ( size_t size );
 
-		inline void operator delete ( void* obj );
+		//inline void operator delete ( void* obj );
 
 		COObject(IOObjectSystem* obj_sys);
 
@@ -70,6 +70,7 @@ namespace game_server
 
 		// Last time in miliseconds that the object was ticked.
 		irr::u32 LastTickTime;
+		bool Tick;
 
 	protected:
 

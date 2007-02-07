@@ -39,7 +39,7 @@ REG_EXPORT COObject* load_Controller(IOObjectSystem* obj_sys)
 }
 
 Controller::Controller(IOObjectSystem* obj_sys)
-: COObject(obj_sys), OwnedPawn(0)
+: COObject(obj_sys), OwnedPawn(0), Target(0)
 {
 
 };
@@ -67,12 +67,19 @@ void Controller::clickGround(irr::core::vector3df origin, irr::core::vector3df t
 
 void Controller::clickObject(Actor* obj, bool shift_click)
 {
+	Target = obj;
+	OwnedPawn->Target = obj;
 	obj->onClick(this, shift_click);
 };
 
 void Controller::requestAttack(Actor* target, bool shift_click)
 {
 	OwnedPawn->attack(target, shift_click);
+};
+
+void Controller::requestUseSkill(irr::u32 skill_id, bool ctrl, bool shift)
+{
+	OwnedPawn->useSkill(skill_id, ctrl, shift);
 };
 
 void Controller::sendText(irr::u32 say_type, irr::core::stringc &msg, irr::core::stringc &target)

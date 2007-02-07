@@ -164,6 +164,21 @@ SCharInfo* CPlayerCache::loadChar(irr::u32 char_id)
 		ci->x = atoi(qr[0]["x"].c_str());
 		ci->y = atoi(qr[0]["y"].c_str());
 		ci->z = atoi(qr[0]["z"].c_str());
+
+		// Query skills
+		irr::db::Query q2(irr::core::stringc("SELECT * FROM char_skills WHERE char_id = $id"));
+		q2.setVar(irr::core::stringc("$id"), irr::core::stringc((int)char_id));
+		irr::db::CQueryResult qr2 = interfaces->DataBase->query(q2);
+
+		for(irr::u32 i = 0; i < qr2.RowCount; i++)
+		{
+			SSkill s;
+			s.Id = atoi(qr2[i]["skill_id"].c_str());
+			s.Level = atoi(qr2[i]["skill_level"].c_str());
+			s.Enchant = atoi(qr2[i]["skill_enchant"].c_str());
+			ci->Skills.push_back(s);
+		}
+
 		CharInfosLock.writeLock();
 		CharInfos.Insert(char_id, ci);
 		CharInfosLock.unlock();

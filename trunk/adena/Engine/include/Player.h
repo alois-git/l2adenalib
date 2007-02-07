@@ -42,6 +42,8 @@ namespace game_server
 
 		virtual void destroy();
 
+		virtual void useSkill(irr::u32 skill_id, bool ctrl, bool shift);
+
 		virtual irr::u32 getSpeed();
 
 		virtual irr::u32 getLevel();
@@ -60,6 +62,15 @@ namespace game_server
 		virtual irr::u32 getWIT();
 		virtual irr::u32 getMEN();
 
+		virtual irr::core::array<SSkill>* getSkills();
+
+		virtual void onSeeObj(Actor* obj);
+
+		virtual void onBeenSeen(Actor* obj);
+
+		virtual void onLoseObj(Actor* obj);
+
+		virtual void onBeenLost(Actor* obj);
 
 		virtual void saveToDatabase();
 
