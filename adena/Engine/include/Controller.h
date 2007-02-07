@@ -52,13 +52,15 @@ namespace game_server
 
 		virtual void requestAttack(Actor* target, bool shift_click);
 
+		virtual void requestUseSkill(irr::u32 skill_id, bool ctrl, bool shift);
+
 		virtual void sendText(irr::u32 say_type, irr::core::stringc &msg, irr::core::stringc &target);
 
 		IGameServerClient* Owner;
 
 		Pawn* OwnedPawn;
 
-		COObject* Target;
+		Actor* Target;
 
 	};
 

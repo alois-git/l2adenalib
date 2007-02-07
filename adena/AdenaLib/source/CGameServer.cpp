@@ -25,6 +25,7 @@
 #include <ip2bytes.h>
 #include <CMersenneTwister.h>
 #include <CGameServerClient.h>
+#include <GameManager.h>
 
 namespace adena
 {
@@ -126,16 +127,33 @@ bool CGameServer::init(const char* config_file)
 	Interfaces.Rng->seed();
 
 	// Database setup
-	Interfaces.DataBase = new irr::db::CSQLLite();
-	irr::db::CSQLLiteConParms qp = irr::db::CSQLLiteConParms();
-	qp.FileName = (*Interfaces.ConfigFile)["sqlite"]["file"].getData();
+	irr::db::IDbConParms* conp;
+	if(!strcmp("mysql" ,(*Interfaces.ConfigFile)["database"]["type"].getData()))
+	{
+		Interfaces.DataBase = new irr::db::CMySQL();
+		irr::db::CMySQLConParms* cp = new irr::db::CMySQLConParms();
+		cp->Ip = (*Interfaces.ConfigFile)["mysql"]["ip"].getData();
+		cp->Username = (*Interfaces.ConfigFile)["mysql"]["username"].getData();
+		cp->Password = (*Interfaces.ConfigFile)["mysql"]["password"].getData();
+		cp->Db = (*Interfaces.ConfigFile)["mysql"]["db"].getData();
+		cp->Port = atoi((*Interfaces.ConfigFile)["mysql"]["port"].getData());
+		conp = cp;
+	}else
+	{
+		Interfaces.DataBase = new irr::db::CSQLLite();
+		irr::db::CSQLLiteConParms* qp = new irr::db::CSQLLiteConParms();
+		qp->FileName = (*Interfaces.ConfigFile)["sqlite"]["file"].getData();
+		conp = qp;
+	}
 	Interfaces.Logger->log("Attempting to connect to DB...");
-	if(!Interfaces.DataBase->connect(&qp))
+	if(!Interfaces.DataBase->connect(conp))
 	{
 		Interfaces.Logger->log("FATAL ERROR: Failed to connect to DB (Check connection settings)", irr::ELL_ERROR);
 		return false;
 	}else
 		Interfaces.Logger->log("DB connection sucsessfull");
+
+	delete conp;
 
 	// Register with login server
 	LoginServerLink->registerWithLoginServer();
@@ -146,16 +164,21 @@ bool CGameServer::init(const char* config_file)
 
 	// Create obj system
 	Interfaces.ObjectSystem = new COObjectSystem();
-	Interfaces.GameManager = (COObject*)Interfaces.ObjectSystem->loadObj(irr::core::stringc("Engine.GameManager"));
 	Interfaces.ObjectSystem->start();
 
 	// Create caches
 	Interfaces.PlayerCache = new CPlayerCache(&Interfaces);
 	Interfaces.CharTemplates = new CCharTemplates(Interfaces.DataBase);
+	Interfaces.SkillCache = new CSkillInfoCache();
+	Interfaces.SkillCache->init("./data/stats/skills");
+	Interfaces.NPCCache = new CNPCCache();
+	Interfaces.NPCCache->init(Interfaces.DataBase);
+
+	Interfaces.GameManager = (COObject*)Interfaces.ObjectSystem->loadObj(irr::core::stringc("Engine.GameManager"));
+	((GameManager*)Interfaces.GameManager)->init(&Interfaces);
 
 	return true;
 };
-
 
 void CGameServer::run()
 {

@@ -33,24 +33,18 @@
 #include <CPCharCreateFailed.h>
 #include <CPCharCreateOk.h>
 #include <CPPressStart.h>
-#include <CPCharInfo.h>
 #include <CCPSay.h>
-#include <CPUserInfo.h>
 #include <CPLogout.h>
 #include <SCharInfo.h>
 #include <CCPMoveToLocation.h>
-#include <CSPSystemMessage.h>
-#include <CSPBuffBar.h>
-#include <CSPMacroList.h>
 #include <CSPItemList.h>
-#include <CSPSkillBar.h>
-#include <CSPDyes.h>
-#include <CSPQuestList.h>
 #include <CSPShowMiniMap.h>
 #include <CCPRestartRequest.h>
 #include <CCPClickObj.h>
 #include <CCPRequestSocial.h>
 #include <CCPRequestAttack.h>
+#include <CCPRequestSkillList.h>
+#include <CCPRequestUseSkill.h>
 
 #define RECV_SIZE 65536 // Max size of a L2 packet.
 
@@ -77,7 +71,7 @@ CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServe
 	InputCipher = new CCrypt((irr::c8*)key);
 	PacketQueue = new CPacketQueue(20);
 
-	// Set all packets with an unknown type to unknownPacket (don't want to try to call a function thats not there :P)
+	// Set all packets with an unknown type to unknownPacket (don't want to try to call a function that's not there :P)
 	for(int i = 0; i < 256; i++)
 		PacketFunctions[i] = &CGameServerClient::unknownPacket;
 
@@ -93,7 +87,9 @@ CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServe
 	PacketFunctions[14] = &CGameServerClient::createCharButtion;
 	PacketFunctions[15] = &CGameServerClient::requestItemList;
 	PacketFunctions[27] = &CGameServerClient::requestSocial;
+	PacketFunctions[47] = &CGameServerClient::requestUseSkill;
 	PacketFunctions[56] = &CGameServerClient::clientSay;
+	PacketFunctions[63] = &CGameServerClient::requestSkillList;
 	PacketFunctions[70] = &CGameServerClient::restartRequest;
 	PacketFunctions[72] = &CGameServerClient::validatePosition;
 	PacketFunctions[157] = &CGameServerClient::requestSkillCoolTime;
@@ -150,32 +146,35 @@ void CGameServerClient::run()
 
 void CGameServerClient::HandlePacket()
 {
-	// Take the first 2 bytes to get the packet size
-	Client->recv(InBuff, 2);
-	int size = 0;
-	size += (unsigned char)InBuff[0];
-	size += ((unsigned char)(InBuff[1]) * 256);
-
-	// Get the rest of the packet
-	int recv_len = Client->recv(InBuff, size - 2);
-
-	if(recv_len != (size - 2))
+	if(Running)
 	{
-		// Invalid packet.
-		Server->Server->kickClient(Client);
+		// Take the first 2 bytes to get the packet size
+		Client->recv(InBuff, 2);
+		int size = 0;
+		size += (unsigned char)InBuff[0];
+		size += ((unsigned char)(InBuff[1]) * 256);
+
+		// Get the rest of the packet
+		int recv_len = Client->recv(InBuff, size - 2);
+
+		if(recv_len != (size - 2))
+		{
+			// Invalid packet.
+			Server->Server->kickClient(Client);
+		}
+
+		if(ProtocolRevision != 0)
+		{
+			// Decrypt the data using L2s usless xor cipher
+			InputCipher->decrypt(InBuff, size - 2);
+		}
+
+		if((InBuff[0] & 0xff) != 0 && ProtocolRevision == 0)
+			return; // Ya, bad dogy
+
+		// Function pointers FTW
+		(this->*PacketFunctions[InBuff[0] & 0xff])(InBuff);
 	}
-
-	if(ProtocolRevision != 0)
-	{
-		// Decrypt the data using L2s usless xor cipher
-		InputCipher->decrypt(InBuff, size - 2);
-	}
-
-	if((InBuff[0] & 0xff) != 0 && ProtocolRevision == 0)
-		return; // Ya, bad dogy
-
-	// Function pointers FTW
-	(this->*PacketFunctions[InBuff[0] & 0xff])(InBuff);
 };
 
 void CGameServerClient::sendPacket(IPacket* packet)
@@ -320,10 +319,22 @@ void CGameServerClient::requestSocial(irr::c8* data)
 	CCPRequestSocial(data, this);
 };
 
+// 47
+void CGameServerClient::requestUseSkill(irr::c8* data)
+{
+	CCPRequestUseSkill(data, this);
+};
+
 // 56
 void CGameServerClient::clientSay(irr::c8* data)
 {
 	CCPSay(data, this);
+};
+
+// 63
+void CGameServerClient::requestSkillList(irr::c8* data)
+{
+	CCPRequestSkillList(data, this);
 };
 
 // 70

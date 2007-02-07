@@ -85,10 +85,13 @@ void COObjectSystem::run()
 					break;
 				}else
 				{
-					irr::u32 time = irr::os::Timer::getRealTime();
-					irr::u32 tdif = time - ((COObject*)item)->LastTickTime;
-					((COObject*)item)->tick( (irr::f32)tdif / (irr::f32)1000 );
-					((COObject*)item)->LastTickTime = time;
+					if(((COObject*)item)->Tick)
+					{
+						irr::u32 time = irr::os::Timer::getRealTime();
+						irr::u32 tdif = time - ((COObject*)item)->LastTickTime;
+						((COObject*)item)->tick( (irr::f32)tdif / (irr::f32)1000 );
+						((COObject*)item)->LastTickTime = time;
+					}
 				}
 				if(!ittr.GetNext(key, item))
 					break;

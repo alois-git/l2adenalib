@@ -25,7 +25,9 @@
 #define _ADENA_C_O_ACTOR_H_
 
 #include <COObject.h>
+#include <irrList.h>
 #include <vector3d.h>
+#include <CServerPacket.h>
 
 namespace adena
 {
@@ -44,12 +46,30 @@ namespace game_server
 
 		virtual void setLocation(irr::core::vector3df &location);
 
+		virtual void broadcastPacket(IPacket* pack);
+
 		// Events
 
+		// Called when a controller clicks on this actor.
 		virtual void onClick(COObject* event_instagator, bool shift_click);
+
+		// Called when this actor sees another actor.
+		virtual void onSeeObj(Actor* obj) {puts("I've seen somthing.");};
+
+		// Called when this actor is seen by another actor.
+		virtual void onBeenSeen(Actor* obj) {puts("I've been seen.");};
+
+		// Called when this actor loses site of another actor.
+		virtual void onLoseObj(Actor* obj) {puts("I've lost site of somthing.");};
+
+		// Called when another actor loses site of this actor.
+		virtual void onBeenLost(Actor* obj) {puts("I've been lost site of.");};
 
 		irr::core::vector3df Location;
 		irr::s32 Heading;
+
+		// List of actors that this object is in range of (actors that need to be updated if the state of this actor changes).
+		irr::core::list<Actor*> KnownList;
 
 	};
 

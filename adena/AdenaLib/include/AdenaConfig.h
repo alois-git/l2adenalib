@@ -30,7 +30,7 @@
 #include <memory.h>
 
 // Version number is Major.Release.Revision
-#define ADENA_VERSION "0.0.53"
+#define ADENA_VERSION "0.0.55"
 
 #ifdef _IRR_WINDOWS_
 #ifdef ADENALIB_EXPORTS
@@ -44,5 +44,8 @@
 #define MAP_MAX_X 228608
 #define MAP_MIN_Y -262144
 #define MAP_MAX_Y 262144
+
+// Max distance a player can see other pawns.
+#define MAX_VIEW_DIST 2850
 
 #endif

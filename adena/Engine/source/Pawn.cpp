@@ -43,7 +43,7 @@ REG_EXPORT COObject* load_Pawn(IOObjectSystem* obj_sys)
 }
 
 Pawn::Pawn(IOObjectSystem* obj_sys)
-: Actor(obj_sys), MoveState(EMS_Still)
+: Actor(obj_sys), MoveState(EMS_Still), Target(0)
 {
 
 };
@@ -55,11 +55,7 @@ Pawn::~Pawn()
 
 void Pawn::destroy()
 {
-	GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
-	if(gm)
-	{
-		gm->broadcastPacket(new CSPDeleteObj(Id));
-	}
+	broadcastPacket(new CSPDeleteObj(Id));
 	Actor::destroy();
 };
 
@@ -90,6 +86,11 @@ void Pawn::tick(irr::f32 delta_time)
 		{
 			Location.Z = Owner->Server->Interfaces.GeoData->getHeight(Location);
 			LastZCheck = time;
+			GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
+			if(gm)
+			{
+				gm->L2World->updateLoc(this);
+			}
 		}
 	}
 };
@@ -167,11 +168,7 @@ irr::u32 Pawn::getMEN()
 void Pawn::moveToLocation(irr::core::vector3df Target)
 {
 	MoveTarget = Owner->Server->Interfaces.GeoData->moveCheck(Location, Target);
-	GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
-	if(gm)
-	{
-		gm->broadcastPacket(new CSPMoveToLocation(Id, MoveTarget, Location));
-	}
+	broadcastPacket(new CSPMoveToLocation(Id, MoveTarget, Location));
 	MoveState = EMS_Moving;
 };
 
@@ -179,35 +176,27 @@ void Pawn::attack(Actor* target, bool shift_click)
 {
 	CSPAttack* a = new CSPAttack(this);
 	a->addHit(target, 1, false, false, false);
+	broadcastPacket(a);
+};
 
-	GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
-	if(gm)
-	{
-		gm->broadcastPacket(a);
-	}
+void Pawn::useSkill(irr::u32 skill_id, bool ctrl, bool shift)
+{
+
 };
 
 void Pawn::onStopMove()
 {
-	GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
-	if(gm)
-	{
-		gm->broadcastPacket(new CSPStopMove(Id, Location, Heading));
-	}
+	broadcastPacket(new CSPStopMove(Id, Location, Heading));
 };
 
 void Pawn::onClick(COObject* event_instagator, bool shift_click)
 {
 	// We have been targeted, tell everyone about it.
-	GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
-	if(gm)
+	Controller* c = dynamic_cast<Controller*>(event_instagator);
+	if(c)
 	{
-		Controller* c = dynamic_cast<Controller*>(event_instagator);
-		if(c)
-		{
-			c->Target = this;
-			gm->broadcastPacket(new CSPTargetSelected(c->OwnedPawn->Id, Id, Location));
-		}
+		c->Target = this;
+		broadcastPacket(new CSPTargetSelected(c->OwnedPawn->Id, Id, Location));
 	}
 };
 

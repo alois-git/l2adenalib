@@ -75,6 +75,8 @@ namespace game_server
 
 		virtual void attack(Actor* target, bool shift_click);
 
+		virtual void useSkill(irr::u32 skill_id, bool ctrl, bool shift);
+
 		// Event called when MoveTarget reached.
 		virtual void onStopMove();
 
@@ -84,6 +86,7 @@ namespace game_server
 		E_MoveState MoveState;
 		// We don't need to check our height EVERY tick...
 		irr::u32 LastZCheck;
+		Actor* Target;
 
 		IGameServerClient* Owner;
 

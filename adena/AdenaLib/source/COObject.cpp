@@ -28,7 +28,7 @@ namespace adena
 namespace game_server
 {
 
-CMemoryManager MemoryManager(65536);
+/*CMemoryManager MemoryManager(65536);
 
 void* COObject::operator new ( size_t size )
 {
@@ -38,10 +38,10 @@ void* COObject::operator new ( size_t size )
 void COObject::operator delete( void* obj )
 {
 	MemoryManager.deallocate(obj);
-};
+};*/
 
 COObject::COObject(IOObjectSystem* obj_sys)
-: ObjectSystem(obj_sys), Delete(false)
+: ObjectSystem(obj_sys), Delete(false), Tick(false)
 {
 	ObjName = "Object";
 };

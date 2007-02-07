@@ -237,7 +237,6 @@ namespace game_server
 	private:
 
 		Player* P;
-
 	};
 
 }

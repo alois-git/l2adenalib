@@ -77,7 +77,9 @@ namespace game_server
 		void createCharButtion(irr::c8* data);		// 014 - 0x0e
 		void requestItemList(irr::c8* data);		// 015 - 0x0f
 		void requestSocial(irr::c8* data);			// 027 - 0x1b
+		void requestUseSkill(irr::c8* data);		// 047 - 0x2f
 		void clientSay(irr::c8* data);				// 056 - 0x38
+		void requestSkillList(irr::c8* data);		// 063 - 0x3f
 		void restartRequest(irr::c8* data);			// 070 - 0x46
 		void validatePosition(irr::c8* data);		// 072 - 0x48
 		void requestSkillCoolTime(irr::c8* data);	// 157 - 0x9d

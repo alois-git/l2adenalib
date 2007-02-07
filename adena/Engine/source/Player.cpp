@@ -22,6 +22,11 @@
  */
 
 #include <Player.h>
+#include <GameManager.h>
+#include <Controller.h>
+#include <CSPSkillUsed.h>
+#include <CPCharInfo.h>
+#include <CSPDeleteObj.h>
 
 namespace adena
 {
@@ -81,6 +86,11 @@ irr::f64 _fastcall getBaseHpForClass(irr::u32 class_id, irr::u32 level)
 			table[13][i] = quadEqu(0.175, 31.325, -511.5, i + 1); // Necro
 			table[14][i] = quadEqu(0.1889124205, 34.15301178, -647.4902592, i + 1); // Warlock
 			table[15][i] = quadEqu(0.155, 27.745, -192.9, i + 1); // Cleric
+			table[16][i] = quadEqu(0.18999999996594852, 34.01000000163913, -499.50000005960464, i + 1); // B1shop (A tribute to teh best bishop ever!)
+			table[17][i] = quadEqu(0.20500000001629815, 36.69499999657273, -630.8999999463558, i + 1); // Prophet
+			table[18][i] = quadEqu(0.0708333333277551, 12.458833333104849, 77.91699999570847, i + 1); // Light Elf Fighter
+			table[19][i] = quadEqu(0.14999999999417923, 26.84999999962747, -242.00000001490116, i + 1); // Light Elf Knight
+			// TODO: Finish adding this data.
 		}
 		// Copy base class hp stats into higher class hp stats
 		for(irr::u32 c = 0; c < 10; c++)
@@ -93,7 +103,7 @@ irr::f64 _fastcall getBaseHpForClass(irr::u32 class_id, irr::u32 level)
 Player::Player(IOObjectSystem* obj_sys)
 : Pawn(obj_sys)
 {
-
+	Tick = true;
 };
 
 Player::~Player()
@@ -106,6 +116,20 @@ void Player::destroy()
 	saveToDatabase();
 	CharInfo->InUse = false;
 	Pawn::destroy();
+};
+
+void Player::useSkill(irr::u32 skill_id, bool ctrl, bool shift)
+{
+	irr::core::array<SSkill>* skills = getSkills();
+	for(int i = 0; i < skills->size(); i++)
+	{
+		if((*skills)[i].Id == skill_id)
+		{
+			// Player has this skill
+			broadcastPacket(new CSPSkillUsed(this, (*skills)[i]));
+			break;
+		}
+	}
 };
 
 irr::u32 Player::getSpeed()
@@ -122,6 +146,7 @@ irr::u32 Player::getLevel()
 irr::u32 Player::getMaxHp()
 {
 	irr::f64 basehp = getBaseHpForClass(CharInfo->ClassId, getLevel());
+	basehp *= getConMod(getCON());
 	return basehp;	
 };
 
@@ -184,6 +209,45 @@ irr::u32 Player::getMEN()
 {
 	SClassTemplate* ct = Owner->Server->Interfaces.CharTemplates->loadTemplate(CharInfo->ClassId);
 	return ct->MEN;
+};
+
+irr::core::array<SSkill>* Player::getSkills()
+{
+	return &CharInfo->Skills;
+};
+
+void Player::onSeeObj(Actor* obj)
+{
+
+};
+
+void Player::onBeenSeen(Actor* obj)
+{
+	Player* p = dynamic_cast<Player*>(obj);
+	if(p)
+	{
+		CPCharInfo* ni = new CPCharInfo(this);
+		p->Owner->sendPacket(ni);
+	}
+};
+
+void Player::onLoseObj(Actor* obj)
+{
+	if(obj == Target)
+	{
+		Target = 0;
+		((Controller*)Owner->PController)->Target = 0;
+	}
+};
+
+void Player::onBeenLost(Actor* obj)
+{
+	Player* p = dynamic_cast<Player*>(obj);
+	if(p)
+	{
+		CSPDeleteObj* ni = new CSPDeleteObj(Id);
+		p->Owner->sendPacket(ni);
+	}
 };
 
 void Player::saveToDatabase()

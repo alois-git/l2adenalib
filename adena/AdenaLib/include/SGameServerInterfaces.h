@@ -33,6 +33,8 @@
 #include <CCharTemplates.h>
 #include <COObjectSystem.h>
 #include <CGeoData.h>
+#include <CSkillInfoCache.h>
+#include <CNPCCache.h>
 
 namespace adena
 {
@@ -47,9 +49,11 @@ namespace game_server
 		BCini* ConfigFile;
 		CPlayerCache* PlayerCache;
 		CCharTemplates* CharTemplates;
+		CSkillInfoCache* SkillCache;
 		COObjectSystem* ObjectSystem;
 		COObject* GameManager;
 		CGeoData* GeoData;
+		CNPCCache* NPCCache;
 	};
 
 }

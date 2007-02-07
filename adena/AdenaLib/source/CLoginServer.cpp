@@ -86,16 +86,33 @@ bool CLoginServer::init(const char* config_file)
 	Interfaces.BlowfishCipher = new CBlowfish("_;5.]94-31==-%xT!^[$\000");
 
 	// Database setup
-	Interfaces.DataBase = new irr::db::CSQLLite();
-	irr::db::CSQLLiteConParms qp = irr::db::CSQLLiteConParms();
-	qp.FileName = (*Interfaces.ConfigFile)["sqlite"]["file"].getData();
+	irr::db::IDbConParms* conp;
+	if(!strcmp("mysql" ,(*Interfaces.ConfigFile)["database"]["type"].getData()))
+	{
+		Interfaces.DataBase = new irr::db::CMySQL();
+		irr::db::CMySQLConParms* cp = new irr::db::CMySQLConParms();
+		cp->Ip = (*Interfaces.ConfigFile)["mysql"]["ip"].getData();
+		cp->Username = (*Interfaces.ConfigFile)["mysql"]["username"].getData();
+		cp->Password = (*Interfaces.ConfigFile)["mysql"]["password"].getData();
+		cp->Db = (*Interfaces.ConfigFile)["mysql"]["db"].getData();
+		cp->Port = atoi((*Interfaces.ConfigFile)["mysql"]["port"].getData());
+		conp = cp;
+	}else
+	{
+		Interfaces.DataBase = new irr::db::CSQLLite();
+		irr::db::CSQLLiteConParms* qp = new irr::db::CSQLLiteConParms();
+		qp->FileName = (*Interfaces.ConfigFile)["sqlite"]["file"].getData();
+		conp = qp;
+	}
 	Interfaces.Logger->log("Attempting to connect to DB...");
-	if(!Interfaces.DataBase->connect(&qp))
+	if(!Interfaces.DataBase->connect(conp))
 	{
 		Interfaces.Logger->log("FATAL ERROR: Failed to connect to DB (Check connection settings)", irr::ELL_ERROR);
 		return false;
 	}else
 		Interfaces.Logger->log("DB connection sucsessfull");
+
+	delete conp;
 
 	return true;
 };
