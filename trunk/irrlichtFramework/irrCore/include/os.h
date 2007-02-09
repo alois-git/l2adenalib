@@ -14,7 +14,7 @@ namespace irr
 
 namespace os
 {
-	class Byteswap
+	class IRRCORE_API Byteswap
 	{
 	public:
 		static u16 byteswap(u16 num);
