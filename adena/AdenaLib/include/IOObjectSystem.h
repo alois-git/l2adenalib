@@ -37,7 +37,15 @@ namespace game_server
 	{
 	public:
 
+		typedef bool (IOObject::*timerFunc) (void*);
+
 		virtual ~IOObjectSystem() {}
+
+		/*
+		 * @param func: [IN] Function to call.
+		 * @param m_seconds_from_now: [IN] Miliseconds from the current time to call this func.
+		 */
+		virtual void regTimerFunc(IOObject* obj, timerFunc func, irr::u32 m_seconds_from_now, void* data = 0) = 0;
 
 		// Loads an obj and adds it to the system.
 		virtual IOObject* loadObj(irr::core::stringc &obj) = 0;

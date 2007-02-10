@@ -30,7 +30,7 @@
 #include <ILogger.h>
 #include <BDRSA.h>
 #include <CBlowfish.h>
-#include <BCini.h>
+#include <CConfig.h>
 
 namespace adena
 {
@@ -44,7 +44,7 @@ namespace login_server
 		irr::IRng* Rng;
 		BDRSA* RsaCipher;
 		CBlowfish* BlowfishCipher;
-		BCini* ConfigFile;
+		CConfig* ConfigFile;
 	};
 
 }

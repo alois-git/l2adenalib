@@ -48,8 +48,8 @@ void CNPCCache::init(irr::db::IDatabase* db)
 	{
 		SNPCInfo* ni = new SNPCInfo();
 		ni->Id = atoi(qr[i]["id"].c_str());
-		ni->Name = qr[i]["name"].c_str();
-		ni->Title = qr[i]["title"].c_str();
+		ni->Name = qr[i]["name"];
+		ni->Title = qr[i]["title"];
 		ni->Collision_radius = atof(qr[i]["collision_radius"].c_str());
 		ni->Collision_height = atof(qr[i]["collision_height"].c_str());
 		ni->Level = atoi(qr[i]["level"].c_str());
@@ -57,6 +57,7 @@ void CNPCCache::init(irr::db::IDatabase* db)
 			ni->Sex = 0;
 		else
 			ni->Sex = 1;
+		ni->SpawnClass = qr[i]["type"];
 		ni->Atk_range = atoi(qr[i]["attackrange"].c_str());
 		ni->Hp = atoi(qr[i]["hp"].c_str());
 		ni->Mp = atoi(qr[i]["mp"].c_str());

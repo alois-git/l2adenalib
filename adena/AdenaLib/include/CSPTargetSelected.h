@@ -48,14 +48,14 @@ namespace game_server
 		{
 			if(!Writen)
 			{
+				Writen = true;
 				w8(0x29);
+
 				w32(TargeterId);
 				w32(TargeteiId);
 				w32(TargetLoc.X);
 				w32(TargetLoc.Y);
 				w32(TargetLoc.Z);
-
-				Writen = true;
 			}
 			return true;
 		};

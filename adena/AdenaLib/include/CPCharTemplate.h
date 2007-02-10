@@ -53,9 +53,10 @@ namespace game_server
 			w8(0x17);
 			w32(0);
 
-			//for (;;)
+			// Why does the server need to send this data to the client? it doesn't :P.
+			/*for (;;)
 			{
-				/*w32(); // Race id
+				w32(); // Race id
 				w32(); // Class id
 				w32(0x46);
 				w32(); // STR
@@ -74,8 +75,8 @@ namespace game_server
 				w32(0x0a);
 				w32(0x46);
 				w32(); // MEN
-				w32(0x0a);*/
-			}
+				w32(0x0a);
+			}*/
 			return true;
 		};
 

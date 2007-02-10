@@ -49,11 +49,12 @@ namespace game_server
 		{
 			if(!Writen)
 			{
+				Writen = true;
 				w8(0x16);
-				
+
 				w32(Npc->Id);
 				w32(Npc->NPCInfo->Id + 1000000);
-				w32(1); // Attackable
+				w32(Npc->isAutoAttackable()); // Attackable
 				w32(Npc->Location.X);
 				w32(Npc->Location.Y);
 				w32(Npc->Location.Z);
@@ -93,13 +94,11 @@ namespace game_server
 				w32(0);
 				w32(0);
 				w8(0);
-		        
+
 				w8(0);  // Team circle: 1 = blue, 2 = red 
 				wf(0);
 				wf(0);
 				w32(0);
-
-				Writen = true;
 			}
 
 			return true;

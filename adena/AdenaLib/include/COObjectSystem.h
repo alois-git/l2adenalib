@@ -28,6 +28,7 @@
 #include <irrThread.h>
 #include <AVL.h>
 #include <irrString.h>
+#include <irrList.h>
 #include <COObject.h>
 
 namespace adena
@@ -47,6 +48,14 @@ namespace game_server
 
 		virtual void run();
 
+		/*
+		 * @param func: [IN] Function to call.
+		 * @param m_seconds_from_now: [IN] Miliseconds from the current time to call this func.
+		 */
+		virtual void regTimerFunc(IOObject* obj, timerFunc func, irr::u32 m_seconds_from_now, void* data = 0);
+
+		void checkTimer();
+
 		// Loads an obj and adds it to the system.
 		virtual IOObject* loadObj(irr::core::stringc &obj);
 
@@ -56,6 +65,16 @@ namespace game_server
 
 	private:
 
+		struct STimerFunc
+		{
+			irr::u32 TimeToRun;
+			irr::u32 RunInterval;
+			timerFunc Func;
+			void* Data;
+			IOObject* Obj;
+		};
+
+		irr::core::list<STimerFunc> TimerFuncs;
 		AVL<irr::core::stringc, void*> Librarys;
 		AVL<irr::u32, IOObject*> Objects;
 		irr::u32 Ids;

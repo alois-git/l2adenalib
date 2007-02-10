@@ -67,7 +67,7 @@ namespace game_server
 				w16(0x00); // Item type1
 				w32(0x01); // Object id
 				w32(57); // Item id ADENA PLIX!
-				w32(2147483647); // Count
+				w32(2147483647); // Count (That's alot of adena!).
 				w16(0x00);	// Item type2
 				w16(0x00);	// Item type3
 				w16(0x00); // Equipted?

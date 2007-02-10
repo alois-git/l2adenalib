@@ -78,9 +78,18 @@ void COObjectSystem::run()
 		{
 			while(true)
 			{
+				checkTimer();
 				if(((COObject*)item)->Delete)
 				{
 					removeObj(((COObject*)item)->Id);
+					irr::core::list<STimerFunc>::Iterator itr(TimerFuncs.begin());
+					for(; itr != TimerFuncs.end(); itr++)
+					{
+						if((*itr).Obj == item)
+						{
+							itr = TimerFuncs.erase(itr);
+						}
+					}
 					delete item;
 					break;
 				}else
@@ -91,6 +100,7 @@ void COObjectSystem::run()
 						irr::u32 tdif = time - ((COObject*)item)->LastTickTime;
 						((COObject*)item)->tick( (irr::f32)tdif / (irr::f32)1000 );
 						((COObject*)item)->LastTickTime = time;
+						irr::core::threads::sleep(1);
 					}
 				}
 				if(!ittr.GetNext(key, item))
@@ -98,6 +108,60 @@ void COObjectSystem::run()
 			}
 		}
 		irr::core::threads::sleep(1);
+	}
+};
+
+void COObjectSystem::regTimerFunc(IOObject* obj, timerFunc func, irr::u32 m_seconds_from_now, void* data)
+{
+	irr::u32 exeTime = irr::os::Timer::getRealTime() + m_seconds_from_now;
+	bool inserted = false;
+	STimerFunc tf;
+	tf.Data = data;
+	tf.Func = func;
+	tf.TimeToRun = exeTime;
+	tf.RunInterval = m_seconds_from_now;
+	tf.Obj = obj;
+	irr::core::list<STimerFunc>::Iterator ittr(TimerFuncs.begin());
+	for(; ittr != TimerFuncs.end(); ittr++)
+	{
+		if(exeTime < (*ittr).TimeToRun)
+		{
+			TimerFuncs.insert_before(ittr, tf);
+			inserted = true;
+			break;
+		}
+	}
+	if(!inserted)
+	{
+		TimerFuncs.push_back(tf);
+	}
+};
+
+void COObjectSystem::checkTimer()
+{
+	irr::core::list<STimerFunc>::Iterator ittr(TimerFuncs.begin());
+	for(; ittr != TimerFuncs.end(); ittr++)
+	{
+		STimerFunc tf = (*ittr);
+		if((*ittr).TimeToRun <= irr::os::Timer::getRealTime())
+		{
+			// Time to run the func
+			if((tf.Obj->*tf.Func)(tf.Data))
+			{
+				// Repeate the timer
+				TimerFuncs.erase(ittr);
+				regTimerFunc(tf.Obj, tf.Func, tf.RunInterval, tf.Data);
+				ittr = TimerFuncs.begin();
+			}else
+			{
+				// Don't repeate the timer.
+				TimerFuncs.erase(ittr);
+				ittr = TimerFuncs.begin();
+			}
+		}else
+		{
+			break;
+		}
 	}
 };
 

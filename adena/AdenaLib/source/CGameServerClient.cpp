@@ -127,7 +127,7 @@ void CGameServerClient::run()
 			irr::core::threads::sleep(1);
 		else
 		{
-			if(((CServerPacket*)packet)->writePacket()) 
+			if(((CServerPacket*)packet)->writePacket())
 			{
 				irr::c8* data = packet->getData();
 				irr::u32 len = packet->getLen();

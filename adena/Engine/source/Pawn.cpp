@@ -23,12 +23,14 @@
 
 #include <Pawn.h>
 #include <CSPStopMove.h>
-#include <CSPTargetSelected.h>
 #include <CSPDeleteObj.h>
 #include <CSPMoveToLocation.h>
+#include <CSPStatusUpdate.h>
 #include <GameManager.h>
 #include <Controller.h>
 #include <CSPAttack.h>
+#include <CSPSystemMessage.h>
+#include <CSPDie.h>
 
 namespace adena
 {
@@ -43,7 +45,7 @@ REG_EXPORT COObject* load_Pawn(IOObjectSystem* obj_sys)
 }
 
 Pawn::Pawn(IOObjectSystem* obj_sys)
-: Actor(obj_sys), MoveState(EMS_Still), Target(0)
+: Actor(obj_sys), MoveState(EMS_Still), PawnState(EPS_None), Target(0), HpUpdated(false), CpUpdated(false), Cp(0), Hp(0), Mp(0)
 {
 
 };
@@ -62,7 +64,7 @@ void Pawn::destroy()
 void Pawn::tick(irr::f32 delta_time)
 {
 	Actor::tick(delta_time);
-	if(MoveState == EMS_Moving)
+	if(MoveState == EMS_Moving || MoveState == EMS_Walking)
 	{
 		irr::u32 speed = getSpeed();
 		irr::core::line3df line(Location, MoveTarget);
@@ -84,7 +86,7 @@ void Pawn::tick(irr::f32 delta_time)
 		irr::u32 time = irr::os::Timer::getRealTime();
 		if((time - LastZCheck) >= 1000) // Check every second
 		{
-			Location.Z = Owner->Server->Interfaces.GeoData->getHeight(Location);
+			//Location.Z = Owner->Server->Interfaces.GeoData->getHeight(Location);
 			LastZCheck = time;
 			GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
 			if(gm)
@@ -92,6 +94,10 @@ void Pawn::tick(irr::f32 delta_time)
 				gm->L2World->updateLoc(this);
 			}
 		}
+	}
+	if(HpUpdated || CpUpdated)
+	{
+		broadcastPacket(new CSPStatusUpdate(this));
 	}
 };
 
@@ -105,32 +111,32 @@ irr::u32 Pawn::getLevel()
 	return 0;
 };
 
-irr::u32 Pawn::getMaxHp()
+irr::f64 Pawn::getMaxHp()
 {
 	return 0;	
 };
 
-irr::u32 Pawn::getHp()
+irr::f64 Pawn::getHp()
 {
 	return 0;
 };
 
-irr::u32 Pawn::getMaxMp()
+irr::f64 Pawn::getMaxMp()
 {
 	return 0;
 };
 
-irr::u32 Pawn::getMp()
+irr::f64 Pawn::getMp()
 {
 	return 0;	
 };
 
-irr::u32 Pawn::getMaxCp()
+irr::f64 Pawn::getMaxCp()
 {
 	return 0;
 };
 
-irr::u32 Pawn::getCp()
+irr::f64 Pawn::getCp()
 {
 	return 0;
 };
@@ -165,6 +171,11 @@ irr::u32 Pawn::getMEN()
 	return 0;
 };
 
+bool Pawn::isAutoAttackable()
+{
+	return false;
+};
+
 void Pawn::moveToLocation(irr::core::vector3df Target)
 {
 	MoveTarget = Owner->Server->Interfaces.GeoData->moveCheck(Location, Target);
@@ -174,14 +185,75 @@ void Pawn::moveToLocation(irr::core::vector3df Target)
 
 void Pawn::attack(Actor* target, bool shift_click)
 {
+	if(PawnState != EPS_None)
+	{
+		return;
+	}
+
+	if(MoveState == EMS_Sitting)
+	{
+		return;
+	}
+
+	if(MoveState != EMS_Still)
+	{
+		// We need to stop before we can attack
+		moveToLocation(Location);
+	}
+	PawnState = EPS_Attacking;
 	CSPAttack* a = new CSPAttack(this);
 	a->addHit(target, 1, false, false, false);
 	broadcastPacket(a);
+	irr::f32 atkspd = getAttackSpeed();
+	irr::u32 time = 460000/atkspd;
+	ObjectSystem->regTimerFunc(this, (IOObjectSystem::timerFunc)&Pawn::attackTimer, time, (void*)target);
 };
 
 void Pawn::useSkill(irr::u32 skill_id, bool ctrl, bool shift)
 {
 
+};
+
+void Pawn::takeDamage(Actor* event_instagator, irr::u32 &damage, bool crit, bool shield)
+{
+	Tick = true;
+	if(damage < Cp)
+	{
+		setCp(Cp - damage);
+	}else
+	{
+		damage -= Cp;
+		setCp(0);
+		setHp(getHp() - damage);
+		if(Hp <= 0)
+		{
+			onDeath(event_instagator);
+		}
+	}
+};
+
+bool Pawn::attackTimer(void* data)
+{
+	// Made it into an event so it can be overridden in sub classes.
+	onDoAttackDmg((Actor*)data);
+	return false;
+};
+
+irr::u32 Pawn::onDoAttackDmg(Actor* target)
+{
+	// Calculate damage
+	irr::u32 dmg = getPAttack() * 25;
+	target->takeDamage(this, dmg, false, false);
+	PawnState = EPS_None;
+	return dmg;
+};
+
+void Pawn::onDeath(Actor* event_instagator)
+{
+	if(MoveState == EMS_Moving || MoveState == EMS_Walking)
+		moveToLocation(Location);
+	PawnState = EPS_Dead;
+	broadcastPacket(new CSPDie(this));
 };
 
 void Pawn::onStopMove()
@@ -191,12 +263,16 @@ void Pawn::onStopMove()
 
 void Pawn::onClick(COObject* event_instagator, bool shift_click)
 {
-	// We have been targeted, tell everyone about it.
 	Controller* c = dynamic_cast<Controller*>(event_instagator);
 	if(c)
 	{
-		c->Target = this;
-		broadcastPacket(new CSPTargetSelected(c->OwnedPawn->Id, Id, Location));
+		if(c->Target == this)
+		{
+			// If auto attackable, start attacking
+		}else
+		{
+			c->setTarget(this);
+		}
 	}
 };
 

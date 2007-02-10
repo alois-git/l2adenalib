@@ -48,6 +48,7 @@ namespace game_server
 		{
 			if(!Writen)
 			{
+				Writen = true;
 				w8(0x01);
 
 				w32(CharId);
@@ -59,8 +60,6 @@ namespace game_server
 				w32(Origin.X);
 				w32(Origin.Y);
 				w32(Origin.Z);
-
-				Writen = true;
 			}
 			return true;
 		};

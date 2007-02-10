@@ -31,6 +31,11 @@ namespace adena
 namespace game_server
 {
 
+	enum E_Social
+	{
+		ES_LEVEL_GAIN = 15
+	};
+
 	class CSPSocial : public CServerPacket
 	{
 	public:
@@ -47,11 +52,11 @@ namespace game_server
 		{
 			if(!Writen)
 			{
+				Writen = true;
 				w8(0x2d);
+
 				w32(CharId);
 				w32(ActionId);
-
-				Writen = true;
 			}
 			return true;
 		};

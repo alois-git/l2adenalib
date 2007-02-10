@@ -88,6 +88,8 @@ void World::newObj(Actor *obj)
 		ActorRegions.Insert(obj, region);
 		ActorRegionsLock.unlock();
 
+		// Add self to known list.
+		obj->KnownList.push_back(obj);
 		// Update known list.
 		updateLoc(obj);
 	}else
@@ -253,6 +255,7 @@ void World::updateLoc(Actor *obj)
 			}
 		}
 		// Look for objs we have lost site of
+		TempKnownList.push_back(obj); // Add self.
 		irr::core::list<Actor*>::Iterator ittr(obj->KnownList.begin());
 		for(;ittr != obj->KnownList.end(); ittr++)
 		{

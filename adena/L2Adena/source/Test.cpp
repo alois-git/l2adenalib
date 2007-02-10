@@ -26,6 +26,7 @@
 #include <CInProcessLoginServerLink.h>
 #include <CInProcessGameServerLink.h>
 #include <CSkillInfoCache.h>
+#include <CL2PacketCap.h>
 
 using namespace std;
 using namespace irr;
@@ -75,6 +76,11 @@ int main()
 
 int main()
 {
+	/*adena::utility::CL2PacketCap lpc = adena::utility::CL2PacketCap();
+	lpc.run();
+
+	system("PAUSE");*/
+
 	adena::login_server::CLoginServer* s = new adena::login_server::CLoginServer();
 	adena::game_server::CGameServer* g = new adena::game_server::CGameServer();
 	adena::login_server::CInProcessGameServerLink GameLink = adena::login_server::CInProcessGameServerLink(s);

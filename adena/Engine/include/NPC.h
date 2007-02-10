@@ -39,6 +39,22 @@ namespace game_server
 
 		virtual ~NPC();
 
+		virtual bool isAttackable();
+
+		virtual bool isAutoAttackable();
+
+		virtual irr::f64 getMaxHp();
+		virtual irr::f64 getHp();
+		virtual irr::f64 getMaxMp();
+		virtual irr::f64 getMp();
+
+		virtual irr::f32 getHpRegen();
+		virtual irr::f32 getMpRegen();
+
+		// Setters
+		virtual void setHp(irr::f64 hp);
+		virtual void setMp(irr::f64 mp);
+
 		virtual void respawn();
 
 		virtual void onSeeObj(Actor* obj);
@@ -49,9 +65,24 @@ namespace game_server
 
 		virtual void onBeenLost(Actor* obj);
 
+		virtual void onClick(COObject* event_instagator, bool shift_click);
+
+		virtual void onDeath(Actor* event_instagator);
+
+		virtual void takeDamage(Actor* event_instagator, irr::u32 &damage, bool crit, bool shield);
+
+		// Timers
+		virtual bool regenHpMpCp(void* data);
+
+		virtual bool disapearTimer(void* data);
+
+		virtual bool respawnTimer(void* data);
+
 		irr::core::vector3df SpawnLoc;
 		irr::u32 RespawnDelay;
 		irr::s32 SpawnHeading;
+
+		bool TickingHpMp;
 
 		SNPCInfo* NPCInfo;
 	};

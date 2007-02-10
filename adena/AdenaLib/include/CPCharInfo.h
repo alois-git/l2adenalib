@@ -48,53 +48,6 @@ namespace game_server
 
 		virtual bool writePacket()
 		{
-			/*w8(0x16);
-			w32(0x00); // Char obj id
-			w32(0x00);  // npctype id
-			w32(0x00); // Has karma
-			w32(-71338); // x
-			w32(258271); // y
-			w32(-3104); // z
-			w32(0x00); // Heading
-			w32(0x00);
-			w32(0x01); // Cast speed
-			w32(0x01); // Atk speed
-			w32(200); // Run speed
-			w32(100); // Walk speed
-			w32(200);  // Swim run speed
-			w32(100);  // Swin walk speed
-			w32(0x00); // _flRunSpd
-			w32(0x00); // _flWalkSpd
-			w32(200); // Fly run speed
-			w32(100); // Fly walk speed
-			wf(1.0); // Move speed x
-			wf(1.0); // Atk speed x
-			wf(1.0); // Collision radius
-			wf(1.0); // Collision height
-			w32(0x00); // right hand weapon
-			w32(0);
-			w32(0x00); // left hand weapon
-			w8(1);	// name above char 1=true ... ??
-			w8(0x01); // Running
-			w8(0x00); // Combat
-			w8(0x00); // Dead
-			w8(0x00); // Invisable
-			wStrW(irr::core::stringc("test")); // Char name
-			wStrW(irr::core::stringc("Adena")); // Char name
-			w32(0);
-			w32(0);
-			w32(0);
-
-			w16(0x00);  // Abnormal effect (bit map)
-			w16(0x00);  // C2
-			w32(0);  // C2
-			w32(0);  // C2
-			w32(0);  // C2
-			w32(0);  // C2
-			w8(0);  // C2
-
-			return;*/
-
 			SCharInfo* ci = P->CharInfo;
 			SClassTemplate* ct = P->Owner->Server->Interfaces.CharTemplates->loadTemplate(P->CharInfo->ClassId);
 
@@ -126,7 +79,7 @@ namespace game_server
 			w32(0x00); // Karma
 
 			w32(ct->M_SPD); // Cast speed
-			w32(ct->P_SPD); // Atk speed
+			w32(P->getAttackSpeed()); // Atk speed
 
 			w32(0x00); // Pvp status
 			w32(0x00); // Karma
@@ -183,8 +136,8 @@ namespace game_server
 			w16(0x00); // Recs have
 			w32(ci->ClassId); // Class id
 
-			w32(100); // Max cp
-			w32(ci->cp); // Current cp
+			w32(P->getMaxCp()); // Max cp
+			w32(P->getCp()); // Current cp
 	        w8(0x00); // Enchant effect
 
 	        w8(0x00); // Team circle around feet (0 = none, 1 = blue, 2 = red)

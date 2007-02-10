@@ -48,11 +48,11 @@ namespace game_server
 		{
 			if(!Writen)
 			{
+				Writen = true;
 				w8(0x12);
+
 				w32(ObjId);
 				w32(0x00);
-
-				Writen = true;
 			}
 			return true;
 		};
