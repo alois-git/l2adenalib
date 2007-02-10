@@ -48,6 +48,14 @@ namespace game_server
 
 		virtual void broadcastPacket(IPacket* pack);
 
+		/*
+		 * @param event_instagator: [IN] Obj that did the damage.
+		 * @param damage: [IN] Damage to be done [OUT] Damage actualy done.
+		 * @param crit: [IN] Crit hit.
+		 * @param shield: [IN] Shield blocked.
+		 */
+		virtual void takeDamage(Actor* event_instagator, irr::u32 &damage, bool crit, bool shield) {};
+
 		// Events
 
 		// Called when a controller clicks on this actor.

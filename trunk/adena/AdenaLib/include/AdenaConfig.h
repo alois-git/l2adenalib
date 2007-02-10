@@ -30,7 +30,7 @@
 #include <memory.h>
 
 // Version number is Major.Release.Revision
-#define ADENA_VERSION "0.0.55"
+#define ADENA_VERSION "0.0.58"
 
 #ifdef _IRR_WINDOWS_
 #ifdef ADENALIB_EXPORTS

@@ -48,15 +48,16 @@ namespace game_server
 		{
 			if(!Writen)
 			{
+				Writen = true;
 				w8(0x47);
+
 				w32(CharId);
 				w32(Loc.X);
 				w32(Loc.Y);
 				w32(Loc.Z);
-				w32(Heading);
-
-				Writen = true;
+				w32(Heading);				
 			}
+
 			return true;
 		};
 

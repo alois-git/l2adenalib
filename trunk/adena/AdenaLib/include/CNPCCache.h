@@ -42,6 +42,7 @@ namespace game_server
 		irr::f32 Collision_height;
 		irr::u32 Level;
 		irr::u32 Sex;
+		irr::core::stringc SpawnClass;
 		irr::u32 Atk_range;
 		irr::u32 Hp;
 		irr::u32 Mp;

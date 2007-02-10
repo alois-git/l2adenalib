@@ -48,6 +48,7 @@ namespace game_server
 		{
 			if(!Writen)
 			{
+				Writen = true;
 				w8(0x76);
 				w32(P->Id);
 				w32(Skill.Id);
@@ -57,8 +58,6 @@ namespace game_server
 					w32(P->Target->Id);
 				else
 					w32(0);
-
-				Writen = true;
 			}
 
 			return true;

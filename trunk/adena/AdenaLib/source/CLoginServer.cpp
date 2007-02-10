@@ -58,16 +58,9 @@ bool CLoginServer::init(const char* config_file)
 	if(Interfaces.Logger == 0)
 		Interfaces.Logger = new irr::CLogger(NULL);
 
-	try
-	{
-		Interfaces.ConfigFile = new BCini(config_file);
-	}catch (std::exception e)
-	{
-		Interfaces.Logger->log(e.what());
-		return false;
-	}
+	Interfaces.ConfigFile = new CConfig(config_file);
 
-	irr::net::Address a((*Interfaces.ConfigFile)["loginserver"]["host"].getData(), (*Interfaces.ConfigFile)["loginserver"]["port"].getData());
+	irr::net::Address a(Interfaces.ConfigFile->getString("loginserver", "host"), Interfaces.ConfigFile->getString("loginserver", "port"));
 	Server->bind(a);
 
 	// Random number generator setup
@@ -87,21 +80,21 @@ bool CLoginServer::init(const char* config_file)
 
 	// Database setup
 	irr::db::IDbConParms* conp;
-	if(!strcmp("mysql" ,(*Interfaces.ConfigFile)["database"]["type"].getData()))
+	if(!strcmp("mysql" ,Interfaces.ConfigFile->getString("database", "type").c_str()))
 	{
 		Interfaces.DataBase = new irr::db::CMySQL();
 		irr::db::CMySQLConParms* cp = new irr::db::CMySQLConParms();
-		cp->Ip = (*Interfaces.ConfigFile)["mysql"]["ip"].getData();
-		cp->Username = (*Interfaces.ConfigFile)["mysql"]["username"].getData();
-		cp->Password = (*Interfaces.ConfigFile)["mysql"]["password"].getData();
-		cp->Db = (*Interfaces.ConfigFile)["mysql"]["db"].getData();
-		cp->Port = atoi((*Interfaces.ConfigFile)["mysql"]["port"].getData());
+		cp->Ip = Interfaces.ConfigFile->getString("mysql", "ip");
+		cp->Username = Interfaces.ConfigFile->getString("mysql", "username");
+		cp->Password = Interfaces.ConfigFile->getString("mysql", "password");
+		cp->Db = Interfaces.ConfigFile->getString("mysql", "db");
+		cp->Port = Interfaces.ConfigFile->getInt("mysql", "port");
 		conp = cp;
 	}else
 	{
 		Interfaces.DataBase = new irr::db::CSQLLite();
 		irr::db::CSQLLiteConParms* qp = new irr::db::CSQLLiteConParms();
-		qp->FileName = (*Interfaces.ConfigFile)["sqlite"]["file"].getData();
+		qp->FileName = Interfaces.ConfigFile->getString("sqlite", "file");
 		conp = qp;
 	}
 	Interfaces.Logger->log("Attempting to connect to DB...");

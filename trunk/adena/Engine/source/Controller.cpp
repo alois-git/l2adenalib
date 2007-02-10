@@ -25,6 +25,8 @@
 #include <CPUserInfo.h>
 #include <CSPCreatureSay.h>
 #include <GameManager.h>
+#include <CSPTargetSelected.h>
+#include <CSPTargetUnselected.h>
 
 namespace adena
 {
@@ -67,14 +69,22 @@ void Controller::clickGround(irr::core::vector3df origin, irr::core::vector3df t
 
 void Controller::clickObject(Actor* obj, bool shift_click)
 {
-	Target = obj;
-	OwnedPawn->Target = obj;
-	obj->onClick(this, shift_click);
+		obj->onClick(this, shift_click);
 };
 
 void Controller::requestAttack(Actor* target, bool shift_click)
 {
-	OwnedPawn->attack(target, shift_click);
+	// Check that we are not in range.
+	if(OwnedPawn->Location.getDistanceFrom(target->Location) > OwnedPawn->getAttackRange())
+	{
+		irr::core::line3df line(OwnedPawn->Location, target->Location);
+		irr::core::vector3df vec = line.getVector();
+		vec.normalize();
+		OwnedPawn->moveToLocation(target->Location - (vec * (OwnedPawn->getAttackRange() * 0.95) ));
+	}else
+	{
+		OwnedPawn->attack(target, shift_click);
+	}
 };
 
 void Controller::requestUseSkill(irr::u32 skill_id, bool ctrl, bool shift)
@@ -88,6 +98,20 @@ void Controller::sendText(irr::u32 say_type, irr::core::stringc &msg, irr::core:
 	if(gm)
 	{
 		gm->broadcastPacket(new CSPCreatureSay(OwnedPawn->Id, say_type, ((Player*)OwnedPawn)->CharInfo->Name, msg));
+	}
+};
+
+void Controller::setTarget(Actor* target)
+{
+	Target = target;
+	OwnedPawn->Target = target;
+
+	if(target == 0)
+	{
+		OwnedPawn->broadcastPacket(new CSPTargetUnselected(OwnedPawn->Id, OwnedPawn->Location));
+	}else
+	{
+		OwnedPawn->broadcastPacket(new CSPTargetSelected(OwnedPawn->Id, Target->Id, Target->Location));
 	}
 };
 

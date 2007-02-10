@@ -72,6 +72,7 @@ namespace game_server
 		{
 			if(!Writen)
 			{
+				Writen = true;
 				w8(0x05);
 				w32(Attacker->Id);
 				w32(Hits[0].TargetId);
@@ -87,8 +88,6 @@ namespace game_server
 					w32(Hits[i].Damage);
 					w8(Hits[i].Flags);
 				}
-
-				Writen = true;
 			}
 			return true;
 		};

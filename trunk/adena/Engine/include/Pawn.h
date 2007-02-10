@@ -32,11 +32,20 @@ namespace adena
 namespace game_server
 {
 
+	enum E_PawnState
+	{
+		EPS_None = 0,
+		EPS_Attacking,
+		EPS_Casting,
+		EPS_Dead
+	};
+
 	enum E_MoveState
 	{
 		EMS_Still = 0,
 		EMS_Moving,
-		EMS_RequestMove
+		EMS_Sitting,
+		EMS_Walking
 	};
 
 	class Pawn : public Actor
@@ -55,12 +64,12 @@ namespace game_server
 
 		virtual irr::u32 getLevel();
 
-		virtual irr::u32 getMaxHp();
-		virtual irr::u32 getHp();
-		virtual irr::u32 getMaxMp();
-		virtual irr::u32 getMp();
-		virtual irr::u32 getMaxCp();
-		virtual irr::u32 getCp();
+		virtual irr::f64 getMaxHp();
+		virtual irr::f64 getHp();
+		virtual irr::f64 getMaxMp();
+		virtual irr::f64 getMp();
+		virtual irr::f64 getMaxCp();
+		virtual irr::f64 getCp();
 
 		virtual irr::u32 getSTR();
 		virtual irr::u32 getCON();
@@ -68,6 +77,20 @@ namespace game_server
 		virtual irr::u32 getINT();
 		virtual irr::u32 getWIT();
 		virtual irr::u32 getMEN();
+
+		virtual irr::u32 getPAttack() {return 0;};
+		virtual irr::f32 getAttackSpeed() {return 0;};
+		virtual irr::f32 getAttackRange() {return 0;};
+
+		virtual irr::f32 getHpRegen() {return 0;};
+
+		virtual bool isAutoAttackable();
+
+		// Setters
+
+		virtual void setHp(irr::f64 hp) {};
+		virtual void setCp(irr::f64 cp) {};
+		virtual void setXp(irr::u64 xp) {};
 
 		virtual void moveToLocation(irr::core::vector3df Target);
 
@@ -77,6 +100,18 @@ namespace game_server
 
 		virtual void useSkill(irr::u32 skill_id, bool ctrl, bool shift);
 
+		virtual void takeDamage(Actor* event_instagator, irr::u32 &damage, bool crit, bool shield);
+
+		// Timers
+
+		virtual bool attackTimer(void* data);
+
+		// Events
+
+		virtual irr::u32 onDoAttackDmg(Actor* target);
+
+		virtual void onDeath(Actor* event_instagator);
+
 		// Event called when MoveTarget reached.
 		virtual void onStopMove();
 
@@ -84,11 +119,23 @@ namespace game_server
 
 		irr::core::vector3df MoveTarget;
 		E_MoveState MoveState;
+		E_PawnState PawnState;
 		// We don't need to check our height EVERY tick...
 		irr::u32 LastZCheck;
 		Actor* Target;
 
+		// Stats
+		irr::u32 Level;
+
+		irr::f64 Cp;
+		irr::f64 Hp;
+		irr::f64 Mp;
+		irr::u64 Xp;
+
 		IGameServerClient* Owner;
+
+		bool HpUpdated;
+		bool CpUpdated;
 
 	};
 

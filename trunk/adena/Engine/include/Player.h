@@ -42,18 +42,20 @@ namespace game_server
 
 		virtual void destroy();
 
+		// Actions
 		virtual void useSkill(irr::u32 skill_id, bool ctrl, bool shift);
 
+		// Getters
 		virtual irr::u32 getSpeed();
 
 		virtual irr::u32 getLevel();
 
-		virtual irr::u32 getMaxHp();
-		virtual irr::u32 getHp();
-		virtual irr::u32 getMaxMp();
-		virtual irr::u32 getMp();
-		virtual irr::u32 getMaxCp();
-		virtual irr::u32 getCp();
+		virtual irr::f64 getMaxHp();
+		virtual irr::f64 getHp();
+		virtual irr::f64 getMaxMp();
+		virtual irr::f64 getMp();
+		virtual irr::f64 getMaxCp();
+		virtual irr::f64 getCp();
 
 		virtual irr::u32 getSTR();
 		virtual irr::u32 getCON();
@@ -62,8 +64,21 @@ namespace game_server
 		virtual irr::u32 getWIT();
 		virtual irr::u32 getMEN();
 
+		virtual irr::u32 getPAttack();
+		virtual irr::f32 getAttackSpeed();
+		virtual irr::f32 getAttackRange();
+
+		virtual irr::f32 getHpRegen();
+
 		virtual irr::core::array<SSkill>* getSkills();
 
+		// Setters
+		virtual void setHp(irr::f64 hp);
+		virtual void setCp(irr::f64 cp);
+
+		virtual void setXp(irr::u64 xp);
+
+		// Events
 		virtual void onSeeObj(Actor* obj);
 
 		virtual void onBeenSeen(Actor* obj);
@@ -72,6 +87,12 @@ namespace game_server
 
 		virtual void onBeenLost(Actor* obj);
 
+		virtual irr::u32 onDoAttackDmg(Actor* target);
+
+		// Timers
+		virtual bool regenHpMpCp(void* data);
+
+		// Utills
 		virtual void saveToDatabase();
 
 		SCharInfo* CharInfo;

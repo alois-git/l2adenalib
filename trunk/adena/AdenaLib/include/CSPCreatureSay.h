@@ -48,13 +48,13 @@ namespace game_server
 		{
 			if(!Writen)
 			{
+				Writen = true;
 				w8(0x4a);
 
 				w32(CharId);
 				w32(MessageType);
 				wStrW(Messenger);
 				wStrW(Message);
-				Writen = true;
 			}
 			return true;
 		};

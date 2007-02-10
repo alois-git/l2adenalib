@@ -60,6 +60,8 @@ public:
 			n->SpawnLoc.Z = atoi(qr[i]["locz"].c_str());
 			n->SpawnHeading = atoi(qr[i]["heading"].c_str());
 			n->RespawnDelay = atoi(qr[i]["respawn_delay"].c_str());
+			n->Hp = n->NPCInfo->Hp;
+			n->Mp = n->NPCInfo->Mp;
 			n->respawn();
 			W->newObj(n);
 		}
@@ -123,6 +125,11 @@ Player* GameManager::playerEnterWorld(SCharInfo* char_info, IGameServerClient* o
 	p->Location.Y = p->CharInfo->y;
 	p->Location.Z = p->CharInfo->z;
 	p->Location.Z = owner->Server->Interfaces.GeoData->getHeight(p->Location);
+	p->Hp = p->CharInfo->hp;
+	p->Cp = p->CharInfo->cp;
+	p->Mp = p->CharInfo->mp;
+	p->Xp = p->CharInfo->xp;
+	p->Level = p->CharInfo->Level;
 	PlayerList.push_back(p);
 	c->posses(p);
 	char_info->InUse = true;
@@ -130,18 +137,6 @@ Player* GameManager::playerEnterWorld(SCharInfo* char_info, IGameServerClient* o
 	owner->sendPacket(sm);
 
 	L2World->newObj(p);
-	/*CPCharInfo* ci = new CPCharInfo(p);
-	ci->getRef();
-	irr::core::list<Player*>::Iterator ittr(PlayerList.begin());
-	for(; ittr != PlayerList.end(); ittr++)
-	{
-		if((*ittr) != p)
-		{
-			(*ittr)->Owner->sendPacket(ci);
-			owner->sendPacket(new CPCharInfo((*ittr)));
-		}
-	}
-	ci->drop();*/
 
 	return p;
 };
@@ -149,16 +144,7 @@ Player* GameManager::playerEnterWorld(SCharInfo* char_info, IGameServerClient* o
 void GameManager::playerLeaveWorld(Player* player)
 {
 	L2World->removeObj(player);
-	/*irr::core::list<Player*>::Iterator ittr(PlayerList.begin());
-	for(; ittr != PlayerList.end(); ittr++)
-	{
-		if(player == (*ittr))
-		{
-			PlayerList.erase(ittr);
-			player->destroy();
-			break;
-		}
-	}*/
+	player->destroy();
 };
 
 }

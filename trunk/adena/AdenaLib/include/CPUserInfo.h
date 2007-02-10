@@ -66,7 +66,7 @@ namespace game_server
 			w32(ci->ClassId); // Class
 
 			w32(P->getLevel()); // Level
-			w64(ci->xp); // XP
+			w64(P->Xp); // XP
 			w32(P->getSTR()); // STR
 			w32(P->getDEX()); // DEX
 			w32(P->getCON()); // CON
@@ -119,15 +119,15 @@ namespace game_server
 			w32(0x00); // Left right hand
 			w32(0x00); // Hair
 
-			w32(ct->P_ATK); // Patk
-			w32(ct->P_SPD); // Patk speed
+			w32(P->getPAttack()); // Patk
+			w32(P->getAttackSpeed()); // Patk speed
 			w32(ct->P_DEF); // Pdef
 			w32(ct->EVASION); // Evasion
 			w32(ct->ACC); // Accutacy
 			w32(ct->CRIT); // Crit
 			w32(ct->M_ATK); // Matk
 			w32(ct->M_SPD); // Cast speed
-			w32(ct->P_SPD); // Atk speed
+			w32(P->getAttackSpeed()); // Atk speed
 			w32(ct->M_DEF); // Mdef
 
 			w32(0x00); // Pvp state (0 = white, 1 = purple)
@@ -191,8 +191,8 @@ namespace game_server
 			w32(ci->ClassId); // Class id
 			w32(0x00); // Effect arround player
 	        
-			w32(100); // Max cp
-			w32(ci->cp); // Current cp
+			w32(P->getMaxCp()); // Max cp
+			w32(P->getCp()); // Current cp
 			w8(0x00); // Enchant lvl
 
 			w8(0x00); // Team circle around feet (0 = none, 1 = blue, 2 = red)

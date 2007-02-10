@@ -75,10 +75,10 @@ namespace game_server
 	protected:
 
 		irr::core::stringc ObjName;
+		IOObjectSystem* ObjectSystem;
 
 	private:
 
-		IOObjectSystem* ObjectSystem;
 		bool Delete;
 
 	};

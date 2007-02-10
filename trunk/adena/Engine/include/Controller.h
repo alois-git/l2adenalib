@@ -34,6 +34,12 @@ namespace adena
 namespace game_server
 {
 
+	enum E_ControllerIntention
+	{
+		ECI_None = 0,
+		ECI_AutoAttack
+	};
+
 	class Controller : public COObject
 	{
 	public:
@@ -56,11 +62,12 @@ namespace game_server
 
 		virtual void sendText(irr::u32 say_type, irr::core::stringc &msg, irr::core::stringc &target);
 
+		virtual void setTarget(Actor* target);
+
 		IGameServerClient* Owner;
-
 		Pawn* OwnedPawn;
-
 		Actor* Target;
+		E_ControllerIntention Intention;
 
 	};
 

@@ -28,7 +28,7 @@
 #include <irrDb.h>
 #include <irrRng.h>
 #include <ILogger.h>
-#include <BCini.h>
+#include <CConfig.h>
 #include <CPlayerCache.h>
 #include <CCharTemplates.h>
 #include <COObjectSystem.h>
@@ -46,7 +46,7 @@ namespace game_server
 		irr::ILogger* Logger;
 		irr::db::IDatabase* DataBase;
 		irr::IRng* Rng;
-		BCini* ConfigFile;
+		CConfig* ConfigFile;
 		CPlayerCache* PlayerCache;
 		CCharTemplates* CharTemplates;
 		CSkillInfoCache* SkillCache;
