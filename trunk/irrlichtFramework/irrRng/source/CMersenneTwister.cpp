@@ -99,6 +99,8 @@ u32 CMersenneTwister::getRandU32()
 s32 CMersenneTwister::getRandS32(s32 min, s32 max)
 {
 	s32 range = abs(min - max);
+	if(range == 0)
+		return min;
 	u32 rand = getRandU32();
 	rand %= range;
 	return (rand + min);
