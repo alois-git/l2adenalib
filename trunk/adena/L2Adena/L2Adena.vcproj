@@ -67,6 +67,7 @@
 				AdditionalLibraryDirectories="..\lib;..\..\irrlichtFramework\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				SupportUnloadOfDelayLoadedDLL="false"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -146,6 +147,7 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				SupportUnloadOfDelayLoadedDLL="false"
 				TargetMachine="1"
 			/>
 			<Tool

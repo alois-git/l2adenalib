@@ -31,6 +31,7 @@
 #include <SCharInfo.h>
 #include <irrList.h>
 #include <IPacket.h>
+#include <Mutator.h>
 
 namespace adena
 {
@@ -65,6 +66,7 @@ namespace game_server
 
 		World* L2World;
 		SGameServerInterfaces* Interfaces;
+		Mutator* Mut;
 
 	};
 

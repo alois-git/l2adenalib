@@ -1,6 +1,6 @@
 /*
- * CCPRestartRequest.h - Client wants to go back to char select screen.
- * Created January 15, 2007, by Michael 'Bigcheese' Spencer.
+ * CSPRestartResponse.h - restart.
+ * Created February 21, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,57 +21,57 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_C_P_RESTART_REQUEST_H_
-#define _ADENA_C_C_P_RESTART_REQUEST_H_
+#ifndef _ADENA_C_S_P_RESTART_RESPONSE_H_
+#define _ADENA_C_S_P_RESTART_RESPONSE_H_
 
-#include <CClientPacket.h>
-#include <CPCharSelect.h>
-#include <Controller.h>
-#include <CSPRestartResponse.h>
-#include <CPCharSelect.h>
-#include <GameManager.h>
+#include <CServerPacket.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CCPRestartRequest : public CClientPacket
+	class CSPRestartResponse : public CServerPacket
 	{
 	public:
 
-		CCPRestartRequest(irr::c8* in_data, Controller* c)
-		: CClientPacket()
+		CSPRestartResponse()
+		: CServerPacket()
 		{
-			Data = in_data;
-			ReadPointer++;
-
-			if(c->OwnedPawn != 0)
-				((GameManager*)c->Owner->Server->Interfaces.GameManager)->playerLeaveWorld((Player*)c->OwnedPawn);
-			c->OwnedPawn = 0;
-			c->Owner->sendPacket(new CSPRestartResponse());
-			c->Owner->sendPacket(new CPCharSelect(c->Owner));
+			Priority = EPP_LOW;
 		};
 
-		virtual ~CCPRestartRequest()
-		{
-			Data = 0;
-		};
+		virtual ~CSPRestartResponse() {};
 
-		virtual void run()
+		virtual bool writePacket()
 		{
+			if(!Writen)
+			{
+				Writen = true;
+				w8(0x5f);
 
+				w32(0x01);
+				wStrW(irr::core::stringc(""));
+			}
+
+			return true;
 		};
 
 		virtual irr::c8* getData()
 		{
-			return NULL;
+			return Data;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return 0;
+			return WritePointer;
 		};
+
+	private:
+
+		irr::u32 CharId;
+		irr::core::vector3df Loc;
+		irr::s32 Heading;
 
 	};
 

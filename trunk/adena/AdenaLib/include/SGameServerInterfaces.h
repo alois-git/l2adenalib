@@ -35,6 +35,8 @@
 #include <CGeoData.h>
 #include <CSkillInfoCache.h>
 #include <CNPCCache.h>
+#include <CSkillTreeCache.h>
+#include <CItemCache.h>
 
 namespace adena
 {
@@ -54,6 +56,8 @@ namespace game_server
 		COObject* GameManager;
 		CGeoData* GeoData;
 		CNPCCache* NPCCache;
+		CSkillTreeCache* SkillTreeCache;
+		CItemCache* ItemCache;
 	};
 
 }

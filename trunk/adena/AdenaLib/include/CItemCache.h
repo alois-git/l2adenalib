@@ -1,9 +1,9 @@
 /*
- * SCharInfo.h - Persistant character info.
- * Created January 10, 2006, by Michael 'Bigcheese' Spencer.
+ * CItemCache.h - Items ftw.
+ * Created February 16, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,52 +21,43 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_CHAR_INFO_H_
-#define _ADENA_S_CHAR_INFO_H_
+#ifndef _ADENA_S_ITEM_INFO_H_
+#define _ADENA_S_ITEM_INFO_H_
 
 #include <AdenaConfig.h>
+#include <irrDb.h>
+#include <irrThread.h>
 #include <irrString.h>
 #include <irrArray.h>
-#include <CItemInstance.h>
+#include <SItemInfo.h>
+#include <AVL.h>
+#include <SCharInfo.h>
+#include <irrDb.h>
+#include <stdlib.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SSkill
+	class ADENALIB_API CItemCache
 	{
-		irr::u32 Id;
-		irr::u32 Level;
-		irr::u32 Enchant;
-	};
+	public:
 
-	struct SCharInfo
-	{
-		// Char currently in game?
-		bool InUse;
-		irr::u32 CharacterId;
-		irr::u32 AccountId;
-		irr::core::stringc Name;
-		irr::core::stringc Title;
-		irr::u32 RaceId;
-		irr::u32 ClassId;
-		irr::u32 Sex;
-		irr::u32 HairType;
-		irr::u32 HairColor;
-		irr::u32 FaceType;
-		irr::u32 Level;
-		irr::u64 xp;
-		irr::u64 sp;
-		irr::u32 hp;
-		irr::u32 mp;
-		irr::u32 cp;
-		irr::s32 x;
-		irr::s32 y;
-		irr::s32 z;
+		CItemCache();
 
-		irr::core::array<SSkill> Skills;
-		irr::core::array<CItemInstance> Items;
+		~CItemCache();
+
+		static CItemCache* getInstance();
+
+		void init(irr::db::IDatabase* db);
+
+		SItemInfo* getItemInfo(irr::u32 item_id);
+
+	private:
+
+		AVL<irr::u32,SItemInfo*> ItemInfo;
+
 	};
 
 }

@@ -39,6 +39,8 @@ namespace adena
 
 		~CConfig();
 
+		static CConfig* getInstance();
+
 		irr::core::stringc getString(irr::core::stringc section, irr::core::stringc var);
 		irr::s32 getInt(irr::core::stringc section, irr::core::stringc var);
 		irr::f64 getFloat(irr::core::stringc section, irr::core::stringc var);

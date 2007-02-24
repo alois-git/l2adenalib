@@ -63,6 +63,7 @@ CGameServerClient::CGameServerClient(irr::net::IServerClient* client, CGameServe
 	SessionId = 0;
 	Server = server;
 	Client = client;
+	PController = 0;
 
 	InBuff = new irr::c8[RECV_SIZE];
 	OutBuff = new irr::c8[RECV_SIZE];
@@ -310,7 +311,8 @@ void CGameServerClient::createCharButtion(irr::c8* data)
 // 15
 void CGameServerClient::requestItemList(irr::c8* data)
 {
-	sendPacket(new CSPItemList(true));
+	if(PController != 0)
+		sendPacket(new CSPItemList(true, (Player*)((Controller*)PController)->OwnedPawn));
 };
 
 // 27

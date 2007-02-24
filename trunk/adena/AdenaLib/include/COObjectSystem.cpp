@@ -67,6 +67,21 @@ COObjectSystem::~COObjectSystem()
 	}
 };
 
+COObjectSystem* COObjectSystem::getInstance()
+{
+	static COObjectSystem* os = 0;
+
+	if(!os)
+		os = new COObjectSystem();
+
+	return os;
+};
+
+irr::u32 COObjectSystem::getNextId()
+{
+	return Ids++;
+};
+
 void COObjectSystem::run()
 {
 	AVL<irr::u32, IOObject*>::Iterator<irr::u32, IOObject*> ittr(&Objects);
@@ -81,15 +96,16 @@ void COObjectSystem::run()
 				checkTimer();
 				if(((COObject*)item)->Delete)
 				{
-					removeObj(((COObject*)item)->Id);
 					irr::core::list<STimerFunc>::Iterator itr(TimerFuncs.begin());
 					for(; itr != TimerFuncs.end(); itr++)
 					{
 						if((*itr).Obj == item)
 						{
-							itr = TimerFuncs.erase(itr);
+							TimerFuncs.erase(itr);
+							itr = TimerFuncs.begin();
 						}
 					}
+					removeObj(((COObject*)item)->Id);
 					delete item;
 					break;
 				}else

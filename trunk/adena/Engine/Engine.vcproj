@@ -193,7 +193,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\Door.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\GameManger.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\ItemOnGround.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Mutator.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\MutAutoSkill.cpp"
 				>
 			</File>
 			<File
@@ -227,7 +243,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\Door.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\GameManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\ItemOnGround.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\Mutator.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\MutAutoSkill.h"
 				>
 			</File>
 			<File

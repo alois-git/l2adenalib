@@ -28,11 +28,21 @@
 #include <irrString.h>
 #include <AVL.h>
 #include <irrDb.h>
+#include <irrArray.h>
 
 namespace adena
 {
 namespace game_server
 {
+	
+	struct SDropInfo
+	{
+		irr::u32 ItemId;
+		irr::u32 Min;
+		irr::u32 Max;
+		irr::u32 Chance;
+	};
+
 	struct SNPCInfo
 	{
 		irr::u32 Id;
@@ -69,6 +79,7 @@ namespace game_server
 		irr::u32 Walk_spd;
 		irr::u32 Run_spd;
 		irr::u32 Is_undead;
+		irr::core::array<SDropInfo> DropInfo;
 	};
 
 	class ADENALIB_API CNPCCache

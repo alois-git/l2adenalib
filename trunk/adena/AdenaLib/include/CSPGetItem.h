@@ -1,6 +1,6 @@
 /*
- * CCPRestartRequest.h - Client wants to go back to char select screen.
- * Created January 15, 2007, by Michael 'Bigcheese' Spencer.
+ * CSPGetItem.h - Player picked up anditem.
+ * Created February 21, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,57 +21,61 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_C_P_RESTART_REQUEST_H_
-#define _ADENA_C_C_P_RESTART_REQUEST_H_
+#ifndef _ADENA_C_S_P_GET_ITEM_H_
+#define _ADENA_C_S_P_GET_ITEM_H_
 
-#include <CClientPacket.h>
-#include <CPCharSelect.h>
-#include <Controller.h>
-#include <CSPRestartResponse.h>
-#include <CPCharSelect.h>
-#include <GameManager.h>
+#include <Actor.h>
+#include <CServerPacket.h>
+#include <irrList.h>
+#include <ItemOnGround.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class CCPRestartRequest : public CClientPacket
+	class CSPGetItem : public CServerPacket
 	{
 	public:
 
-		CCPRestartRequest(irr::c8* in_data, Controller* c)
-		: CClientPacket()
+		CSPGetItem(ItemOnGround* item, irr::u32 getter_id)
+		: CServerPacket(), Item(item), Id(getter_id)
 		{
-			Data = in_data;
-			ReadPointer++;
-
-			if(c->OwnedPawn != 0)
-				((GameManager*)c->Owner->Server->Interfaces.GameManager)->playerLeaveWorld((Player*)c->OwnedPawn);
-			c->OwnedPawn = 0;
-			c->Owner->sendPacket(new CSPRestartResponse());
-			c->Owner->sendPacket(new CPCharSelect(c->Owner));
+			Priority = EPP_LOW;
 		};
 
-		virtual ~CCPRestartRequest()
-		{
-			Data = 0;
-		};
+		virtual ~CSPGetItem() {};
 
-		virtual void run()
+		virtual bool writePacket()
 		{
+			if(!Writen)
+			{
+				Writen = true;
+				w8(0x0d);
 
+				w32(Id);
+				w32(Item->Id);
+				w32(Item->Location.X);
+				w32(Item->Location.Y);
+				w32(Item->Location.Z);
+			}
+			return true;
 		};
 
 		virtual irr::c8* getData()
 		{
-			return NULL;
+			return Data;
 		};
 
 		virtual irr::u32 getLen()
 		{
-			return 0;
+			return WritePointer;
 		};
+
+	private:
+
+		ItemOnGround* Item;
+		irr::u32 Id;
 
 	};
 

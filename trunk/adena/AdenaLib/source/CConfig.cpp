@@ -36,6 +36,16 @@ CConfig::~CConfig()
 
 };
 
+CConfig* CConfig::getInstance()
+{
+	static CConfig* instance = 0;
+
+	if(!instance)
+		instance = new CConfig("game.ini");
+
+	return instance;
+};
+
 irr::core::stringc CConfig::getString(irr::core::stringc section, irr::core::stringc var)
 {
 	return (*Ini)[section.c_str()][var.c_str()].getData();
