@@ -62,16 +62,16 @@ namespace game_server
 		virtual void onClick(COObject* event_instagator, bool shift_click);
 
 		// Called when this actor sees another actor.
-		virtual void onSeeObj(Actor* obj) {puts("I've seen somthing.");};
+		virtual void onSeeObj(Actor* obj) {};
 
 		// Called when this actor is seen by another actor.
-		virtual void onBeenSeen(Actor* obj) {puts("I've been seen.");};
+		virtual void onBeenSeen(Actor* obj) {};
 
 		// Called when this actor loses site of another actor.
-		virtual void onLoseObj(Actor* obj) {puts("I've lost site of somthing.");};
+		virtual void onLoseObj(Actor* obj) {};
 
 		// Called when another actor loses site of this actor.
-		virtual void onBeenLost(Actor* obj) {puts("I've been lost site of.");};
+		virtual void onBeenLost(Actor* obj) {};
 
 		irr::core::vector3df Location;
 		irr::s32 Heading;

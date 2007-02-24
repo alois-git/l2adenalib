@@ -51,6 +51,8 @@ namespace game_server
 
 		virtual ~CGameServer();
 
+		static COObject* getGMInstance(IOObjectSystem* objsys = 0, irr::core::stringc name = "Engine.GameManager");
+
 		virtual void OnEvent(irr::net::NetEvent &e);
 
 		virtual bool init(const char* config_file);
@@ -61,7 +63,6 @@ namespace game_server
 
 		SGameServerInterfaces Interfaces;
 		irr::net::IServer* Server;
-		//irr::core::list<SClassTemplate> ClassTemplateList;
 		irr::core::threads::Mutex CreateCharMutex;
 		ILoginServerLink* LoginServerLink;
 
@@ -81,10 +82,6 @@ namespace game_server
 		// Maps account ids to user info
 		AVL<irr::u32, SAccountUser> AccountUsers;
 		irr::core::threads::Mutex AccountUsersMutex;
-
-		// Maps char ids to players
-		//AVL<irr::u32, COPawn*> Players;
-		//irr::core::threads::Mutex PlayersMutex;
 
 		// Maps account names to char ids
 		AVL<irr::core::stringc, irr::u32> Accounts;

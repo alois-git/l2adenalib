@@ -26,6 +26,7 @@
 
 #include <Pawn.h>
 #include <SCharInfo.h>
+#include <SItemInfo.h>
 
 namespace adena
 {
@@ -68,15 +69,22 @@ namespace game_server
 		virtual irr::f32 getAttackSpeed();
 		virtual irr::f32 getAttackRange();
 
+		virtual irr::u32 getMAttack();
+		virtual irr::f32 getCastSpeed();
+		virtual irr::f32 getCastRange();
+
 		virtual irr::f32 getHpRegen();
 
 		virtual irr::core::array<SSkill>* getSkills();
+		virtual irr::core::array<CItemInstance>* getItems();
 
 		// Setters
+		virtual void addItem(SItemInfo* item, irr::u32 count);
+
 		virtual void setHp(irr::f64 hp);
 		virtual void setCp(irr::f64 cp);
 
-		virtual void setXp(irr::u64 xp);
+		virtual void setXpSp(irr::u64 xp, irr::u64 sp);
 
 		// Events
 		virtual void onSeeObj(Actor* obj);

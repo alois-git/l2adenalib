@@ -36,10 +36,10 @@ namespace game_server
 	{
 	public:
 
-		CSPSkillUsed(Player* player, SSkill &skill)
-		: CServerPacket(), P(player), Skill(skill)
+		CSPSkillUsed(Player* player, SSkill &skill, irr::s32 hit_time, irr::s32 reuse_delay)
+		: CServerPacket(), P(player), Skill(skill), HitTime(hit_time), ReuseDelay(reuse_delay)
 		{
-			Priority = EPP_LOW;
+			Priority = EPP_URGENT;
 		};
 
 		virtual ~CSPSkillUsed() {};
@@ -48,16 +48,21 @@ namespace game_server
 		{
 			if(!Writen)
 			{
-				Writen = true;
-				w8(0x76);
+				w8(0x48);
+
 				w32(P->Id);
+				w32(P->Target->Id);
 				w32(Skill.Id);
 				w32(Skill.Level);
-				w32(0); // failed
-				if(P->Target != 0)
-					w32(P->Target->Id);
-				else
-					w32(0);
+				w32(HitTime);
+				w32(ReuseDelay);
+				w32(P->Location.X);
+				w32(P->Location.Y);
+				w32(P->Location.Z);
+				w16(0x00);
+				w32(0x00);
+				w32(0x00);
+				w32(0x00);
 			}
 
 			return true;
@@ -77,6 +82,8 @@ namespace game_server
 
 		Player* P;
 		SSkill Skill;
+		irr::s32 HitTime;
+		irr::s32 ReuseDelay;
 
 	};
 

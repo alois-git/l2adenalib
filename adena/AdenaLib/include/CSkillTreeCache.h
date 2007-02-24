@@ -1,9 +1,9 @@
 /*
- * SCharInfo.h - Persistant character info.
- * Created January 10, 2006, by Michael 'Bigcheese' Spencer.
+ * CSkillTreeCache.h - Skill tree.
+ * Created February 10, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,52 +21,53 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_CHAR_INFO_H_
-#define _ADENA_S_CHAR_INFO_H_
+#ifndef _ADENA_C_SKILL_TREE_CACHE_H_
+#define _ADENA_C_SKILL_TREE_CACHE_H_
 
 #include <AdenaConfig.h>
+#include <irrDb.h>
+#include <irrThread.h>
 #include <irrString.h>
 #include <irrArray.h>
-#include <CItemInstance.h>
+#include <map>
+#include <AVL.h>
+#include <SCharInfo.h>
+#include <irrDb.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SSkill
+	class ADENALIB_API CSkillTreeCache
 	{
-		irr::u32 Id;
-		irr::u32 Level;
-		irr::u32 Enchant;
-	};
+	public:
 
-	struct SCharInfo
-	{
-		// Char currently in game?
-		bool InUse;
-		irr::u32 CharacterId;
-		irr::u32 AccountId;
-		irr::core::stringc Name;
-		irr::core::stringc Title;
-		irr::u32 RaceId;
-		irr::u32 ClassId;
-		irr::u32 Sex;
-		irr::u32 HairType;
-		irr::u32 HairColor;
-		irr::u32 FaceType;
-		irr::u32 Level;
-		irr::u64 xp;
-		irr::u64 sp;
-		irr::u32 hp;
-		irr::u32 mp;
-		irr::u32 cp;
-		irr::s32 x;
-		irr::s32 y;
-		irr::s32 z;
+		CSkillTreeCache();
 
-		irr::core::array<SSkill> Skills;
-		irr::core::array<CItemInstance> Items;
+		~CSkillTreeCache();
+
+		void init(irr::db::IDatabase* db);
+
+		irr::core::array<SSkill> getSkillsForPlayer(irr::u32 class_id, irr::u32 level);
+
+	private:
+
+		struct SSkillTree
+		{
+			irr::u32 ClassId;
+			irr::u32 Id;
+			irr::u32 MaxLevel;
+			irr::u32 Sp;
+			irr::u32 MinLevel;
+		};
+
+		// Returns true if needed_class is a base class of cur_class.
+		bool isOfClass(irr::u32 cur_class, irr::u32 needed_class);
+
+		irr::core::array<irr::s32> ClassToBase;
+		irr::core::array<SSkillTree> SkillTree;
+
 	};
 
 }

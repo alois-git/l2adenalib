@@ -24,6 +24,9 @@
 #include <CPlayerCache.h>
 #include <SGameServerInterfaces.h>
 #include <CCharTemplates.h>
+#include <CItemInstance.h>
+#include <CItemCache.h>
+#include <COObjectSystem.h>
 
 namespace adena
 {
@@ -79,8 +82,8 @@ bool CPlayerCache::createChar(SCharInfo &char_info)
 		}
 
 		// Add char
-		irr::db::Query add_char(irr::core::stringc("INSERT INTO characters (account_id, name, race_id, class_id, sex, hair_type, hair_color, face, level, hp, mp, cp, x, y, z)\
-VALUES ($acc, '$name', $race, $class, $sex, $hairt, $hairc, $face, $lvl, $hp, $mp, $cp, $x, $y, $z)"));
+		irr::db::Query add_char(irr::core::stringc("INSERT INTO characters (account_id, name, race_id, class_id, sex, hair_type, hair_color, face, level, xp, sp, hp, mp, cp, x, y, z)\
+VALUES ($acc, '$name', $race, $class, $sex, $hairt, $hairc, $face, $lvl, $xp, $sp, $hp, $mp, $cp, $x, $y, $z)"));
 		add_char.setVar(irr::core::stringc("$acc"), irr::core::stringc((int)char_info.AccountId));
 		add_char.setVar(irr::core::stringc("$name"), char_info.Name);
 		add_char.setVar(irr::core::stringc("$race"), irr::core::stringc((int)char_info.RaceId));
@@ -90,6 +93,8 @@ VALUES ($acc, '$name', $race, $class, $sex, $hairt, $hairc, $face, $lvl, $hp, $m
 		add_char.setVar(irr::core::stringc("$hairc"), irr::core::stringc((int)char_info.HairColor));
 		add_char.setVar(irr::core::stringc("$face"), irr::core::stringc((int)char_info.FaceType));
 		add_char.setVar(irr::core::stringc("$lvl"), irr::core::stringc(1));
+		add_char.setVar(irr::core::stringc("$xp"), irr::core::stringc(0));
+		add_char.setVar(irr::core::stringc("$sp"), irr::core::stringc(0));
 		add_char.setVar(irr::core::stringc("$hp"), irr::core::stringc(50));
 		add_char.setVar(irr::core::stringc("$mp"), irr::core::stringc(50));
 		add_char.setVar(irr::core::stringc("$cp"), irr::core::stringc(50));
@@ -158,6 +163,7 @@ SCharInfo* CPlayerCache::loadChar(irr::u32 char_id)
 		ci->Title = qr[0]["title"];
 		ci->Level = atoi(qr[0]["level"].c_str());
 		ci->xp = atoi(qr[0]["xp"].c_str());
+		ci->sp = atoi(qr[0]["sp"].c_str());
 		ci->hp = atoi(qr[0]["hp"].c_str());
 		ci->mp = atoi(qr[0]["mp"].c_str());
 		ci->cp = atoi(qr[0]["cp"].c_str());
@@ -166,17 +172,36 @@ SCharInfo* CPlayerCache::loadChar(irr::u32 char_id)
 		ci->z = atoi(qr[0]["z"].c_str());
 
 		// Query skills
-		irr::db::Query q2(irr::core::stringc("SELECT * FROM char_skills WHERE char_id = $id"));
-		q2.setVar(irr::core::stringc("$id"), irr::core::stringc((int)char_id));
-		irr::db::CQueryResult qr2 = interfaces->DataBase->query(q2);
-
-		for(irr::u32 i = 0; i < qr2.RowCount; i++)
 		{
-			SSkill s;
-			s.Id = atoi(qr2[i]["skill_id"].c_str());
-			s.Level = atoi(qr2[i]["skill_level"].c_str());
-			s.Enchant = atoi(qr2[i]["skill_enchant"].c_str());
-			ci->Skills.push_back(s);
+			irr::db::Query q2(irr::core::stringc("SELECT * FROM char_skills WHERE char_id = $id"));
+			q2.setVar(irr::core::stringc("$id"), irr::core::stringc((int)char_id));
+			irr::db::CQueryResult qr2 = interfaces->DataBase->query(q2);
+
+			for(irr::u32 i = 0; i < qr2.RowCount; i++)
+			{
+				SSkill s;
+				s.Id = atoi(qr2[i]["skill_id"].c_str());
+				s.Level = atoi(qr2[i]["skill_level"].c_str());
+				s.Enchant = atoi(qr2[i]["skill_enchant"].c_str());
+				ci->Skills.push_back(s);
+			}
+		}
+
+		{
+			// Query Items
+			irr::db::Query q2(irr::core::stringc("SELECT * FROM items WHERE owner_id = $id"));
+			q2.setVar(irr::core::stringc("$id"), irr::core::stringc((int)char_id));
+			irr::db::CQueryResult qr2 = interfaces->DataBase->query(q2);
+
+			for(irr::u32 i = 0; i < qr2.RowCount; i++)
+			{
+				CItemInstance ii;
+
+				ii.Id = COObjectSystem::getInstance()->getNextId();
+				ii.ItemInfo = CItemCache::getInstance()->getItemInfo(atoi(qr2[i]["item_id"].c_str()));
+				ii.ItemCount = atoi(qr2[i]["count"].c_str());
+				ci->Items.push_back(ii);
+			}
 		}
 
 		CharInfosLock.writeLock();
@@ -198,19 +223,74 @@ void CPlayerCache::saveChar(irr::u32 char_id)
 		}
 		CharInfosLock.unlock();
 
-		irr::db::Query save_char(irr::core::stringc("UPDATE characters SET class_id = $class, title = '$title', level = $lvl, xp = $xp, hp = $hp, mp = $mp, cp = $cp, x = $x, y = $y, z = $z WHERE id = $id"));
-		save_char.setVar(irr::core::stringc("$class"), irr::core::stringc((int)ci->ClassId));
-		save_char.setVar(irr::core::stringc("$title"), ci->Title);
-		save_char.setVar(irr::core::stringc("$lvl"), irr::core::stringc((int)ci->Level));
-		save_char.setVar(irr::core::stringc("$xp"), irr::core::stringc((int)ci->xp));
-		save_char.setVar(irr::core::stringc("$hp"), irr::core::stringc((int)ci->hp));
-		save_char.setVar(irr::core::stringc("$mp"), irr::core::stringc((int)ci->mp));
-		save_char.setVar(irr::core::stringc("$cp"), irr::core::stringc((int)ci->cp));
-		save_char.setVar(irr::core::stringc("$x"), irr::core::stringc(ci->x));
-		save_char.setVar(irr::core::stringc("$y"), irr::core::stringc(ci->y));
-		save_char.setVar(irr::core::stringc("$z"), irr::core::stringc(ci->z));
-		save_char.setVar(irr::core::stringc("$id"), irr::core::stringc((int)char_id));
-		interfaces->DataBase->query(save_char);
+		{
+			irr::db::Query save_char(irr::core::stringc("UPDATE characters SET class_id = $class, title = '$title', level = $lvl, xp = $xp, sp = $sp, hp = $hp, mp = $mp, cp = $cp, x = $x, y = $y, z = $z WHERE id = $id"));
+			save_char.setVar(irr::core::stringc("$class"), irr::core::stringc((int)ci->ClassId));
+			save_char.setVar(irr::core::stringc("$title"), ci->Title);
+			save_char.setVar(irr::core::stringc("$lvl"), irr::core::stringc((int)ci->Level));
+			save_char.setVar(irr::core::stringc("$xp"), irr::core::stringc((int)ci->xp));
+			save_char.setVar(irr::core::stringc("$sp"), irr::core::stringc((int)ci->sp));
+			save_char.setVar(irr::core::stringc("$hp"), irr::core::stringc((int)ci->hp));
+			save_char.setVar(irr::core::stringc("$mp"), irr::core::stringc((int)ci->mp));
+			save_char.setVar(irr::core::stringc("$cp"), irr::core::stringc((int)ci->cp));
+			save_char.setVar(irr::core::stringc("$x"), irr::core::stringc(ci->x));
+			save_char.setVar(irr::core::stringc("$y"), irr::core::stringc(ci->y));
+			save_char.setVar(irr::core::stringc("$z"), irr::core::stringc(ci->z));
+			save_char.setVar(irr::core::stringc("$id"), irr::core::stringc((int)char_id));
+			interfaces->DataBase->query(save_char);
+		}
+
+		// Skills
+		{
+			irr::db::Query del_skills(irr::core::stringc("DELETE FROM char_skills WHERE char_id = $id"));
+			del_skills.setVar(irr::core::stringc("$id"), irr::core::stringc((int)char_id));
+			interfaces->DataBase->query(del_skills);
+
+			irr::core::stringc query("INSERT INTO char_skills (char_id, skill_id, skill_level, skill_enchant) VALUES ");
+			for(irr::u32 i = 0; i < ci->Skills.size(); i++)
+			{
+				query += "(";
+				query += (irr::s32)ci->CharacterId;
+				query += ", ";
+				query += (irr::s32)ci->Skills[i].Id;
+				query += ", ";
+				query += (irr::s32)ci->Skills[i].Level;
+				query += ", ";
+				query += (irr::s32)ci->Skills[i].Enchant;
+				query += ")";
+
+				if(i != ci->Skills.size() - 1)
+					query += ",";
+			}
+
+			irr::db::Query add_skills(query);
+			interfaces->DataBase->query(add_skills);
+		}
+
+		// Items
+		{
+			irr::db::Query del_items(irr::core::stringc("DELETE FROM items WHERE owner_id = $id"));
+			del_items.setVar(irr::core::stringc("$id"), irr::core::stringc((int)char_id));
+			interfaces->DataBase->query(del_items);
+
+			irr::core::stringc query("INSERT INTO items (owner_id, item_id, count, loc, equip_loc) VALUES ");
+			for(irr::u32 i = 0; i < ci->Items.size(); i++)
+			{
+				query += "(";
+				query += (irr::s32)ci->CharacterId;
+				query += ", ";
+				query += (irr::s32)ci->Items[i].ItemInfo->ItemId;
+				query += ", ";
+				query += (irr::s32)ci->Items[i].ItemCount;
+				query += ", 'INVENTORY', 0)";
+
+				if(i != ci->Skills.size() - 1)
+					query += ",";
+			}
+
+			irr::db::Query add_items(query);
+			interfaces->DataBase->query(add_items);
+		}
 };
 
 void CPlayerCache::garbageCollect(bool full_collect)

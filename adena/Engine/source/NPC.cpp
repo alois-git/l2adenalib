@@ -24,10 +24,13 @@
 #include <NPC.h>
 #include <Player.h>
 #include <Controller.h>
+#include <ItemOnGround.h>
+#include <GameManager.h>
 #include <CSPNpcInfo.h>
 #include <CSPDeleteObj.h>
 #include <CSPStatusUpdate.h>
 #include <CSPSystemMessage.h>
+#include <CDbRandInstance.h>
 
 namespace adena
 {
@@ -192,14 +195,39 @@ void NPC::onDeath(Actor* event_instagator)
 	if(p)
 	{
 		irr::u32 xp = NPCInfo->Exp * p->Owner->Server->Interfaces.ConfigFile->getInt("gameserver", "xp_rate");
-		p->setXp(p->Xp + xp);
+		irr::u32 sp = NPCInfo->Sp * p->Owner->Server->Interfaces.ConfigFile->getInt("gameserver", "sp_rate");
+		p->setXpSp(p->Xp + xp, p->Sp + sp);
 		CSPSystemMessage* sm = new CSPSystemMessage(EMI_YOU_EARNED_S1_EXP_AND_S2_SP);
 		sm->addNumber(xp);
-		sm->addNumber(0); // TODO: Sp
+		sm->addNumber(sp);
 		p->Owner->sendPacket(sm);
 	}
-	ObjectSystem->regTimerFunc(this, (IOObjectSystem::timerFunc)&NPC::disapearTimer, 1000);
+	ObjectSystem->regTimerFunc(this, (IOObjectSystem::timerFunc)&NPC::disapearTimer, RespawnDelay * 900);
 	ObjectSystem->regTimerFunc(this, (IOObjectSystem::timerFunc)&NPC::respawnTimer, RespawnDelay * 1000);
+
+	// Drop items
+	irr::IRng* rng = CDbRandInstance::getRngInstance();
+	CConfig* c = CConfig::getInstance();
+	CItemCache* ic = CItemCache::getInstance();
+	GameManager* gm = (GameManager*)CGameServer::getGMInstance();
+	for(irr::u32 i = 0; i < NPCInfo->DropInfo.size(); i++)
+	{
+		irr::u32 rand = rng->getRandS32(0, 1000000);
+		if(rand <= (NPCInfo->DropInfo[i].Chance * c->getInt("gameserver", "drop_rate")))
+		{
+			// Create the item
+			irr::s32 count = rng->getRandS32(NPCInfo->DropInfo[i].Min, NPCInfo->DropInfo[i].Max);
+
+			ItemOnGround* iog = (ItemOnGround*)COObject::spawn("Engine.ItemOnGround");
+			iog->Dropper = this;
+			iog->ItemInfo = ic->getItemInfo(NPCInfo->DropInfo[i].ItemId);
+			iog->Location = Location + irr::core::vector3df(rng->getRandS32(-35, 35), rng->getRandS32(-35, 35), rng->getRandS32(-35, 35));
+			iog->ItemCount = count;
+
+			gm->L2World->newObj(iog);
+		}
+	};
+
 	Tick = false;
 };
 

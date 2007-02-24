@@ -64,6 +64,10 @@ namespace game_server
 
 		virtual void setTarget(Actor* target);
 
+		virtual void setIntention(E_ControllerIntention intention);
+
+		virtual void checkIntention();
+
 		IGameServerClient* Owner;
 		Pawn* OwnedPawn;
 		Actor* Target;

@@ -22,6 +22,7 @@
  */
 
 #include <Pawn.h>
+#include <Player.h>
 #include <CSPStopMove.h>
 #include <CSPDeleteObj.h>
 #include <CSPMoveToLocation.h>
@@ -31,6 +32,7 @@
 #include <CSPAttack.h>
 #include <CSPSystemMessage.h>
 #include <CSPDie.h>
+#include <CSPSkillLaunched.h>
 
 namespace adena
 {
@@ -45,7 +47,7 @@ REG_EXPORT COObject* load_Pawn(IOObjectSystem* obj_sys)
 }
 
 Pawn::Pawn(IOObjectSystem* obj_sys)
-: Actor(obj_sys), MoveState(EMS_Still), PawnState(EPS_None), Target(0), HpUpdated(false), CpUpdated(false), Cp(0), Hp(0), Mp(0)
+: Actor(obj_sys), Owner(0), MoveState(EMS_Still), PawnState(EPS_None), Target(0), HpUpdated(false), CpUpdated(false), Cp(0), Hp(0), Mp(0)
 {
 
 };
@@ -176,8 +178,24 @@ bool Pawn::isAutoAttackable()
 	return false;
 };
 
+bool Pawn::isDead()
+{
+	if(PawnState == EPS_Dead)
+		return true;
+	return false;
+};
+
+bool Pawn::isLooksDead()
+{
+	return isDead();
+};
+
 void Pawn::moveToLocation(irr::core::vector3df Target)
 {
+	if(PawnState == EPS_Dead)
+		return;
+	if(PawnState == EPS_Attacking || PawnState == EPS_Casting)
+		PawnState = EPS_None;
 	MoveTarget = Owner->Server->Interfaces.GeoData->moveCheck(Location, Target);
 	broadcastPacket(new CSPMoveToLocation(Id, MoveTarget, Location));
 	MoveState = EMS_Moving;
@@ -194,6 +212,11 @@ void Pawn::attack(Actor* target, bool shift_click)
 	{
 		return;
 	}
+
+	Pawn* p = dynamic_cast<Pawn*>(target);
+	if(p)
+		if(p->PawnState == EPS_Dead)
+			return;
 
 	if(MoveState != EMS_Still)
 	{
@@ -216,36 +239,56 @@ void Pawn::useSkill(irr::u32 skill_id, bool ctrl, bool shift)
 
 void Pawn::takeDamage(Actor* event_instagator, irr::u32 &damage, bool crit, bool shield)
 {
-	Tick = true;
-	if(damage < Cp)
+	if(PawnState != EPS_Dead)
 	{
-		setCp(Cp - damage);
-	}else
-	{
-		damage -= Cp;
-		setCp(0);
-		setHp(getHp() - damage);
-		if(Hp <= 0)
+		Tick = true;
+		if(damage < Cp)
 		{
-			onDeath(event_instagator);
+			setCp(Cp - damage);
+		}else
+		{
+			damage -= Cp;
+			setCp(0);
+			setHp(getHp() - damage);
+			if(Hp <= 0)
+			{
+				onDeath(event_instagator);
+			}
 		}
 	}
 };
 
 bool Pawn::attackTimer(void* data)
 {
-	// Made it into an event so it can be overridden in sub classes.
-	onDoAttackDmg((Actor*)data);
+	if(PawnState == EPS_Attacking)
+		onDoAttackDmg((Actor*)data);
+	return false;
+};
+
+bool Pawn::skillTimer(void* data)
+{
+	if(PawnState == EPS_Casting)
+	{
+		SSkill* s = (SSkill*)data;
+		CSPSkillLaunched* sl = new CSPSkillLaunched(this, *s);
+		broadcastPacket(sl);
+		irr::u32 dmg = getMAttack();
+		Target->takeDamage(this, dmg, false, false);
+	}
 	return false;
 };
 
 irr::u32 Pawn::onDoAttackDmg(Actor* target)
 {
-	// Calculate damage
-	irr::u32 dmg = getPAttack() * 25;
-	target->takeDamage(this, dmg, false, false);
-	PawnState = EPS_None;
-	return dmg;
+	if(PawnState == EPS_Attacking)
+	{
+		// Calculate damage
+		irr::u32 dmg = getPAttack() * 25;
+		target->takeDamage(this, dmg, false, false);
+		PawnState = EPS_None;
+		return dmg;
+	}
+	return 0;
 };
 
 void Pawn::onDeath(Actor* event_instagator)
@@ -254,11 +297,18 @@ void Pawn::onDeath(Actor* event_instagator)
 		moveToLocation(Location);
 	PawnState = EPS_Dead;
 	broadcastPacket(new CSPDie(this));
+	Player* p = dynamic_cast<Player*>(event_instagator);
+	if(p)
+	{
+		((Controller*)p->Owner->PController)->setIntention(ECI_None);
+	}
 };
 
 void Pawn::onStopMove()
 {
 	broadcastPacket(new CSPStopMove(Id, Location, Heading));
+	if(Owner)
+		((Controller*)Owner->PController)->checkIntention();
 };
 
 void Pawn::onClick(COObject* event_instagator, bool shift_click)

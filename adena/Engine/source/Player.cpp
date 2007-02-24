@@ -31,6 +31,8 @@
 #include <CPUserInfo.h>
 #include <CSPSocial.h>
 #include <CSPSystemMessage.h>
+#include <CSPSetupGauge.h>
+#include <CSPItemList.h>
 
 namespace adena
 {
@@ -74,9 +76,24 @@ irr::f64 _inline getDexMod(irr::u32 dex)
 	return quadEqu(0.000021739130434350606, 0.008717391304358557, 0.8182608695648241, dex);
 };
 
+irr::f64 _inline getIntMod(irr::u32 _int)
+{
+	return expEqu(0.5371684942309826, 1.0199841763646618, _int);
+};
+
+irr::f64 _inline getWitMod(irr::u32 wit)
+{
+	return expEqu(0.3784927339908137, 1.0498188918035174, wit);
+};
+
 irr::f64 _inline getMenMod(irr::u32 men)
 {
 	return quadEqu(0.000076312576312354, 0.008751770451773666, 1.017893772893558, men);
+};
+
+irr::f64 _inline getLevelMod(irr::f64 level)
+{
+	return (level + 89) / 100;
 };
 
 irr::f64 _fastcall getBaseHpForClass(irr::u32 class_id, irr::u32 level)
@@ -114,6 +131,7 @@ irr::f64 _fastcall getBaseHpForClass(irr::u32 class_id, irr::u32 level)
 			table[17][i] = quadEqu(0.20500000001629815, 36.69499999657273, -630.8999999463558, i + 1); // Prophet
 			table[18][i] = quadEqu(0.0708333333277551, 12.458833333104849, 77.91699999570847, i + 1); // Light Elf Fighter
 			table[19][i] = quadEqu(0.14999999999417923, 26.84999999962747, -242.00000001490116, i + 1); // Light Elf Knight
+			table[53][i] = quadEqu(0.069999999992433, 12.529999999329448, 67.39999999850988, i + 1); // Dwarf Fighter
 			// TODO: Finish adding this data.
 		}
 		// Copy base class hp stats into higher class hp stats
@@ -159,6 +177,16 @@ irr::f64 _fastcall getBaseCpForClass(irr::u32 class_id, irr::u32 level)
 			table[17][i] = quadEqu(0.10249999999359716, 18.347469696309417, -315.45112121105194, i + 1); // Prophet
 			table[18][i] = quadEqu(0.028106060599384364, 5.002348484937102, 30.774696964770555, i + 1); // Light Elf Fighter
 			table[19][i] = quadEqu(0.07499999999708962, 13.424999999813735, -121.00000000745058, i + 1); // Light Elf Knight
+			table[20][i] = quadEqu(0.11999999999534339, 21.479999999981374, -407.9999999925494, i + 1); // Temple Knight
+			table[21][i] = quadEqu(0.10499999999592546, 18.794999999459833, -383.80000000447035, i + 1); // Sword Singer
+			table[22][i] = quadEqu(0.05606060606078245, 10.01848484808579, -80.75703030824661, i + 1); // Light Elf Scout
+			table[23][i] = quadEqu(0.0720454545407847, 12.883863636292517, -220.94827274233103, i + 1); // Plains Walker
+			table[24][i] = quadEqu(0.09499999999752617, 17.00499999895692, -320.09999998658895, i + 1); // Silver Ranger
+			table[25][i] = quadEqu(0.042499999988649506, 7.607469697482884, 44.348878771066666, i + 1); // Light Elf Mage
+			table[26][i] = quadEqu(0.06499999998777639, 11.635000000242144, -45.20000001788139, i + 1); // Light Elf Wizard
+			table[27][i] = quadEqu(0.09249999999519787, 16.557469696737826, -286.1011212170124, i + 1); // Spell Singer
+			table[28][i] = quadEqu(0.1170454545354005, 20.938863635994494, -395.7882727384567, i + 1); // Elemental Summoner
+			table[53][i] = quadEqu(0.04909090909131919, 8.76272727176547, 47.363454565405846, i + 1); // Dwarf Fighter
 			// TODO: Finish adding this data.
 		}
 		// Copy base class cp stats into higher class cp stats
@@ -185,7 +213,7 @@ Player::Player(IOObjectSystem* obj_sys)
 : Pawn(obj_sys)
 {
 	Tick = true;
-	obj_sys->regTimerFunc(this, (IOObjectSystem::timerFunc)&Player::regenHpMpCp, 5000);
+	obj_sys->regTimerFunc(this, (IOObjectSystem::timerFunc)&Player::regenHpMpCp, 3000);
 };
 
 Player::~Player()
@@ -202,14 +230,25 @@ void Player::destroy()
 
 void Player::useSkill(irr::u32 skill_id, bool ctrl, bool shift)
 {
-	irr::core::array<SSkill>* skills = getSkills();
-	for(int i = 0; i < skills->size(); i++)
+	if(Target != 0)
 	{
-		if((*skills)[i].Id == skill_id)
+		irr::core::array<SSkill>* skills = getSkills();
+		for(int i = 0; i < skills->size(); i++)
 		{
-			// Player has this skill
-			broadcastPacket(new CSPSkillUsed(this, (*skills)[i]));
-			break;
+			if((*skills)[i].Id == skill_id)
+			{
+				// Player has this skill
+				CSPSystemMessage* sm = new CSPSystemMessage(EMI_USE_S1);
+				sm->addSkillName((*skills)[i].Id);
+				Owner->sendPacket(sm);
+				SSkillInfo* si = Owner->Server->Interfaces.SkillCache->getSkill((*skills)[i].Id);
+				irr::u32 skillTime = atoi(si->Data["skillTime"].c_str());
+				irr::u32 reuseDelay = atoi(si->Data["reuseDelay"].c_str());
+				broadcastPacket(new CSPSetupGauge(EGC_BLUE, skillTime));
+				broadcastPacket(new CSPSkillUsed(this, (*skills)[i], skillTime, reuseDelay));
+				ObjectSystem->regTimerFunc(this, (IOObjectSystem::timerFunc)&Player::skillTimer, (skillTime * 333) / getCastSpeed(), &(*skills)[i]);
+				break;
+			}
 		}
 	}
 };
@@ -222,7 +261,7 @@ irr::u32 Player::getSpeed()
 
 irr::u32 Player::getLevel()
 {
-	return CharInfo->Level;
+	return Level;
 };
 
 irr::f64 Player::getMaxHp()
@@ -311,6 +350,21 @@ irr::f32 Player::getAttackRange()
 	return 25; // TODO: Get range from current weapon.
 };
 
+irr::u32 Player::getMAttack()
+{
+	return 6 * pow(getLevelMod(Level), 2) * pow(getIntMod(getINT()), 2);
+};
+
+irr::f32 Player::getCastSpeed()
+{
+	return 333 * getWitMod(getWIT());
+};
+
+irr::f32 Player::getCastRange()
+{
+	return 500;
+};
+
 irr::f32 Player::getHpRegen()
 {
 	// Get base regen
@@ -351,6 +405,60 @@ irr::core::array<SSkill>* Player::getSkills()
 	return &CharInfo->Skills;
 };
 
+irr::core::array<CItemInstance>* Player::getItems()
+{
+	return &CharInfo->Items;
+};
+
+void Player::addItem(SItemInfo* item, irr::u32 count)
+{
+	bool found = false;
+	for(irr::u32 i = 0; i < CharInfo->Items.size(); i++)
+	{
+		if(CharInfo->Items[i].Id == item->ItemId)
+		{
+			found = true;
+			if( (CharInfo->Items[i].ItemCount + count) > 2147483647)
+			{
+				count = 2147483647 - CharInfo->Items[i].ItemCount;
+				Owner->sendPacket(new CSPSystemMessage("You may not have more than 2147483647 of an item."));
+			}
+			CharInfo->Items[i].ItemCount += count;
+		}
+	}
+
+	if(!found)
+	{
+		CItemInstance ii;
+		ii.Id = COObjectSystem::getInstance()->getNextId();
+		ii.ItemInfo = item;
+		ii.ItemCount = count;
+		CharInfo->Items.push_back(ii);
+	}
+
+	CSPSystemMessage* sm = 0;
+	if(item->ItemType == EIT_Armor || item->ItemType == EIT_Weapon)
+	{
+		sm = new CSPSystemMessage(EMI_YOU_PICKED_UP_S1);
+		sm->addItemName(item->ItemId);
+	}else if(item->ItemId == 57)
+	{
+		sm = new CSPSystemMessage(EMI_YOU_PICKED_UP_S1_ADENA);
+		sm->addNumber(count);
+	}else if(item->ETCItem.ConsumeType == ECT_Stackable)
+	{
+		sm = new CSPSystemMessage(EMI_YOU_PICKED_UP_S1_S2);
+		sm->addNumber(count);
+		sm->addItemName(item->ItemId);
+	}else
+	{
+		sm = new CSPSystemMessage(EMI_YOU_PICKED_UP_S1);
+		sm->addItemName(item->ItemId);
+	}
+	Owner->sendPacket(sm);
+	Owner->sendPacket(new CSPItemList(false, this));
+};
+
 void Player::setHp(irr::f64 hp)
 {
 	irr::f64 maxhp = getMaxHp();
@@ -379,7 +487,7 @@ void Player::setCp(irr::f64 cp)
 	}
 };
 
-void Player::setXp(irr::u64 xp)
+void Player::setXpSp(irr::u64 xp, irr::u64 sp)
 {
 	CharInfo->xp = Xp = xp;
 	irr::u32 tmplvl = xpToLevel(Xp);
@@ -390,12 +498,21 @@ void Player::setXp(irr::u64 xp)
 		{
 			CSPSocial* s = new CSPSocial(Id, ES_LEVEL_GAIN);
 			broadcastPacket(s);
+			GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
+			if(gm)
+			{
+				if(gm->Mut)
+					gm->Mut->playerLevelUp(this);
+			}
 		}
 		CharInfo->Level = Level = tmplvl;
 		Cp = getMaxCp();
 		Hp = getMaxHp();
 		Mp = getMaxMp();
 	}
+
+	CharInfo->sp = Sp = sp;
+
 	CPUserInfo* ui = new CPUserInfo(this);
 	Owner->sendPacket(ui);
 }
@@ -441,6 +558,7 @@ irr::u32 Player::onDoAttackDmg(Actor* target)
 	Owner->sendPacket(sm);
 	target->takeDamage(this, dmg, false, false);
 	PawnState = EPS_None;
+	((Controller*)Owner->PController)->checkIntention();
 	return dmg;
 };
 

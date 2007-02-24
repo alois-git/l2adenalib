@@ -41,14 +41,26 @@ void COObject::operator delete( void* obj )
 };*/
 
 COObject::COObject(IOObjectSystem* obj_sys)
-: ObjectSystem(obj_sys), Delete(false), Tick(false)
+: ObjectSystem(obj_sys), Delete(false), Tick(false), RefCount(1)
 {
-	ObjName = "Object";
+
 };
 
 COObject::~COObject()
 {
 
+};
+
+void COObject::getRef()
+{
+	RefCount++;
+};
+
+void COObject::drop()
+{
+	RefCount--;
+	if(RefCount <= 0)
+		destroy();
 };
 
 void COObject::destroy()

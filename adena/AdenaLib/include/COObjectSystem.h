@@ -46,6 +46,10 @@ namespace game_server
 
 		virtual ~COObjectSystem();
 
+		static COObjectSystem* getInstance();
+
+		irr::u32 getNextId();
+
 		virtual void run();
 
 		/*

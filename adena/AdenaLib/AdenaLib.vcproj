@@ -364,11 +364,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\include\CConfig.cpp"
+					RelativePath=".\source\CConfig.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\source\CCrypt.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\CDbRandInstance.cpp"
 					>
 				</File>
 				<File
@@ -385,6 +389,14 @@
 				</File>
 				<File
 					RelativePath=".\source\CInProcessLoginServerLink.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\CItemCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\CItemInstance.cpp"
 					>
 				</File>
 				<File
@@ -413,6 +425,10 @@
 				</File>
 				<File
 					RelativePath=".\source\CSkillInfoCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\CSkillTreeCache.cpp"
 					>
 				</File>
 			</Filter>
@@ -554,6 +570,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\include\CDbRandInstance.h"
+					>
+				</File>
+				<File
 					RelativePath=".\include\CGameServer.h"
 					>
 				</File>
@@ -567,6 +587,14 @@
 				</File>
 				<File
 					RelativePath=".\include\CInProcessLoginServerLink.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\CItemCache.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\CItemInstance.h"
 					>
 				</File>
 				<File
@@ -598,6 +626,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\include\CSkillTreeCache.h"
+					>
+				</File>
+				<File
 					RelativePath=".\include\IGameServerClient.h"
 					>
 				</File>
@@ -623,6 +655,10 @@
 				</File>
 				<File
 					RelativePath=".\include\SGameServerInterfaces.h"
+					>
+				</File>
+				<File
+					RelativePath=".\include\SItemInfo.h"
 					>
 				</File>
 				<Filter
@@ -749,7 +785,15 @@
 						>
 					</File>
 					<File
+						RelativePath=".\include\CSPDropItem.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CSPDyes.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPGetItem.h"
 						>
 					</File>
 					<File
@@ -773,11 +817,23 @@
 						>
 					</File>
 					<File
+						RelativePath=".\include\CSPRestartResponse.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPSetupGauge.h"
+						>
+					</File>
+					<File
 						RelativePath=".\include\CSPShowMiniMap.h"
 						>
 					</File>
 					<File
 						RelativePath=".\include\CSPSkillBar.h"
+						>
+					</File>
+					<File
+						RelativePath=".\include\CSPSkillLaunched.h"
 						>
 					</File>
 					<File

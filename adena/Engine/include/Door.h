@@ -1,9 +1,9 @@
 /*
- * SCharInfo.h - Persistant character info.
- * Created January 10, 2006, by Michael 'Bigcheese' Spencer.
+ * Door.h - A door...
+ * Created February 10, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,52 +21,43 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_CHAR_INFO_H_
-#define _ADENA_S_CHAR_INFO_H_
+#ifndef _ADENA_C_O_DOOR_H_
+#define _ADENA_C_O_DOOR_H_
 
-#include <AdenaConfig.h>
-#include <irrString.h>
-#include <irrArray.h>
-#include <CItemInstance.h>
+#include <Pawn.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SSkill
+	class Door : public Pawn
 	{
-		irr::u32 Id;
-		irr::u32 Level;
-		irr::u32 Enchant;
-	};
+	public:
 
-	struct SCharInfo
-	{
-		// Char currently in game?
-		bool InUse;
-		irr::u32 CharacterId;
-		irr::u32 AccountId;
-		irr::core::stringc Name;
-		irr::core::stringc Title;
-		irr::u32 RaceId;
-		irr::u32 ClassId;
-		irr::u32 Sex;
-		irr::u32 HairType;
-		irr::u32 HairColor;
-		irr::u32 FaceType;
-		irr::u32 Level;
-		irr::u64 xp;
-		irr::u64 sp;
-		irr::u32 hp;
-		irr::u32 mp;
-		irr::u32 cp;
-		irr::s32 x;
-		irr::s32 y;
-		irr::s32 z;
+		Door(IOObjectSystem* obj_sys);
 
-		irr::core::array<SSkill> Skills;
-		irr::core::array<CItemInstance> Items;
+		virtual ~Door();
+
+		// Getters
+		virtual bool isAttackable();
+		virtual bool isAutoAttackable();
+
+		virtual irr::f64 getMaxHp();
+		virtual irr::f64 getHp();
+
+		// Setters
+		virtual void setHp(irr::f64 hp);
+
+		// Events
+		virtual void onBeenSeen(Actor* obj);
+		virtual void onBeenLost(Actor* obj);
+
+		virtual void onClick(COObject* event_instagator, bool shift_click);
+
+		virtual void onDeath(Actor* event_instagator);
+
+		virtual void takeDamage(Actor* event_instagator, irr::u32 &damage, bool crit, bool shield);
 	};
 
 }

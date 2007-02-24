@@ -59,6 +59,10 @@ namespace game_server
 
 		virtual ~COObject();
 
+		void getRef();
+
+		void drop();
+
 		virtual void destroy();
 
 		/*
@@ -74,11 +78,11 @@ namespace game_server
 
 	protected:
 
-		irr::core::stringc ObjName;
 		IOObjectSystem* ObjectSystem;
 
 	private:
 
+		irr::s32 RefCount;
 		bool Delete;
 
 	};

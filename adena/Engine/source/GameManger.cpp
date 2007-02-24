@@ -75,7 +75,7 @@ public:
 };
 
 GameManager::GameManager(IOObjectSystem* obj_sys)
-: COObject(obj_sys)
+: COObject(obj_sys), Mut(0)
 {
 	ControllerClass = "Engine.Controller";
 	PlayerClass = "Engine.Player";
@@ -92,6 +92,7 @@ void GameManager::init(SGameServerInterfaces* interfaces)
 	Interfaces = interfaces;
 	NPCLoaderThread* nlt = new NPCLoaderThread(Interfaces->DataBase, L2World, Interfaces->NPCCache);
 	nlt->run(); // TODO: Change back to start.
+	Mut = (Mutator*)spawn("Engine.MutAutoSkill");
 };
 
 void GameManager::tick(irr::f32 delta_time)
@@ -129,22 +130,26 @@ Player* GameManager::playerEnterWorld(SCharInfo* char_info, IGameServerClient* o
 	p->Cp = p->CharInfo->cp;
 	p->Mp = p->CharInfo->mp;
 	p->Xp = p->CharInfo->xp;
+	p->Sp = p->CharInfo->sp;
 	p->Level = p->CharInfo->Level;
 	PlayerList.push_back(p);
 	c->posses(p);
 	char_info->InUse = true;
-	CSPSystemMessage* sm = new CSPSystemMessage(irr::core::stringc("Welcome to l2adena - v") + ADENA_VERSION);
-	owner->sendPacket(sm);
 
 	L2World->newObj(p);
+	Mut->playerEnterWorld(p);
+
+	CSPSystemMessage* sm = new CSPSystemMessage(irr::core::stringc("Welcome to l2adena - v") + ADENA_VERSION);
+	owner->sendPacket(sm);
 
 	return p;
 };
 
 void GameManager::playerLeaveWorld(Player* player)
 {
+	Mut->playerLeaveWorld(player);
 	L2World->removeObj(player);
-	player->destroy();
+	player->drop();
 };
 
 }

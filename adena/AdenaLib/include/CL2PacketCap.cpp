@@ -21,6 +21,8 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
+#ifdef ADENA_L2_CAP
+
 #include <CL2PacketCap.h>
 #include <pcap.h>
 #include <hexdump.h>
@@ -207,3 +209,4 @@ void CL2PacketCap::run()
 }
 }
 
+#endif

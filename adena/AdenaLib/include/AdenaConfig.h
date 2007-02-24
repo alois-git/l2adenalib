@@ -27,10 +27,11 @@
 #include <IrrCompileConfig.h>
 #include <irrTypes.h>
 #include <irrMath.h>
+#include <irrDb.h>
 #include <memory.h>
 
 // Version number is Major.Release.Revision
-#define ADENA_VERSION "0.0.58"
+#define ADENA_VERSION "0.0.60"
 
 #ifdef _IRR_WINDOWS_
 #ifdef ADENALIB_EXPORTS

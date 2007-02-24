@@ -1,9 +1,9 @@
 /*
- * CCharTemplates.h - Caches the default char templates.
- * Created January 11, 2006, by Michael 'Bigcheese' Spencer.
+ * Door.cpp - A door...
+ * Created February 10, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,43 +21,82 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_C_CHAR_TEMPLATES_H_
-#define _ADENA_C_CHAR_TEMPLATES_H_
-
-#include <AdenaConfig.h>
-#include <irrThread.h>
-#include <irrDb.h>
-#include <AVL.h>
-#include <SClassTemplate.h>
+#include <Door.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	class ADENALIB_API CCharTemplates
-	{
-	public:
-
-		CCharTemplates(irr::db::IDatabase* database);
-
-		virtual ~CCharTemplates();
-
-		static CCharTemplates* getInstance();
-
-		SClassTemplate* loadTemplate(irr::u32 class_id);
-
-	private:
-
-		void loadTemplates();
-
-		irr::db::IDatabase* DataBase;
-
-		AVL<irr::u32, SClassTemplate*> Templates;
-
-	};
-
+extern "C"{
+REG_EXPORT COObject* load_Door(IOObjectSystem* obj_sys)
+{
+	return (COObject*)new Door(obj_sys);
 }
 }
 
-#endif
+Door::Door(IOObjectSystem* obj_sys)
+: Pawn(obj_sys)
+{
+
+};
+
+Door::~Door()
+{
+
+};
+
+bool Door::isAttackable()
+{
+	return true;
+};
+
+bool Door::isAutoAttackable()
+{
+	return true;
+};
+
+irr::f64 Door::getMaxHp()
+{
+	return 10;
+};
+
+irr::f64 Door::getHp()
+{
+	return 0;
+};
+
+// Setters
+void Door::setHp(irr::f64 hp)
+{
+
+};
+
+// Events
+void Door::onBeenSeen(Actor* obj)
+{
+
+};
+
+void Door::onBeenLost(Actor* obj)
+{
+
+};
+
+void Door::onClick(COObject* event_instagator, bool shift_click)
+{
+
+};
+
+void Door::onDeath(Actor* event_instagator)
+{
+
+};
+
+void Door::takeDamage(Actor* event_instagator, irr::u32 &damage, bool crit, bool shield)
+{
+
+};
+
+}
+}

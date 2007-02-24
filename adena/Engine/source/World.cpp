@@ -123,8 +123,7 @@ void World::removeObj(Actor* obj)
 		irr::core::list<Actor*>::Iterator ittr(obj->KnownList.begin());
 		for(;ittr != obj->KnownList.end(); ittr++)
 		{
-			obj->onLoseObj((*ittr));
-			(*ittr)->onBeenLost(obj);
+			updateLoc((*ittr));
 		}
 		obj->KnownList.clear();
 	}else

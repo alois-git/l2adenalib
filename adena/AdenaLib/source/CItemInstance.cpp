@@ -1,9 +1,9 @@
 /*
- * SCharInfo.h - Persistant character info.
- * Created January 10, 2006, by Michael 'Bigcheese' Spencer.
+ * CItemInstance.cpp - Item...
+ * Created February 21, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,12 +21,6 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_CHAR_INFO_H_
-#define _ADENA_S_CHAR_INFO_H_
-
-#include <AdenaConfig.h>
-#include <irrString.h>
-#include <irrArray.h>
 #include <CItemInstance.h>
 
 namespace adena
@@ -34,42 +28,16 @@ namespace adena
 namespace game_server
 {
 
-	struct SSkill
-	{
-		irr::u32 Id;
-		irr::u32 Level;
-		irr::u32 Enchant;
-	};
+CItemInstance::CItemInstance()
+: ItemCount(0), ItemInfo(0)
+{
 
-	struct SCharInfo
-	{
-		// Char currently in game?
-		bool InUse;
-		irr::u32 CharacterId;
-		irr::u32 AccountId;
-		irr::core::stringc Name;
-		irr::core::stringc Title;
-		irr::u32 RaceId;
-		irr::u32 ClassId;
-		irr::u32 Sex;
-		irr::u32 HairType;
-		irr::u32 HairColor;
-		irr::u32 FaceType;
-		irr::u32 Level;
-		irr::u64 xp;
-		irr::u64 sp;
-		irr::u32 hp;
-		irr::u32 mp;
-		irr::u32 cp;
-		irr::s32 x;
-		irr::s32 y;
-		irr::s32 z;
+};
 
-		irr::core::array<SSkill> Skills;
-		irr::core::array<CItemInstance> Items;
-	};
+CItemInstance::~CItemInstance()
+{
+
+};
 
 }
 }
-
-#endif

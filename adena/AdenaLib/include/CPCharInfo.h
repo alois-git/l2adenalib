@@ -70,7 +70,7 @@ namespace game_server
 			w32(0x00); // Gloves
 			w32(0x00); // Chest
 			w32(0x00); // Leggings
-			w32(600); // Boots
+			w32(0x00); // Boots
 			w32(0x00); // Back
 			w32(0x00); // Gloves
 			w32(0x00); // Hair
@@ -84,13 +84,13 @@ namespace game_server
 			w32(0x00); // Pvp status
 			w32(0x00); // Karma
 
-			w32(ct->RUN_SPEED); // Run speed
+			w32(P->getSpeed()); // Run speed
 			w32(100); // Walk speed
-			w32(ct->RUN_SPEED);  // Swim run speed
+			w32(P->getSpeed());  // Swim run speed
 			w32(100);  // Swin walk speed
-			w32(ct->RUN_SPEED); // _flRunSpd
+			w32(P->getSpeed()); // _flRunSpd
 			w32(0x00); // _flWalkSpd
-			w32(ct->RUN_SPEED); // Fly run speed
+			w32(P->getSpeed()); // Fly run speed
 			w32(100); // Fly walk speed
 			wf(1.0); // Move speed x
 			wf(1.0); // Atk speed x
@@ -118,7 +118,7 @@ namespace game_server
 			w8(0x01); // Standing
 			w8(0x01); // Running
 			w8(0x00); // Combat
-			w8(0x00); // Dead
+			w8(P->isLooksDead() ? 1 : 0); // Dead
 
 			w8(0x00); // Invisable
 			w8(0x00); // Mount type (0 = none, 1 = stryder, 2 = whyfren(sp?))
@@ -132,7 +132,7 @@ namespace game_server
 
 			w32(0x00); // Abnormal effect (bit map)
 
-			w8(6); // Recs left
+			w8(0x00); // Recs left
 			w16(0x00); // Recs have
 			w32(ci->ClassId); // Class id
 

@@ -77,7 +77,7 @@ namespace game_server
 			w32(P->getHp()); // Current hp
 			w32(P->getMaxMp()); // Max mp
 			w32(P->getMp()); // Current mp
-			w32(1); // Sp
+			w32(P->Sp); // Sp
 			w32(1); // Weight
 			w32(ct->MAX_WEIGHT); // Max weight
 
@@ -125,8 +125,8 @@ namespace game_server
 			w32(ct->EVASION); // Evasion
 			w32(ct->ACC); // Accutacy
 			w32(ct->CRIT); // Crit
-			w32(ct->M_ATK); // Matk
-			w32(ct->M_SPD); // Cast speed
+			w32(P->getMAttack()); // Matk
+			w32(P->getCastSpeed()); // Cast speed
 			w32(P->getAttackSpeed()); // Atk speed
 			w32(ct->M_DEF); // Mdef
 
@@ -169,7 +169,7 @@ namespace game_server
 			w8(0x00); // Mount type (0 = none, 1 = stryder, 2 = whyfren(sp?))
 			w8(0x00); // Pvt store type (1 sell shop)
 			w8(ct->canCraft); // Can craft?
-			w32(1000); // Pks
+			w32(0x00); // Pks
 			w32(0x00); // Pvps
 
 			w16(0x00); // Cubics count.

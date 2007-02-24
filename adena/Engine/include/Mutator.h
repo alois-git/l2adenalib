@@ -1,6 +1,6 @@
 /*
- * SCharInfo.h - Persistant character info.
- * Created January 10, 2006, by Michael 'Bigcheese' Spencer.
+ * Mutator.h - A mut.
+ * Created February 10, 2007, by Michael 'Bigcheese' Spencer.
  *
  * Copyright (C) 2007 Michael Spencer
  * 
@@ -21,52 +21,33 @@
  * Michael Spencer - bigcheesegs@gmail.com
  */
 
-#ifndef _ADENA_S_CHAR_INFO_H_
-#define _ADENA_S_CHAR_INFO_H_
+#ifndef _ADENA_C_O_MUTATOR_H_
+#define _ADENA_C_O_MUTATOR_H_
 
-#include <AdenaConfig.h>
-#include <irrString.h>
-#include <irrArray.h>
-#include <CItemInstance.h>
+#include <COObject.h>
+#include <Player.h>
 
 namespace adena
 {
 namespace game_server
 {
 
-	struct SSkill
+	class Mutator : public COObject
 	{
-		irr::u32 Id;
-		irr::u32 Level;
-		irr::u32 Enchant;
-	};
+	public:
 
-	struct SCharInfo
-	{
-		// Char currently in game?
-		bool InUse;
-		irr::u32 CharacterId;
-		irr::u32 AccountId;
-		irr::core::stringc Name;
-		irr::core::stringc Title;
-		irr::u32 RaceId;
-		irr::u32 ClassId;
-		irr::u32 Sex;
-		irr::u32 HairType;
-		irr::u32 HairColor;
-		irr::u32 FaceType;
-		irr::u32 Level;
-		irr::u64 xp;
-		irr::u64 sp;
-		irr::u32 hp;
-		irr::u32 mp;
-		irr::u32 cp;
-		irr::s32 x;
-		irr::s32 y;
-		irr::s32 z;
+		Mutator(IOObjectSystem* obj_sys);
 
-		irr::core::array<SSkill> Skills;
-		irr::core::array<CItemInstance> Items;
+		virtual ~Mutator();
+
+		virtual void playerEnterWorld(Player* p);
+
+		virtual void playerLeaveWorld(Player* p);
+
+		virtual void playerLevelUp(Player* p);		
+
+		Mutator* Next;
+
 	};
 
 }

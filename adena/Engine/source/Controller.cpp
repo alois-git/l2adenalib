@@ -64,27 +64,22 @@ void Controller::posses(Pawn* pawn)
 
 void Controller::clickGround(irr::core::vector3df origin, irr::core::vector3df target, bool mouse_click)
 {
+	setIntention(ECI_None);
 	OwnedPawn->moveToLocation(target);
 };
 
 void Controller::clickObject(Actor* obj, bool shift_click)
 {
-		obj->onClick(this, shift_click);
+	obj->onClick(this, shift_click);
 };
 
 void Controller::requestAttack(Actor* target, bool shift_click)
 {
-	// Check that we are not in range.
-	if(OwnedPawn->Location.getDistanceFrom(target->Location) > OwnedPawn->getAttackRange())
-	{
-		irr::core::line3df line(OwnedPawn->Location, target->Location);
-		irr::core::vector3df vec = line.getVector();
-		vec.normalize();
-		OwnedPawn->moveToLocation(target->Location - (vec * (OwnedPawn->getAttackRange() * 0.95) ));
-	}else
-	{
-		OwnedPawn->attack(target, shift_click);
-	}
+	if(target != Target)
+		setTarget(target);
+
+	setIntention(ECI_AutoAttack);
+	checkIntention();
 };
 
 void Controller::requestUseSkill(irr::u32 skill_id, bool ctrl, bool shift)
@@ -94,15 +89,18 @@ void Controller::requestUseSkill(irr::u32 skill_id, bool ctrl, bool shift)
 
 void Controller::sendText(irr::u32 say_type, irr::core::stringc &msg, irr::core::stringc &target)
 {
-	GameManager* gm = dynamic_cast<GameManager*>(Owner->Server->Interfaces.GameManager);
-	if(gm)
-	{
-		gm->broadcastPacket(new CSPCreatureSay(OwnedPawn->Id, say_type, ((Player*)OwnedPawn)->CharInfo->Name, msg));
-	}
+	OwnedPawn->broadcastPacket(new CSPCreatureSay(OwnedPawn->Id, say_type, ((Player*)OwnedPawn)->CharInfo->Name, msg));
 };
 
 void Controller::setTarget(Actor* target)
 {
+	if(target != Target)
+	{
+		if(Target != 0)
+			Target->drop();
+		if(target != 0)
+			target->getRef();
+	}
 	Target = target;
 	OwnedPawn->Target = target;
 
@@ -112,6 +110,33 @@ void Controller::setTarget(Actor* target)
 	}else
 	{
 		OwnedPawn->broadcastPacket(new CSPTargetSelected(OwnedPawn->Id, Target->Id, Target->Location));
+	}
+};
+
+void Controller::setIntention(E_ControllerIntention intention)
+{
+	Intention = intention;
+	checkIntention();
+};
+
+void Controller::checkIntention()
+{
+	switch(Intention)
+	{
+		case ECI_None:
+			break;
+		case ECI_AutoAttack:
+			if(OwnedPawn->Location.getDistanceFrom(Target->Location) > OwnedPawn->getAttackRange())
+			{
+				irr::core::line3df line(OwnedPawn->Location, Target->Location);
+				irr::core::vector3df vec = line.getVector();
+				vec.normalize();
+				OwnedPawn->moveToLocation(Target->Location - (vec * (OwnedPawn->getAttackRange() * 0.95) ));
+			}else
+			{
+				OwnedPawn->attack(Target, false);
+			}
+			break;
 	}
 };
 

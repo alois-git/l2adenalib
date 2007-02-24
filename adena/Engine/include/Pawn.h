@@ -82,9 +82,15 @@ namespace game_server
 		virtual irr::f32 getAttackSpeed() {return 0;};
 		virtual irr::f32 getAttackRange() {return 0;};
 
+		virtual irr::u32 getMAttack() {return 0;};
+		virtual irr::f32 getCastSpeed() {return 0;};
+		virtual irr::f32 getCastRange() {return 0;};
+
 		virtual irr::f32 getHpRegen() {return 0;};
 
 		virtual bool isAutoAttackable();
+		virtual bool isDead();
+		virtual bool isLooksDead();
 
 		// Setters
 
@@ -105,6 +111,8 @@ namespace game_server
 		// Timers
 
 		virtual bool attackTimer(void* data);
+
+		virtual bool skillTimer(void* data);
 
 		// Events
 
@@ -131,6 +139,7 @@ namespace game_server
 		irr::f64 Hp;
 		irr::f64 Mp;
 		irr::u64 Xp;
+		irr::u64 Sp;
 
 		IGameServerClient* Owner;
 

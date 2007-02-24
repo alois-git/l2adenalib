@@ -23,8 +23,8 @@
 
 #include <CGameServer.h>
 #include <ip2bytes.h>
-#include <CMersenneTwister.h>
 #include <CGameServerClient.h>
+#include <CDbRandInstance.h>
 #include <GameManager.h>
 
 namespace adena
@@ -47,6 +47,21 @@ CGameServer::~CGameServer()
 		delete Interfaces.Logger;
 };
 
+COObject* CGameServer::getGMInstance(IOObjectSystem* objsys, irr::core::stringc name)
+{
+	static GameManager* gm = 0;
+
+	if(!gm)
+	{
+		if(!objsys)
+			return 0;
+
+		gm = (GameManager*)objsys->loadObj(name);
+	}
+
+	return gm;
+};
+
 void CGameServer::OnEvent(irr::net::NetEvent &e)
 {
 	switch(e.enet)
@@ -55,11 +70,6 @@ void CGameServer::OnEvent(irr::net::NetEvent &e)
 			e.serverClient->UserData = new CGameServerClient(e.serverClient, this);
 			break;
 		case irr::net::ENET_CLIENT_DISCONNECT:
-			if(((CGameServerClient*)e.serverClient->UserData)->AccountId != 0)
-			{
-				if(((CGameServerClient*)e.serverClient->UserData)->PController != 0)
-					Interfaces.PlayerCache->saveChar(((CGameServerClient*)e.serverClient->UserData)->CharInfo->CharacterId);
-			}
 			((CGameServerClient*)e.serverClient->UserData)->Running = false;
 			break;
 		case ::irr::net::ENET_RECVDATA:
@@ -109,54 +119,24 @@ bool CGameServer::init(const char* config_file)
 	if(Interfaces.Logger == 0)
 		Interfaces.Logger = new irr::CLogger(NULL);
 
-	Interfaces.ConfigFile = new CConfig(config_file);
+	Interfaces.ConfigFile = CConfig::getInstance();
 
 	irr::net::Address a(Interfaces.ConfigFile->getString("gameserver", "internal_host"), Interfaces.ConfigFile->getString("gameserver", "port"));
 	Server->bind(a);
 
 	// Random number generator setup
-	if(Interfaces.Rng == 0)
-		Interfaces.Rng = new irr::CMersenneTwister();
+	Interfaces.Rng = CDbRandInstance::getRngInstance();
 	Interfaces.Rng->seed();
 
 	// Database setup
-	irr::db::IDbConParms* conp;
-	if(!strcmp("mysql" ,Interfaces.ConfigFile->getString("database", "type").c_str()))
-	{
-		Interfaces.DataBase = new irr::db::CMySQL();
-		irr::db::CMySQLConParms* cp = new irr::db::CMySQLConParms();
-		cp->Ip = Interfaces.ConfigFile->getString("mysql", "ip");
-		cp->Username = Interfaces.ConfigFile->getString("mysql", "username");
-		cp->Password = Interfaces.ConfigFile->getString("mysql", "password");
-		cp->Db = Interfaces.ConfigFile->getString("mysql", "db");
-		cp->Port = Interfaces.ConfigFile->getInt("mysql", "port");
-		conp = cp;
-	}else
-	{
-		Interfaces.DataBase = new irr::db::CSQLLite();
-		irr::db::CSQLLiteConParms* qp = new irr::db::CSQLLiteConParms();
-		qp->FileName = Interfaces.ConfigFile->getString("sqlite", "file");
-		conp = qp;
-	}
-	Interfaces.Logger->log("Attempting to connect to DB...");
-	if(!Interfaces.DataBase->connect(conp))
-	{
-		Interfaces.Logger->log("FATAL ERROR: Failed to connect to DB (Check connection settings)", irr::ELL_ERROR);
-		return false;
-	}else
-		Interfaces.Logger->log("DB connection sucsessfull");
-
-	delete conp;
-
-	// Register with login server
-	LoginServerLink->registerWithLoginServer();
+	Interfaces.DataBase = CDbRandInstance::getDbInstance();
 
 	// Create GeoData.
 	Interfaces.GeoData = new CGeoData();
 	Interfaces.GeoData->initGeoData("./geodata/geo_index.txt");
 
 	// Create obj system
-	Interfaces.ObjectSystem = new COObjectSystem();
+	Interfaces.ObjectSystem = COObjectSystem::getInstance();
 	Interfaces.ObjectSystem->start();
 
 	// Create caches
@@ -166,9 +146,15 @@ bool CGameServer::init(const char* config_file)
 	Interfaces.SkillCache->init("./data/stats/skills");
 	Interfaces.NPCCache = new CNPCCache();
 	Interfaces.NPCCache->init(Interfaces.DataBase);
+	Interfaces.SkillTreeCache = new CSkillTreeCache();
+	Interfaces.SkillTreeCache->init(Interfaces.DataBase);
+	Interfaces.ItemCache = CItemCache::getInstance();
 
-	Interfaces.GameManager = (COObject*)Interfaces.ObjectSystem->loadObj(irr::core::stringc("Engine.GameManager"));
+	Interfaces.GameManager = (GameManager*)getGMInstance(Interfaces.ObjectSystem, Interfaces.ConfigFile->getString("gameserver", "gamemanager"));
 	((GameManager*)Interfaces.GameManager)->init(&Interfaces);
+
+	// Register with login server
+	LoginServerLink->registerWithLoginServer();
 
 	return true;
 };
